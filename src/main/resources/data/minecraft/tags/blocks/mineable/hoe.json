@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "values": [
+    "minenorth_harvest:apple_leaves",
+    "minenorth_harvest:orange_leaves",
+    "minenorth_harvest:lemon_leaves",
+    "minenorth_harvest:cherry_leaves",
+    "minenorth_harvest:pear_leaves"
+  ]
+}

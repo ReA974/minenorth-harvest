@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "minecraft:spruce_sapling"
+    },
+    {
+      "item": "minenorth_harvest:pear"
+    },
+    {
+      "item": "minenorth_harvest:pear"
+    }
+  ],
+  "result": {
+    "item": "minenorth_harvest:pear_sapling",
+    "count": 1
+  }
+}

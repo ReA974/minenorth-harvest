@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "minecraft:birch_sapling"
+    },
+    {
+      "item": "minenorth_harvest:lemon"
+    },
+    {
+      "item": "minenorth_harvest:lemon"
+    }
+  ],
+  "result": {
+    "item": "minenorth_harvest:lemon_sapling",
+    "count": 1
+  }
+}

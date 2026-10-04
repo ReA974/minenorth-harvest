@@ -1,0 +1,28 @@
+modLoader="javafml"
+loaderVersion="[47,)"
+license="All rights reserved - MineNorthRP"
+
+[[mods]]
+modId="minenorth_harvest"
+version="1.0.0"
+displayName="MineNorth Récolte"
+authors="Erwan"
+description='''
+Récolte RP pour MineNorthRP : arbres fruitiers (pommes, oranges, citrons, cerises, poires)
+qui fleurissent et mûrissent, mini-jeu d'abattage, souches à replanter,
+zones de bûcheronnage et vergers créés à la baguette.
+'''
+
+[[dependencies.minenorth_harvest]]
+    modId="forge"
+    mandatory=true
+    versionRange="[47,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.minenorth_harvest]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.20.1,1.21)"
+    ordering="NONE"
+    side="BOTH"

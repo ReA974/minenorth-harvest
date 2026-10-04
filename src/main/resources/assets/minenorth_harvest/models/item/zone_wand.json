@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/handheld",
+  "textures": {
+    "layer0": "minenorth_harvest:item/zone_wand"
+  }
+}

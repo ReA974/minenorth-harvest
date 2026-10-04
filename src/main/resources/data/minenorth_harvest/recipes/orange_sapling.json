@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "minecraft:jungle_sapling"
+    },
+    {
+      "item": "minenorth_harvest:orange"
+    },
+    {
+      "item": "minenorth_harvest:orange"
+    }
+  ],
+  "result": {
+    "item": "minenorth_harvest:orange_sapling",
+    "count": 1
+  }
+}

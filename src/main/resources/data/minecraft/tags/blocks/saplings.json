@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "values": [
+    "minenorth_harvest:apple_sapling",
+    "minenorth_harvest:orange_sapling",
+    "minenorth_harvest:lemon_sapling",
+    "minenorth_harvest:cherry_sapling",
+    "minenorth_harvest:pear_sapling"
+  ]
+}
