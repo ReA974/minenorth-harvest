@@ -28,7 +28,10 @@ public class MineNorthHarvest {
         ModItems.ITEMS.register(modBus);
         ModCreativeTabs.TABS.register(modBus);
 
-        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, HarvestConfig.SPEC, "minenorth_harvest-common.toml");
+        // Config côté serveur uniquement : le client ne crée aucun fichier (les valeurs par défaut s'appliquent).
+        if (net.minecraftforge.fml.loading.FMLEnvironment.dist == net.minecraftforge.api.distmarker.Dist.DEDICATED_SERVER) {
+            ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, HarvestConfig.SPEC, "minenorth_harvest-common.toml");
+        }
 
         modBus.addListener(this::commonSetup);
         modBus.addListener(this::onConfigReload);

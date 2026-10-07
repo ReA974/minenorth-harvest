@@ -51,6 +51,8 @@ public final class HuntRewards {
 
     /** @return message d'erreur, ou null si OK. */
     public static String load() {
+        // Config côté serveur uniquement : le client ne crée ni ne lit aucun fichier.
+        if (net.minecraftforge.fml.loading.FMLEnvironment.dist != net.minecraftforge.api.distmarker.Dist.DEDICATED_SERVER) return null;
         Path path = file();
         try {
             if (!Files.exists(path)) {
