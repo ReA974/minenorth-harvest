@@ -2,7 +2,7 @@ package com.minenorth_harvest.chop;
 
 import com.minenorth_harvest.block.FruitLeavesBlock;
 import com.minenorth_harvest.config.HarvestConfig;
-import com.minenorth_harvest.data.HarvestData;
+import com.minenorth_harvest.job.HarvestData;
 import com.minenorth_harvest.network.ModNetwork;
 import com.minenorth_harvest.network.S2CChopState;
 import com.minenorth_harvest.registry.ModBlocks;

@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "minenorth_harvest:flour"
+    },
+    {
+      "item": "minenorth_harvest:flour"
+    },
+    {
+      "item": "minenorth_harvest:flour"
+    },
+    {
+      "item": "minecraft:water_bucket"
+    }
+  ],
+  "result": {
+    "item": "minenorth_harvest:dough",
+    "count": 3
+  }
+}

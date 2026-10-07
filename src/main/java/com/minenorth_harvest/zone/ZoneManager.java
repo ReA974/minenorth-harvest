@@ -32,7 +32,8 @@ public final class ZoneManager {
     /** Ticks aléatoires vanilla par bloc et par seconde (randomTickSpeed = 3) ≈ 1 / 68. */
     private static final double VANILLA_TICKS_PER_SECOND = 20.0 * 3.0 / 4096.0;
 
-    private static final Map<UUID, String> CURRENT_ZONE = new HashMap<>();
+    /** Zones où se trouve chaque joueur : clé "dimension|type|nom". */
+    private static final Map<UUID, Set<String>> CURRENT_ZONES = new HashMap<>();
     private static final List<Showing> SHOWING = new ArrayList<>();
     private static int tickCounter;
 
@@ -47,6 +48,7 @@ public final class ZoneManager {
             trackPlayers(server);
             tickShowing();
         }
+        HuntManager.tick(server, tickCounter);
         if (tickCounter % 20 == 0) {
             for (ServerLevel level : server.getAllLevels()) {
                 ZoneData data = ZoneData.get(level);
@@ -66,29 +68,50 @@ public final class ZoneManager {
             if (p.isSpectator()) continue;
             ServerLevel level = p.serverLevel();
             ZoneData data = ZoneData.get(level);
-            Zone zone = data.zoneAt(p.getX(), p.getY(), p.getZ());
+            List<Zone> zones = data.zonesAt(p.getX(), p.getY(), p.getZ());
 
-            if (zone != null && zone.type == ZoneType.VERGER) {
-                ACTIVE_ORCHARDS.computeIfAbsent(level, l -> new HashSet<>()).add(zone);
-            }
-
-            String key = zone == null ? "" : level.dimension().location() + "/" + zone.name;
-            String previous = CURRENT_ZONE.getOrDefault(p.getUUID(), "");
-            if (!key.equals(previous)) {
-                CURRENT_ZONE.put(p.getUUID(), key);
-                if (HarvestConfig.ZONE_ENTER_MESSAGE.get()) {
-                    if (zone != null) {
-                        p.displayClientMessage(Component.translatable("message.minenorth_harvest.zone_enter." + zone.type.id(), zone.name), true);
-                    } else {
-                        p.displayClientMessage(Component.translatable("message.minenorth_harvest.zone_leave"), true);
-                    }
+            Set<String> now = new HashSet<>();
+            for (Zone zone : zones) {
+                if (zone.type == ZoneType.VERGER) {
+                    ACTIVE_ORCHARDS.computeIfAbsent(level, l -> new HashSet<>()).add(zone);
                 }
+                now.add(level.dimension().location() + "|" + zone.type.id() + "|" + zone.name);
+            }
+            Set<String> before = CURRENT_ZONES.getOrDefault(p.getUUID(), Set.of());
+            if (now.equals(before)) continue;
+            CURRENT_ZONES.put(p.getUUID(), now);
+
+            for (String key : now) {
+                if (!before.contains(key)) onEnter(p, key.split("\\|", 3));
+            }
+            for (String key : before) {
+                if (!now.contains(key)) onLeave(p, key.split("\\|", 3));
             }
         }
     }
 
+    private static void onEnter(ServerPlayer p, String[] key) {
+        ZoneType type = ZoneType.byId(key[1]);
+        String name = key[2];
+        if (type == ZoneType.CHASSE) {
+            HuntManager.onEnter(p, name);
+        } else if (HarvestConfig.ZONE_ENTER_MESSAGE.get()) {
+            p.displayClientMessage(Component.translatable("message.minenorth_harvest.zone_enter." + key[1], name), true);
+        }
+    }
+
+    private static void onLeave(ServerPlayer p, String[] key) {
+        ZoneType type = ZoneType.byId(key[1]);
+        String name = key[2];
+        if (type == ZoneType.CHASSE) {
+            HuntManager.onLeave(p, name);
+        } else if (HarvestConfig.ZONE_ENTER_MESSAGE.get()) {
+            p.displayClientMessage(Component.translatable("message.minenorth_harvest.zone_leave"), true);
+        }
+    }
+
     public static void onLogout(ServerPlayer player) {
-        CURRENT_ZONE.remove(player.getUUID());
+        CURRENT_ZONES.remove(player.getUUID());
         SHOWING.removeIf(s -> s.player.getUUID().equals(player.getUUID()));
     }
 
@@ -177,9 +200,14 @@ public final class ZoneManager {
     private static void drawOutline(ServerPlayer player, ServerLevel level, Zone z) {
         double x1 = z.min.getX(), y1 = z.min.getY(), z1 = z.min.getZ();
         double x2 = z.max.getX() + 1, y2 = z.max.getY() + 1, z2 = z.max.getZ() + 1;
+        if (z.ignoresHeight()) { // zone de chasse : on dessine autour de la hauteur du joueur
+            y1 = Math.floor(player.getY()) - 1;
+            y2 = y1 + 5;
+        }
         double perimeter = 4 * ((x2 - x1) + (y2 - y1) + (z2 - z1));
         double step = Math.max(1.0, perimeter / 600.0);
-        var particle = z.type == ZoneType.VERGER ? ParticleTypes.HAPPY_VILLAGER : ParticleTypes.FLAME;
+        var particle = z.type == ZoneType.VERGER ? ParticleTypes.HAPPY_VILLAGER
+                : z.type == ZoneType.CHASSE ? ParticleTypes.SOUL_FIRE_FLAME : ParticleTypes.FLAME;
         double[][] corners = {{x1, y1, z1}, {x2, y1, z1}, {x2, y1, z2}, {x1, y1, z2}};
         for (int i = 0; i < 4; i++) {
             double[] a = corners[i], b = corners[(i + 1) % 4];
@@ -201,7 +229,7 @@ public final class ZoneManager {
     }
 
     public static void clearAll() {
-        CURRENT_ZONE.clear();
+        CURRENT_ZONES.clear();
         SHOWING.clear();
         ACTIVE_ORCHARDS.clear();
     }

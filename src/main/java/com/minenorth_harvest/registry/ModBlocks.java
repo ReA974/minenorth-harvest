@@ -5,6 +5,7 @@ import com.minenorth_harvest.block.FruitLeavesBlock;
 import com.minenorth_harvest.block.FruitSaplingBlock;
 import com.minenorth_harvest.block.FruitTreeGrower;
 import com.minenorth_harvest.block.FruitType;
+import com.minenorth_harvest.block.MillBlock;
 import com.minenorth_harvest.block.TreeStumpBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -39,6 +40,13 @@ public final class ModBlocks {
                     .mapColor(MapColor.WOOD)
                     .strength(2.5f)
                     .sound(SoundType.WOOD)
+                    .noOcclusion()));
+
+    public static final RegistryObject<Block> MILL = BLOCKS.register("mill",
+            () -> new MillBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.STONE)
+                    .strength(2.0f, 6.0f)
+                    .sound(SoundType.STONE)
                     .noOcclusion()));
 
     private ModBlocks() {}

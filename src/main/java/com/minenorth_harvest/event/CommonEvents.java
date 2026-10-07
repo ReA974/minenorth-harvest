@@ -7,7 +7,13 @@ import com.minenorth_harvest.config.SyncedConfig;
 import com.minenorth_harvest.network.ModNetwork;
 import com.minenorth_harvest.network.S2CSyncConfig;
 import com.minenorth_harvest.zone.ZoneCommand;
+import com.minenorth_harvest.zone.HuntManager;
+import com.minenorth_harvest.zone.HuntRewards;
 import com.minenorth_harvest.zone.ZoneManager;
+import net.minecraftforge.event.entity.living.LivingDropsEvent;
+import net.minecraftforge.event.entity.living.LivingExperienceDropEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
+import net.minecraftforge.event.server.ServerStartingEvent;
 import com.minenorth_harvest.zone.ZoneSelection;
 import com.minenorth_harvest.registry.ModItems;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -54,6 +60,22 @@ public final class CommonEvents {
         if (event.getEntity() instanceof ServerPlayer sp && sp.hasPermissions(2)) {
             ZoneSelection.set(sp, event.getPos(), true);
         }
+    }
+
+    /** Récompenses de chasse (port de chasse.sk). */
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void onLivingDrops(LivingDropsEvent event) {
+        HuntManager.onDrops(event);
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void onLivingExperience(LivingExperienceDropEvent event) {
+        HuntManager.onExperience(event);
+    }
+
+    @SubscribeEvent
+    public static void onServerStarting(ServerStartingEvent event) {
+        HuntRewards.load();
     }
 
     @SubscribeEvent

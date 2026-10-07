@@ -57,6 +57,13 @@ public class ZoneData extends SavedData {
         return null;
     }
 
+    /** Toutes les zones contenant cette position (elles peuvent se chevaucher). */
+    public List<Zone> zonesAt(double x, double y, double z) {
+        List<Zone> list = new ArrayList<>();
+        for (Zone zone : zones.values()) if (zone.contains(x, y, z)) list.add(zone);
+        return list;
+    }
+
     public List<Regrow> regrows() { return regrows; }
 
     public void addRegrow(BlockPos pos, String sapling, long due) {

@@ -1,6 +1,6 @@
 package com.minenorth_harvest.block;
 
-import com.minenorth_harvest.data.HarvestData;
+import com.minenorth_harvest.job.HarvestData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;

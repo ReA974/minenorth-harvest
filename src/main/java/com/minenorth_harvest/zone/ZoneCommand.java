@@ -1,6 +1,6 @@
 package com.minenorth_harvest.zone;
 
-import com.minenorth_harvest.data.HarvestData;
+import com.minenorth_harvest.job.HarvestData;
 import com.minenorth_harvest.registry.ModItems;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.BoolArgumentType;
@@ -28,13 +28,14 @@ import java.util.Collection;
  * Toutes les commandes sont op 2.
  *
  * /recolte baguette                                   -> donne la baguette de zone
- * /recolte zone creer <nom> <bucheron|verger>         -> crée la zone à partir de la sélection de la baguette
+ * /recolte zone creer <nom> <bucheron|verger|chasse>  -> crée la zone à partir de la sélection de la baguette
  * /recolte zone creer <nom> <type> <de> <a>           -> (optionnel) avec des coordonnées
  * /recolte zone redefinir <nom>                       -> remplace les limites par la sélection actuelle
  * /recolte zone supprimer|info|afficher <nom>
  * /recolte zone liste
  * /recolte zone repousse <nom> <true|false>           (zones bûcheron)
  * /recolte zone vitesse <nom> <multiplicateur>        (zones verger, 0 = valeur de la config)
+ * /recolte chasse reload                             -> recharge config/minenorth_harvest-chasse.json
  * /recolte ecoreset <joueurs>                         -> remet la dette écologique à 0
  * Les zones sont propres à chaque dimension (celle où la commande est lancée).
  */
@@ -52,6 +53,8 @@ public final class ZoneCommand {
         dispatcher.register(Commands.literal("recolte")
                 .requires(s -> s.hasPermission(2))
                 .then(Commands.literal("baguette").executes(ZoneCommand::giveWand))
+                .then(Commands.literal("chasse")
+                        .then(Commands.literal("reload").executes(ZoneCommand::reloadHunt)))
                 .then(Commands.literal("ecoreset")
                         .then(Commands.argument("joueurs", EntityArgument.players()).executes(ZoneCommand::ecoReset)))
                 .then(Commands.literal("zone")
@@ -208,6 +211,17 @@ public final class ZoneCommand {
         z.speed = DoubleArgumentType.getDouble(c, "multiplicateur");
         ZoneData.get(c.getSource().getLevel()).setDirty();
         sendInfo(c, z);
+        return 1;
+    }
+
+    private static int reloadHunt(CommandContext<CommandSourceStack> c) {
+        String error = HuntRewards.load();
+        if (error != null) {
+            c.getSource().sendFailure(Component.translatable("command.minenorth_harvest.hunt_reload_error", error));
+            return 0;
+        }
+        c.getSource().sendSuccess(() -> Component.translatable("command.minenorth_harvest.hunt_reloaded",
+                HuntRewards.rewards.size()), true);
         return 1;
     }
 

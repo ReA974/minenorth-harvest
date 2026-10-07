@@ -27,6 +27,20 @@ Le jar se trouve dans `build/libs/minenorth_harvest-1.20.1-1.0.0.jar`. Java 17 r
 - Recette pour démarrer : *pousse vanilla du bon bois + 2 fruits* → pousse fruitière
   (les pousses peuvent aussi être vendues dans tes shops, ou données via `/give`).
 
+## Boulangerie : du blé à la baguette
+
+| Étape | Comment | Résultat |
+|---|---|---|
+| Moudre | **Moulin** : blé en main, **maintenir clic droit** (8 tours ≈ 1,5 s) | 3 blé → 1 **Farine** |
+| Pétrir | Établi : 3 farine + 1 seau d'eau (le seau est rendu) | 3 **Pâte à pain** |
+| Cuire | Four, fumoir ou feu de camp | **Baguette** |
+| Pâtisser | Établi : farine + sucre + œuf + 2 fruits | **Tarte** aux pommes / à l'orange / au citron / aux cerises / aux poires |
+
+- Moulin : recette *meule + 3 pierres lisses* (supprime `data/minenorth_harvest/recipes/mill.json` si tu préfères le vendre ou le donner).
+- Section `[mill]` de la config : tours par produit, délai anti auto-clic, et **recettes du moulin**
+  (`"minecraft:wheat*3=minenorth_harvest:flour*1"` ; ajoute des lignes pour moudre autre chose).
+- Le pain vanilla (3 blé) existe toujours : pour la revente, fais racheter farine, baguettes et tartes dans tes shops.
+
 ## Bûcheron : mini-jeu d'abattage
 
 1. Dans une **zone de bûcheronnage**, hache en main, **accroupi + clic droit** sur le tronc d'un arbre naturel.
@@ -55,13 +69,14 @@ Deux types de zones, propres à chaque dimension :
   Les protections (claims) y sont ignorées pour l'abattage (`zonesBypassProtection`).
   Avec la **repousse** (activée par défaut), une souche oubliée est replantée automatiquement après 10 min.
 - **verger** : dès qu'un joueur est dans la zone, les fruits y poussent **5× plus vite**.
+- **chasse** : des animaux apparaissent autour des joueurs présents (port de `chasse.sk`). Hauteur ignorée.
 
 ### Créer une zone avec la baguette (comme WorldEdit)
 
 1. `/recolte baguette` → tu reçois la **Baguette de zone**.
 2. **Clic gauche** sur un bloc = point 1, **clic droit** sur un autre bloc = point 2
    (le contour s'affiche en particules).
-3. `/recolte zone creer <nom> bucheron` ou `/recolte zone creer <nom> verger`.
+3. `/recolte zone creer <nom> bucheron`, `... verger` ou `... chasse`.
 
 Pense à prendre la hauteur : clique un bloc au sol d'un coin, et un bloc en hauteur au coin opposé
 (au-dessus de la cime des arbres).
@@ -78,7 +93,24 @@ Pense à prendre la hauteur : clique un bloc au sol d'un coin, et un bloc en hau
 /recolte zone vitesse <nom> <multiplicateur> (zones verger, 0 = valeur de la config)
 /recolte zone creer <nom> <type> <x1 y1 z1> <x2 y2 z2>   (si tu préfères les coordonnées)
 /recolte ecoreset <joueurs>                  (remet la dette écologique à 0)
+/recolte chasse reload                       (recharge les récompenses de chasse)
 ```
+
+## Chasse (port de chasse.sk)
+
+- Entrée dans une zone de chasse : message `[Chasse]` + titre « Zone de Chasse ». Sortie : message.
+- Toutes les 10 s, pour chaque joueur en zone : s'il y a moins de 6 animaux à 20 blocs, un animal apparaît
+  entre 6 et 20 blocs de lui, **sur de l'herbe** et **dans la zone** (vache, cochon, mouton, poule, lapin, ours polaire).
+- Réglages dans `config/minenorth_harvest-common.toml`, section `[hunting]` : intervalle, rayons, max d'animaux,
+  liste des animaux avec poids (`"minecraft:cow=3"`), blocs de sol autorisés, titre.
+- **Récompenses** dans `config/minenorth_harvest-chasse.json` (créé au 1er démarrage avec celles du script) :
+  objets nommés (codes `&`), quantité, chance optionnelle, message. Ajoute n'importe quel mob par son id.
+  - **L'animal ne lâche rien au sol** : le butin va directement dans l'inventaire du chasseur, sans orbes d'XP.
+  - `clearVanillaDrops` (true) : aucun drop au sol. `noExperience` (true) : pas d'XP.
+  - `dropIfInventoryFull` (false) : inventaire plein = butin perdu avec un message ; `true` = posé aux pieds du joueur.
+  - `onlyInHuntingZones` : `false` = partout comme le script, `true` = seulement dans les zones de chasse.
+  - Un animal configuré tué sans joueur (lave, cactus…) ne lâche rien non plus.
+
 
 ## Configuration
 

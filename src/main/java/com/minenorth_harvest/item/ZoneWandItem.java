@@ -18,7 +18,7 @@ import java.util.List;
 
 /**
  * Baguette de zone : clic gauche sur un bloc = point 1, clic droit = point 2.
- * Puis /recolte zone creer <nom> <bucheron|verger>.
+ * Puis /recolte zone creer <nom> <bucheron|verger|chasse>.
  * (Le clic gauche est géré dans CommonEvents via LeftClickBlock.)
  */
 public class ZoneWandItem extends Item {

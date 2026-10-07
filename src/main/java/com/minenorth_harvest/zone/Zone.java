@@ -22,15 +22,20 @@ public class Zone {
         this.max = new BlockPos(Math.max(a.getX(), b.getX()), Math.max(a.getY(), b.getY()), Math.max(a.getZ(), b.getZ()));
     }
 
+    /** Les zones de chasse ignorent la hauteur (comme le script Skript d'origine). */
+    public boolean ignoresHeight() {
+        return type == ZoneType.CHASSE;
+    }
+
     public boolean contains(BlockPos p) {
         return p.getX() >= min.getX() && p.getX() <= max.getX()
-                && p.getY() >= min.getY() && p.getY() <= max.getY()
+                && (ignoresHeight() || (p.getY() >= min.getY() && p.getY() <= max.getY()))
                 && p.getZ() >= min.getZ() && p.getZ() <= max.getZ();
     }
 
     public boolean contains(double x, double y, double z) {
         return x >= min.getX() && x < max.getX() + 1
-                && y >= min.getY() && y < max.getY() + 1
+                && (ignoresHeight() || (y >= min.getY() && y < max.getY() + 1))
                 && z >= min.getZ() && z < max.getZ() + 1;
     }
 

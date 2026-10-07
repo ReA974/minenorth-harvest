@@ -22,6 +22,11 @@ public final class ModCreativeTabs {
                 out.accept(ModItems.LEMON.get());
                 out.accept(ModItems.CHERRIES.get());
                 out.accept(ModItems.PEAR.get());
+                out.accept(ModItems.MILL.get());
+                out.accept(ModItems.FLOUR.get());
+                out.accept(ModItems.DOUGH.get());
+                out.accept(ModItems.BAGUETTE.get());
+                for (FruitType type : FruitType.values()) out.accept(ModItems.PIES.get(type).get());
                 out.accept(ModItems.TREE_STUMP.get());
                 out.accept(ModItems.ZONE_WAND.get());
             })

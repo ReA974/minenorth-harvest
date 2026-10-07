@@ -44,6 +44,23 @@ public final class HarvestConfig {
     public static final ForgeConfigSpec.IntValue ORCHARD_MAX_CHECKS;
     public static final ForgeConfigSpec.BooleanValue ZONE_ENTER_MESSAGE;
 
+    // ---- Chasse ----
+    public static final ForgeConfigSpec.BooleanValue HUNT_ENABLED;
+    public static final ForgeConfigSpec.IntValue HUNT_INTERVAL;
+    public static final ForgeConfigSpec.IntValue HUNT_ATTEMPTS;
+    public static final ForgeConfigSpec.IntValue HUNT_SPAWN_RADIUS;
+    public static final ForgeConfigSpec.IntValue HUNT_MIN_DISTANCE;
+    public static final ForgeConfigSpec.IntValue HUNT_COUNT_RADIUS;
+    public static final ForgeConfigSpec.IntValue HUNT_MAX_ANIMALS;
+    public static final ForgeConfigSpec.ConfigValue<java.util.List<? extends String>> HUNT_ANIMALS;
+    public static final ForgeConfigSpec.ConfigValue<java.util.List<? extends String>> HUNT_GROUND;
+    public static final ForgeConfigSpec.BooleanValue HUNT_TITLE;
+
+    // ---- Moulin ----
+    public static final ForgeConfigSpec.IntValue MILL_TURNS;
+    public static final ForgeConfigSpec.IntValue MILL_COOLDOWN;
+    public static final ForgeConfigSpec.ConfigValue<java.util.List<? extends String>> MILL_RECIPES;
+
     // ---- Écologie ----
     public static final ForgeConfigSpec.IntValue ECO_DEBT_THRESHOLD;
     public static final ForgeConfigSpec.IntValue ECO_EXTRA_HITS;
@@ -95,6 +112,30 @@ public final class HarvestConfig {
         ORCHARD_MAX_CHECKS = b.comment("Zones verger : nombre max de blocs testés par seconde et par zone (limite de perf)")
                 .defineInRange("orchardMaxChecksPerSecond", 6000, 100, 100000);
         ZONE_ENTER_MESSAGE = b.comment("Afficher un message quand un joueur entre / sort d'une zone").define("enterMessage", true);
+        b.pop();
+
+        b.comment("Chasse : zones /recolte zone creer <nom> chasse. Les récompenses sont dans config/minenorth_harvest-chasse.json").push("hunting");
+        HUNT_ENABLED = b.comment("Active l'apparition d'animaux dans les zones de chasse").define("enabled", true);
+        HUNT_INTERVAL = b.comment("Intervalle entre deux vagues d'apparition (secondes)").defineInRange("spawnIntervalSeconds", 10, 1, 3600);
+        HUNT_ATTEMPTS = b.comment("Tentatives d'apparition par joueur et par vague").defineInRange("attemptsPerPlayer", 1, 1, 20);
+        HUNT_SPAWN_RADIUS = b.comment("Distance max (X/Z) autour du joueur où un animal peut apparaître").defineInRange("spawnRadius", 20, 4, 64);
+        HUNT_MIN_DISTANCE = b.comment("Distance min autour du joueur (évite les apparitions sous son nez)").defineInRange("minSpawnDistance", 6, 0, 60);
+        HUNT_COUNT_RADIUS = b.comment("Rayon de comptage des animaux déjà présents autour du joueur").defineInRange("countRadius", 20, 4, 64);
+        HUNT_MAX_ANIMALS = b.comment("Plus d'apparition si au moins autant d'animaux (de la liste) autour du joueur").defineInRange("maxAnimalsAroundPlayer", 6, 0, 100);
+        HUNT_ANIMALS = b.comment("Animaux qui peuvent apparaître, format \"id=poids\" (poids = probabilité relative)")
+                .defineList("animals", java.util.List.of("minecraft:cow=1", "minecraft:pig=1", "minecraft:sheep=1",
+                        "minecraft:chicken=1", "minecraft:rabbit=1", "minecraft:polar_bear=1"), o -> o instanceof String);
+        HUNT_GROUND = b.comment("Blocs au sol sur lesquels un animal peut apparaître")
+                .defineList("groundBlocks", java.util.List.of("minecraft:grass_block"), o -> o instanceof String);
+        HUNT_TITLE = b.comment("Afficher un titre \"Zone de Chasse\" à l'entrée").define("titleOnEnter", true);
+        b.pop();
+
+        b.comment("Moulin : objet en main, maintenir clic droit sur le moulin pour moudre").push("mill");
+        MILL_TURNS = b.comment("Tours de meule pour obtenir un produit (un clic droit maintenu = environ 5 tours par seconde)")
+                .defineInRange("turnsPerProduct", 8, 1, 200);
+        MILL_COOLDOWN = b.comment("Délai minimal entre deux tours, en ticks (anti auto-clic)").defineInRange("turnCooldownTicks", 3, 0, 40);
+        MILL_RECIPES = b.comment("Recettes du moulin, format \"entrée*quantité=sortie*quantité\"")
+                .defineList("recipes", java.util.List.of("minecraft:wheat*3=minenorth_harvest:flour*1"), o -> o instanceof String);
         b.pop();
 
         b.comment("Écologie : chaque arbre abattu ajoute 1 'dette', chaque replantation sur une souche en retire 1").push("ecology");

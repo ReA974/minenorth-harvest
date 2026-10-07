@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "minenorth_harvest:flour"
+    },
+    {
+      "item": "minecraft:sugar"
+    },
+    {
+      "item": "minecraft:egg"
+    },
+    {
+      "item": "minenorth_harvest:cherries"
+    },
+    {
+      "item": "minenorth_harvest:cherries"
+    }
+  ],
+  "result": {
+    "item": "minenorth_harvest:cherry_pie",
+    "count": 1
+  }
+}
