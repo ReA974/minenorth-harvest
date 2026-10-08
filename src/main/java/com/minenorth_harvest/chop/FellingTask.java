@@ -4,17 +4,21 @@ import com.minenorth_harvest.config.HarvestConfig;
 import com.minenorth_harvest.registry.ModBlocks;
 import com.minenorth_harvest.zone.ZoneData;
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.level.BlockEvent;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -39,9 +43,11 @@ public class FellingTask {
 
     private final boolean bypassProtection;
     @Nullable private final String regrowSapling;
+    @Nullable private final String dropSapling;
 
     public FellingTask(ServerLevel level, @Nullable ServerPlayer player, List<BlockPos> logs, BlockPos base, int bonusLogs,
-                       boolean bypassProtection, @Nullable String regrowSapling) {
+                       boolean bypassProtection, @Nullable String regrowSapling, @Nullable String dropSapling) {
+        this.dropSapling = dropSapling;
         this.level = level;
         this.bypassProtection = bypassProtection;
         this.regrowSapling = regrowSapling;
@@ -104,6 +110,7 @@ public class FellingTask {
                 drop.setCount(bonusLogs);
                 Block.popResource(level, base.above(), drop);
             }
+            dropSapling();
             level.playSound(null, base, SoundEvents.WOOD_BREAK, SoundSource.BLOCKS, 1.2f, 0.5f);
             if (HarvestConfig.FAST_LEAF_DECAY.get()) {
                 phase = Phase.WAIT;
@@ -112,6 +119,16 @@ public class FellingTask {
                 phase = Phase.DONE;
             }
         }
+    }
+
+    /** Un arbre abattu rend toujours une pousse de son essence (fruitière ou vanilla). */
+    private void dropSapling() {
+        if (dropSapling == null) return;
+        ResourceLocation id = ResourceLocation.tryParse(dropSapling);
+        if (id == null) return;
+        Item item = ForgeRegistries.ITEMS.getValue(id);
+        if (item == null || item == Items.AIR) return;
+        Block.popResource(level, base.above(), new ItemStack(item));
     }
 
     private void collectLeaves() {

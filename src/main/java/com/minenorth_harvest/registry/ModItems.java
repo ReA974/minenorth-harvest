@@ -61,5 +61,14 @@ public final class ModItems {
     public static final RegistryObject<Item> ZONE_WAND = ITEMS.register("zone_wand",
             () -> new ZoneWandItem(new Item.Properties().stacksTo(1)));
 
+    // ---- Pétrole ----
+    public static final RegistryObject<Item> OIL_DEPOSIT = ITEMS.register("oil_deposit",
+            () -> new BlockItem(ModBlocks.OIL_DEPOSIT.get(), new Item.Properties()));
+    public static final RegistryObject<Item> CRUDE_OIL = ITEMS.register("crude_oil", () -> new Item(new Item.Properties()));
+
+    public static final RegistryObject<Item> REFINERY = ITEMS.register("refinery",
+            () -> new BlockItem(ModBlocks.REFINERY.get(), new Item.Properties()));
+    public static final RegistryObject<Item> GASOLINE = ITEMS.register("gasoline", () -> new Item(new Item.Properties()));
+
     private ModItems() {}
 }

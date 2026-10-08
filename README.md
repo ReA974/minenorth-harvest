@@ -31,7 +31,7 @@ Le jar se trouve dans `build/libs/minenorth_harvest-1.20.1-1.0.0.jar`. Java 17 r
 
 | Étape | Comment | Résultat |
 |---|---|---|
-| Moudre | **Moulin** : blé en main, **maintenir clic droit** (8 tours ≈ 1,5 s) | 3 blé → 1 **Farine** |
+| Moudre | **Moulin** : blé en main, **maintenir clic droit** (8 tours ≈ 1,5 s) | 3 blé → 1 **Baguette** (recette par défaut de la config ; farine/pâte/tartes restent possibles) |
 | Pétrir | Établi : 3 farine + 1 seau d'eau (le seau est rendu) | 3 **Pâte à pain** |
 | Cuire | Four, fumoir ou feu de camp | **Baguette** |
 | Pâtisser | Établi : farine + sucre + œuf + 2 fruits | **Tarte** aux pommes / à l'orange / au citron / aux cerises / aux poires |
@@ -51,11 +51,23 @@ Le jar se trouve dans `build/libs/minenorth_harvest-1.20.1-1.0.0.jar`. Java 17 r
 3. Le curseur ne revient jamais à gauche : à chaque coup réussi la zone se déplace et le curseur accélère.
    Un arbre classique se coupe en 2 à 3 coups (environ 2 secondes).
 4. Barre pleine → **TIMBER !** l'arbre tombe bloc par bloc, les feuilles orphelines tombent vite.
-5. Il reste une **souche** : clic droit dessus avec une pousse pour **replanter**.
+5. L'arbre abattu rend **toujours une pousse** de son essence (pommier, oranger… ou vanilla), à ramasser au pied de la souche.
+6. Il reste une **souche** : clic droit dessus avec une pousse pour **replanter**.
 
 Accroupi + clic droit pendant le mini-jeu = abandonner. S'éloigner, changer d'objet ou attendre 20 s annule aussi.
 Casser les bûches d'un arbre naturel à la main reste possible mais plus lent (`manualLogBreakSpeed`).
 Les constructions (bûches sans feuilles naturelles) ne sont pas concernées.
+
+### Pétrole
+- **Gisement de pétrole** : minerai noir, à la pioche (pierre minimum). Donne 1 à 3 **Pétrole brut** (Fortune ok, Silk Touch = le bloc).
+  Il ne génère **pas** naturellement : les gisements n'existent que dans les **zones pétrole** (voir plus bas).
+- Le brut est un combustible de four (2400 ticks, plus que le charbon).
+- Très inflammable : feu, lave ou briquet à côté d'un gisement = **explosion**, qui peut s'enchaîner sur les gisements voisins.
+
+### Raffinerie
+- **Raffinerie** : comme le moulin, objet en main + **maintenir clic droit** (12 tours). 3 **Pétrole brut** → 2 **Essence** (combustible de four, 6400 ticks).
+- Section `[refinery]` de la config : tours par produit et recettes (même format que le moulin).
+- Recette : 5 lingots de fer, 1 lingot de cuivre, 2 seaux, 1 haut fourneau (supprime `recipes/refinery.json` pour la vendre ou la donner).
 
 ### Écologie
 Chaque arbre abattu = +1 dette, chaque replantation sur une souche = −1.
@@ -69,6 +81,8 @@ Deux types de zones, propres à chaque dimension :
   Les protections (claims) y sont ignorées pour l'abattage (`zonesBypassProtection`).
   Avec la **repousse** (activée par défaut), une souche oubliée est replantée automatiquement après 10 min.
 - **verger** : dès qu'un joueur est dans la zone, les fruits y poussent **5× plus vite**.
+- **petrole** : la roche de la zone se remplit de gisements (`densite`, 6 % par défaut). Un gisement miné **réapparaît** après `oilRegenDelaySeconds` (900 s, désactivable avec `/recolte zone repousse <nom> false`).
+  `/recolte zone generer <nom>` (re)génère, `/recolte zone densite <nom> <0-1>` règle la part de roche.  Les chunks de la zone sont chargés automatiquement pour la génération.
 - **chasse** : des animaux apparaissent autour des joueurs présents (port de `chasse.sk`). Hauteur ignorée.
 
 ### Créer une zone avec la baguette (comme WorldEdit)
@@ -76,7 +90,7 @@ Deux types de zones, propres à chaque dimension :
 1. `/recolte baguette` → tu reçois la **Baguette de zone**.
 2. **Clic gauche** sur un bloc = point 1, **clic droit** sur un autre bloc = point 2
    (le contour s'affiche en particules).
-3. `/recolte zone creer <nom> bucheron`, `... verger` ou `... chasse`.
+3. `/recolte zone creer <nom> bucheron`, `... verger`, `... chasse` ou `... petrole`.
 
 Pense à prendre la hauteur : clique un bloc au sol d'un coin, et un bloc en hauteur au coin opposé
 (au-dessus de la cime des arbres).

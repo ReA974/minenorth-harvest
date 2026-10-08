@@ -25,7 +25,7 @@
   "zone.minenorth_harvest.bucheron": "bûcheronnage",
   "zone.minenorth_harvest.verger": "verger",
   "command.minenorth_harvest.zone_unknown": "Zone inconnue dans cette dimension : %s",
-  "command.minenorth_harvest.zone_bad_type": "Type de zone inconnu : %s (bucheron, verger, chasse)",
+  "command.minenorth_harvest.zone_bad_type": "Type de zone inconnu : %s (bucheron, verger, chasse, petrole)",
   "command.minenorth_harvest.zone_exists": "Une zone nommée %s existe déjà",
   "command.minenorth_harvest.zone_created": "Zone %s (%s) créée : %s blocs",
   "command.minenorth_harvest.zone_deleted": "Zone %s supprimée",
@@ -80,5 +80,16 @@
   "item.minenorth_harvest.orange_pie": "Tarte à l'orange",
   "item.minenorth_harvest.lemon_pie": "Tarte au citron",
   "item.minenorth_harvest.cherry_pie": "Tarte aux cerises",
-  "item.minenorth_harvest.pear_pie": "Tarte aux poires"
+  "item.minenorth_harvest.pear_pie": "Tarte aux poires",
+  "block.minenorth_harvest.oil_deposit": "Gisement de pétrole",
+  "item.minenorth_harvest.crude_oil": "Pétrole brut",
+  "zone.minenorth_harvest.petrole": "gisement de pétrole",
+  "message.minenorth_harvest.zone_enter.petrole": "§8Gisement de pétrole : §f%s §7— attention au feu !",
+  "command.minenorth_harvest.zone_not_oil": "La zone %s n'est pas une zone pétrole",
+  "command.minenorth_harvest.oil_generated": "%s gisement(s) généré(s) dans %s (%s chunk(s) parcouru(s))",
+  "command.minenorth_harvest.oil_too_big": "Zone trop grande pour générer (max %s blocs)",
+  "block.minenorth_harvest.refinery": "Raffinerie",
+  "item.minenorth_harvest.gasoline": "Essence",
+  "message.minenorth_harvest.refinery_hint": "§7Prenez du pétrole brut en main et maintenez clic droit pour raffiner.",
+  "message.minenorth_harvest.refinery_progress": "§6Raffinerie §f[%s§f]"
 }

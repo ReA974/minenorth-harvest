@@ -245,8 +245,9 @@ public final class ChopManager {
         HarvestData.onTreeFelled(player);
         level.playSound(null, s.target, SoundEvents.ZOMBIE_BREAK_WOODEN_DOOR, SoundSource.BLOCKS, 0.7f, 0.6f);
         boolean bypass = s.zone != null && HarvestConfig.ZONES_BYPASS_PROTECTION.get();
-        String regrowSapling = s.zone != null && s.zone.regrow ? saplingFor(tree, level.getBlockState(s.base)) : null;
-        FELLING.add(new FellingTask(level, player, logs, tree.tooBig() ? s.base : tree.base(), bonus, bypass, regrowSapling));
+        String sapling = saplingFor(tree, level.getBlockState(s.base));
+        String regrowSapling = s.zone != null && s.zone.regrow ? sapling : null;
+        FELLING.add(new FellingTask(level, player, logs, tree.tooBig() ? s.base : tree.base(), bonus, bypass, regrowSapling, sapling));
 
         Component msg = HarvestData.isForestExhausted(player)
                 ? Component.translatable("message.minenorth_harvest.timber_exhausted", bonus)

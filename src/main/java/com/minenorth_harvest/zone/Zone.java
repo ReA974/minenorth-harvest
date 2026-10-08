@@ -14,6 +14,8 @@ public class Zone {
     public boolean regrow = true;
     /** VERGER : multiplicateur propre à la zone (<= 0 = valeur de la config). */
     public double speed = 0;
+    /** PETROLE : proportion (0-1) de la roche de la zone transformée en gisement. */
+    public double density = 0.06;
 
     public Zone(String name, ZoneType type, BlockPos a, BlockPos b) {
         this.name = name;
@@ -51,6 +53,7 @@ public class Zone {
         t.put("max", NbtUtils.writeBlockPos(max));
         t.putBoolean("regrow", regrow);
         t.putDouble("speed", speed);
+        t.putDouble("density", density);
         return t;
     }
 
@@ -60,6 +63,7 @@ public class Zone {
         Zone z = new Zone(t.getString("name"), type, NbtUtils.readBlockPos(t.getCompound("min")), NbtUtils.readBlockPos(t.getCompound("max")));
         z.regrow = !t.contains("regrow") || t.getBoolean("regrow");
         z.speed = t.getDouble("speed");
+        if (t.contains("density")) z.density = t.getDouble("density");
         return z;
     }
 }

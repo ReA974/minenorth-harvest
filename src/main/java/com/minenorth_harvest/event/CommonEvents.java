@@ -30,6 +30,25 @@ import net.minecraftforge.fml.common.Mod;
 public final class CommonEvents {
     private CommonEvents() {}
 
+    /** Le pétrole brut brûle longtemps dans un four (un peu plus que le charbon). */
+    @SubscribeEvent
+    public static void onFurnaceFuel(net.minecraftforge.event.furnace.FurnaceFuelBurnTimeEvent event) {
+        if (event.getItemStack().is(ModItems.CRUDE_OIL.get())) event.setBurnTime(2400);
+        else if (event.getItemStack().is(ModItems.GASOLINE.get())) event.setBurnTime(6400);
+    }
+
+    /** Gisement miné dans une zone pétrole avec régénération : il reviendra après le délai configuré. */
+    @SubscribeEvent
+    public static void onOilBroken(net.minecraftforge.event.level.BlockEvent.BreakEvent event) {
+        if (!(event.getLevel() instanceof net.minecraft.server.level.ServerLevel level)) return;
+        if (!event.getState().is(com.minenorth_harvest.registry.ModBlocks.OIL_DEPOSIT.get())) return;
+        com.minenorth_harvest.zone.ZoneData data = com.minenorth_harvest.zone.ZoneData.get(level);
+        com.minenorth_harvest.zone.Zone zone = data.zoneAt(event.getPos(), com.minenorth_harvest.zone.ZoneType.PETROLE);
+        if (zone == null || !zone.regrow) return;
+        data.addRegrow(event.getPos(), ZoneManager.OIL_REGEN,
+                level.getGameTime() + com.minenorth_harvest.config.HarvestConfig.OIL_REGEN_DELAY.get() * 20L);
+    }
+
     @SubscribeEvent
     public static void onRegisterCommands(RegisterCommandsEvent event) {
         ZoneCommand.register(event.getDispatcher());

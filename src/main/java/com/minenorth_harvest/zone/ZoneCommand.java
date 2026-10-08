@@ -35,6 +35,8 @@ import java.util.Collection;
  * /recolte zone liste
  * /recolte zone repousse <nom> <true|false>           (zones bûcheron)
  * /recolte zone vitesse <nom> <multiplicateur>        (zones verger, 0 = valeur de la config)
+ * /recolte zone densite <nom> <0-1>                   (zones pétrole : part de roche transformée en gisement)
+ * /recolte zone generer <nom>                         (zones pétrole : (re)génère les gisements dans la zone)
  * /recolte chasse reload                             -> recharge config/minenorth_harvest-chasse.json
  * /recolte ecoreset <joueurs>                         -> remet la dette écologique à 0
  * Les zones sont propres à chaque dimension (celle où la commande est lancée).
@@ -74,8 +76,18 @@ public final class ZoneCommand {
                         .then(Commands.literal("afficher").then(zoneArg().executes(ZoneCommand::show)))
                         .then(Commands.literal("repousse").then(zoneArg()
                                 .then(Commands.argument("valeur", BoolArgumentType.bool()).executes(ZoneCommand::setRegrow))))
+                        .then(Commands.literal("densite").then(zoneArg()
+                                .then(Commands.argument("valeur", DoubleArgumentType.doubleArg(0, 1)).executes(ZoneCommand::setDensity))))
+                        .then(Commands.literal("generer").then(zoneArg().executes(ZoneCommand::generate)))
                         .then(Commands.literal("vitesse").then(zoneArg()
                                 .then(Commands.argument("multiplicateur", DoubleArgumentType.doubleArg(0, 100)).executes(ZoneCommand::setSpeed))))));
+    }
+
+    /** Affiche la réponse au joueur même si la gamerule sendCommandFeedback est désactivée. */
+    private static void reply(CommandContext<CommandSourceStack> c, Component message) {
+        ServerPlayer player = c.getSource().getPlayer();
+        if (player != null) player.sendSystemMessage(message);
+        else c.getSource().sendSuccess(() -> message, false);
     }
 
     // ------------------------------------------------------------ baguette / sélection
@@ -84,7 +96,7 @@ public final class ZoneCommand {
         ServerPlayer p = c.getSource().getPlayerOrException();
         ItemStack wand = new ItemStack(ModItems.ZONE_WAND.get());
         if (!p.getInventory().add(wand)) p.drop(wand, false);
-        c.getSource().sendSuccess(() -> Component.translatable("command.minenorth_harvest.wand_given"), false);
+        reply(c, Component.translatable("command.minenorth_harvest.wand_given"));
         return 1;
     }
 
@@ -125,9 +137,10 @@ public final class ZoneCommand {
         }
         Zone zone = new Zone(name, type, a, b);
         data.add(zone);
-        c.getSource().sendSuccess(() -> Component.translatable("command.minenorth_harvest.zone_created",
-                name, Component.translatable("zone.minenorth_harvest." + type.id()), zone.volume()), true);
+        reply(c, Component.translatable("command.minenorth_harvest.zone_created",
+                name, Component.translatable("zone.minenorth_harvest." + type.id()), zone.volume()));
         if (c.getSource().getPlayer() != null) ZoneManager.show(c.getSource().getPlayer(), zone, 10);
+        if (type == ZoneType.PETROLE) sendGenerated(c, zone, OilGenerator.generate(level, zone));
         return 1;
     }
 
@@ -139,10 +152,11 @@ public final class ZoneCommand {
         Zone zone = new Zone(old.name, old.type, sel.pos1, sel.pos2);
         zone.regrow = old.regrow;
         zone.speed = old.speed;
+        zone.density = old.density;
         ZoneData data = ZoneData.get(c.getSource().getLevel());
         data.remove(old.name);
         data.add(zone);
-        c.getSource().sendSuccess(() -> Component.translatable("command.minenorth_harvest.zone_redefined", zone.name, zone.volume()), true);
+        reply(c, Component.translatable("command.minenorth_harvest.zone_redefined", zone.name, zone.volume()));
         ZoneManager.show(c.getSource().getPlayerOrException(), zone, 10);
         return 1;
     }
@@ -160,14 +174,14 @@ public final class ZoneCommand {
         Zone z = find(c);
         if (z == null) return 0;
         ZoneData.get(c.getSource().getLevel()).remove(z.name);
-        c.getSource().sendSuccess(() -> Component.translatable("command.minenorth_harvest.zone_deleted", z.name), true);
+        reply(c, Component.translatable("command.minenorth_harvest.zone_deleted", z.name));
         return 1;
     }
 
     private static int list(CommandContext<CommandSourceStack> c) {
         ZoneData data = ZoneData.get(c.getSource().getLevel());
         if (data.zones().isEmpty()) {
-            c.getSource().sendSuccess(() -> Component.translatable("command.minenorth_harvest.zone_none"), false);
+            reply(c, Component.translatable("command.minenorth_harvest.zone_none"));
             return 0;
         }
         for (Zone z : data.zones()) sendInfo(c, z);
@@ -182,11 +196,12 @@ public final class ZoneCommand {
     }
 
     private static void sendInfo(CommandContext<CommandSourceStack> c, Zone z) {
-        c.getSource().sendSuccess(() -> Component.translatable("command.minenorth_harvest.zone_info",
+        reply(c, Component.translatable("command.minenorth_harvest.zone_info",
                 z.name, Component.translatable("zone.minenorth_harvest." + z.type.id()),
                 z.min.toShortString(), z.max.toShortString(),
                 z.type == ZoneType.BUCHERON ? (z.regrow ? "oui" : "non") : "-",
-                z.type == ZoneType.VERGER ? (z.speed > 0 ? "x" + z.speed : "config") : "-"), false);
+                z.type == ZoneType.VERGER ? (z.speed > 0 ? "x" + z.speed : "config")
+                        : z.type == ZoneType.PETROLE ? Math.round(z.density * 100) + "%" : "-"));
     }
 
     private static int show(CommandContext<CommandSourceStack> c) throws CommandSyntaxException {
@@ -205,6 +220,35 @@ public final class ZoneCommand {
         return 1;
     }
 
+    private static int setDensity(CommandContext<CommandSourceStack> c) {
+        Zone z = find(c);
+        if (z == null) return 0;
+        z.density = DoubleArgumentType.getDouble(c, "valeur");
+        ZoneData.get(c.getSource().getLevel()).setDirty();
+        sendInfo(c, z);
+        return 1;
+    }
+
+    private static int generate(CommandContext<CommandSourceStack> c) {
+        Zone z = find(c);
+        if (z == null) return 0;
+        if (z.type != ZoneType.PETROLE) {
+            c.getSource().sendFailure(Component.translatable("command.minenorth_harvest.zone_not_oil", z.name));
+            return 0;
+        }
+        sendGenerated(c, z, OilGenerator.generate(c.getSource().getLevel(), z));
+        return 1;
+    }
+
+    private static void sendGenerated(CommandContext<CommandSourceStack> c, Zone z, OilGenerator.Result r) {
+        if (r.tooBig()) {
+            c.getSource().sendFailure(Component.translatable("command.minenorth_harvest.oil_too_big", OilGenerator.MAX_VOLUME));
+            return;
+        }
+        reply(c, Component.translatable("command.minenorth_harvest.oil_generated",
+                r.placed(), z.name, r.chunks()));
+    }
+
     private static int setSpeed(CommandContext<CommandSourceStack> c) {
         Zone z = find(c);
         if (z == null) return 0;
@@ -220,15 +264,15 @@ public final class ZoneCommand {
             c.getSource().sendFailure(Component.translatable("command.minenorth_harvest.hunt_reload_error", error));
             return 0;
         }
-        c.getSource().sendSuccess(() -> Component.translatable("command.minenorth_harvest.hunt_reloaded",
-                HuntRewards.rewards.size()), true);
+        reply(c, Component.translatable("command.minenorth_harvest.hunt_reloaded",
+                HuntRewards.rewards.size()));
         return 1;
     }
 
     private static int ecoReset(CommandContext<CommandSourceStack> c) throws CommandSyntaxException {
         Collection<ServerPlayer> players = EntityArgument.getPlayers(c, "joueurs");
         for (ServerPlayer p : players) HarvestData.setEcoDebt(p, 0);
-        c.getSource().sendSuccess(() -> Component.translatable("command.minenorth_harvest.eco_reset", players.size()), true);
+        reply(c, Component.translatable("command.minenorth_harvest.eco_reset", players.size()));
         return players.size();
     }
 }

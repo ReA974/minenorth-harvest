@@ -37,6 +37,9 @@ public final class ZoneManager {
     private static final List<Showing> SHOWING = new ArrayList<>();
     private static int tickCounter;
 
+    /** Marqueur utilisé dans la file de repousse pour les gisements de pétrole. */
+    public static final String OIL_REGEN = "minenorth_harvest:oil_deposit";
+
     private record Showing(ServerPlayer player, ServerLevel level, Zone zone, long until) {}
 
     public static void tick() {
@@ -162,6 +165,12 @@ public final class ZoneManager {
             if (r.due() > now || !level.isLoaded(r.pos())) continue;
             it.remove();
             changed = true;
+            if (OIL_REGEN.equals(r.sapling())) { // gisement miné : il réapparaît s'il ne reste que du vide
+                if (level.getBlockState(r.pos()).isAir()) {
+                    level.setBlock(r.pos(), ModBlocks.OIL_DEPOSIT.get().defaultBlockState(), Block.UPDATE_ALL);
+                }
+                continue;
+            }
             if (!level.getBlockState(r.pos()).is(ModBlocks.TREE_STUMP.get())) continue; // déjà replantée / retirée
             ResourceLocation id = ResourceLocation.tryParse(r.sapling());
             Block sapling = id == null ? null : ForgeRegistries.BLOCKS.getValue(id);
@@ -207,7 +216,8 @@ public final class ZoneManager {
         double perimeter = 4 * ((x2 - x1) + (y2 - y1) + (z2 - z1));
         double step = Math.max(1.0, perimeter / 600.0);
         var particle = z.type == ZoneType.VERGER ? ParticleTypes.HAPPY_VILLAGER
-                : z.type == ZoneType.CHASSE ? ParticleTypes.SOUL_FIRE_FLAME : ParticleTypes.FLAME;
+                : z.type == ZoneType.CHASSE ? ParticleTypes.SOUL_FIRE_FLAME
+                : z.type == ZoneType.PETROLE ? ParticleTypes.SMOKE : ParticleTypes.FLAME;
         double[][] corners = {{x1, y1, z1}, {x2, y1, z1}, {x2, y1, z2}, {x1, y1, z2}};
         for (int i = 0; i < 4; i++) {
             double[] a = corners[i], b = corners[(i + 1) % 4];

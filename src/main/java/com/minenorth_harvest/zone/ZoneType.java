@@ -6,7 +6,9 @@ public enum ZoneType {
     /** Verger : les fruits y poussent plus vite dès qu'un joueur est dans la zone. */
     VERGER("verger"),
     /** Zone de chasse : des animaux apparaissent autour des joueurs présents. Détection 2D (hauteur ignorée). */
-    CHASSE("chasse");
+    CHASSE("chasse"),
+    /** Gisement de pétrole : des gisements sont générés dans la roche de la zone et se régénèrent une fois minés. */
+    PETROLE("petrole");
 
     private final String id;
 

@@ -40,6 +40,7 @@ public final class HarvestConfig {
     public static final ForgeConfigSpec.BooleanValue REQUIRE_ZONE;
     public static final ForgeConfigSpec.BooleanValue ZONES_BYPASS_PROTECTION;
     public static final ForgeConfigSpec.IntValue REGROW_DELAY;
+    public static final ForgeConfigSpec.IntValue OIL_REGEN_DELAY;
     public static final ForgeConfigSpec.DoubleValue ORCHARD_SPEED;
     public static final ForgeConfigSpec.IntValue ORCHARD_MAX_CHECKS;
     public static final ForgeConfigSpec.BooleanValue ZONE_ENTER_MESSAGE;
@@ -60,6 +61,8 @@ public final class HarvestConfig {
     public static final ForgeConfigSpec.IntValue MILL_TURNS;
     public static final ForgeConfigSpec.IntValue MILL_COOLDOWN;
     public static final ForgeConfigSpec.ConfigValue<java.util.List<? extends String>> MILL_RECIPES;
+    public static final ForgeConfigSpec.IntValue REFINERY_TURNS;
+    public static final ForgeConfigSpec.ConfigValue<java.util.List<? extends String>> REFINERY_RECIPES;
 
     // ---- Écologie ----
     public static final ForgeConfigSpec.IntValue ECO_DEBT_THRESHOLD;
@@ -107,6 +110,8 @@ public final class HarvestConfig {
                 .define("zonesBypassProtection", true);
         REGROW_DELAY = b.comment("Zones avec repousse : délai (secondes) avant qu'une pousse soit replantée automatiquement sur une souche oubliée")
                 .defineInRange("regrowDelaySeconds", 600, 5, 86400);
+        OIL_REGEN_DELAY = b.comment("Zones pétrole avec régénération : délai (secondes) avant qu'un gisement miné réapparaisse")
+                .defineInRange("oilRegenDelaySeconds", 900, 5, 86400);
         ORCHARD_SPEED = b.comment("Zones verger : multiplicateur de vitesse de pousse des fruits quand un joueur est dans la zone (modifiable par zone)")
                 .defineInRange("orchardSpeedMultiplier", 5.0, 1.0, 100.0);
         ORCHARD_MAX_CHECKS = b.comment("Zones verger : nombre max de blocs testés par seconde et par zone (limite de perf)")
@@ -135,7 +140,14 @@ public final class HarvestConfig {
                 .defineInRange("turnsPerProduct", 8, 1, 200);
         MILL_COOLDOWN = b.comment("Délai minimal entre deux tours, en ticks (anti auto-clic)").defineInRange("turnCooldownTicks", 3, 0, 40);
         MILL_RECIPES = b.comment("Recettes du moulin, format \"entrée*quantité=sortie*quantité\"")
-                .defineList("recipes", java.util.List.of("minecraft:wheat*3=minenorth_harvest:flour*1"), o -> o instanceof String);
+                .defineList("recipes", java.util.List.of("minecraft:wheat*3=minenorth_harvest:baguette*1"), o -> o instanceof String);
+        b.pop();
+
+        b.comment("Raffinerie : objet en main, maintenir clic droit sur la raffinerie pour raffiner").push("refinery");
+        REFINERY_TURNS = b.comment("Tours de pompe pour obtenir un produit (un clic droit maintenu = environ 5 tours par seconde)")
+                .defineInRange("turnsPerProduct", 12, 1, 200);
+        REFINERY_RECIPES = b.comment("Recettes de la raffinerie, format \"entrée*quantité=sortie*quantité\"")
+                .defineList("recipes", java.util.List.of("minenorth_harvest:crude_oil*3=minenorth_harvest:gasoline*2"), o -> o instanceof String);
         b.pop();
 
         b.comment("Écologie : chaque arbre abattu ajoute 1 'dette', chaque replantation sur une souche en retire 1").push("ecology");
