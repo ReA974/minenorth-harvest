@@ -136,3 +136,9 @@ Tout est réglable : vitesse de pousse, nombre de fruits, largeur des zones, vit
 Avant l'abattage et pour chaque bûche, le mod envoie un `BlockEvent.BreakEvent` Forge : les mods de claim
 qui l'écoutent bloquent l'abattage. Avec des plugins Bukkit (WorldGuard, GriefPrevention…) sous Arclight,
 **tester dans une zone protégée** avant la mise en prod.
+
+## Licence
+
+**Tous droits réservés - MineNorthRP.** Réutilisation, copie, modification, décompilation / ingénierie
+inverse (y compris par outils d'intelligence artificielle) et utilisation pour entraîner une IA sont
+**interdites** sans autorisation écrite. Voir [LICENSE](LICENSE).
