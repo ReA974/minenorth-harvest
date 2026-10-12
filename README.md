@@ -69,6 +69,14 @@ Les constructions (bûches sans feuilles naturelles) ne sont pas concernées.
 - Section `[refinery]` de la config : tours par produit et recettes (même format que le moulin).
 - Recette : 5 lingots de fer, 1 lingot de cuivre, 2 seaux, 1 haut fourneau (supprime `recipes/refinery.json` pour la vendre ou la donner).
 
+### Scierie
+- **Scierie** : bûches en main + **maintenir clic droit** (6 tours). 1 bûche → **6 planches** (4 à l'établi), toutes essences vanilla + bambou. Section `[sawmill]` de la config.
+- **Coup de chance** (15 %) : la production est doublée (son, totem, message). Recette : fer + planches + bâtons.
+
+### Mine et Fonderie
+- Zone **mine** (`/recolte zone creer <nom> mine`) : la roche se remplit de minerais (liste pondérée `[mine] ores`, variantes deepslate auto, `densite` réglable, `generer` pour regénérer). Un minerai miné **repousse** après 600 s (`/recolte zone repousse <nom> false` pour désactiver).
+- **Fonderie** : minerai brut en main + maintenir clic droit (10 tours). 2 minerai brut → **3 lingots** (fer, cuivre, or), plus rentable que le four. Coup de chance 10 % = lingots doublés. Section `[foundry]`.
+
 ### Écologie
 Chaque arbre abattu = +1 dette, chaque replantation sur une souche = −1.
 À partir de 3 (configurable), la forêt est « épuisée » : plus de bonus et 2 coups de plus.

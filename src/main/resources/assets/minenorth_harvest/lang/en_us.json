@@ -25,7 +25,7 @@
   "zone.minenorth_harvest.bucheron": "bûcheronnage",
   "zone.minenorth_harvest.verger": "verger",
   "command.minenorth_harvest.zone_unknown": "Zone inconnue dans cette dimension : %s",
-  "command.minenorth_harvest.zone_bad_type": "Type de zone inconnu : %s (bucheron, verger, chasse, petrole)",
+  "command.minenorth_harvest.zone_bad_type": "Type de zone inconnu : %s (bucheron, verger, chasse, petrole, mine)",
   "command.minenorth_harvest.zone_exists": "Une zone nommée %s existe déjà",
   "command.minenorth_harvest.zone_created": "Zone %s (%s) créée : %s blocs",
   "command.minenorth_harvest.zone_deleted": "Zone %s supprimée",
@@ -91,5 +91,14 @@
   "block.minenorth_harvest.refinery": "Raffinerie",
   "item.minenorth_harvest.gasoline": "Essence",
   "message.minenorth_harvest.refinery_hint": "§7Prenez du pétrole brut en main et maintenez clic droit pour raffiner.",
-  "message.minenorth_harvest.refinery_progress": "§6Raffinerie §f[%s§f]"
+  "message.minenorth_harvest.refinery_progress": "§6Raffinerie §f[%s§f]",
+  "block.minenorth_harvest.sawmill": "Sawmill",
+  "message.minenorth_harvest.sawmill_hint": "§7Hold logs and keep right-clicking to saw.",
+  "message.minenorth_harvest.sawmill_progress": "§6Sawmill §f[%s§f]",
+  "block.minenorth_harvest.foundry": "Foundry",
+  "message.minenorth_harvest.foundry_hint": "§7Hold raw ore and keep right-clicking to smelt.",
+  "message.minenorth_harvest.foundry_progress": "§6Foundry §f[%s§f]",
+  "message.minenorth_harvest.lucky": "§e§l✦ LUCKY STRIKE! §r§a+%s %s",
+  "zone.minenorth_harvest.mine": "mine",
+  "message.minenorth_harvest.zone_enter.mine": "§7Mine: §f%s §7— veins regrow!"
 }

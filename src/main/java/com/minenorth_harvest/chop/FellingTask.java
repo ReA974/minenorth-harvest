@@ -34,6 +34,8 @@ public class FellingTask {
     private final BlockPos base;
     private final int bonusLogs;
     private ItemStack bonusItem = ItemStack.EMPTY;
+    /** Drops de toutes les bûches, regroupés puis lâchés au pied de l'arbre (évite des centaines d'entités). */
+    private final List<ItemStack> drops = new ArrayList<>();
 
     private Phase phase = Phase.LOGS;
     private int index;
@@ -92,7 +94,8 @@ public class FellingTask {
             if (!state.is(BlockTags.LOGS)) continue;
             if (!canBreak(pos, state)) continue;
 
-            level.destroyBlock(pos, true, player);
+            collectDrops(state, pos);
+            level.destroyBlock(pos, false, player);
 
             if (pos.equals(base) && HarvestConfig.LEAVE_STUMP.get()
                     && level.getBlockState(pos.below()).is(BlockTags.DIRT)
@@ -105,6 +108,7 @@ public class FellingTask {
             }
         }
         if (index >= logs.size()) {
+            dropCollected();
             if (bonusLogs > 0 && !bonusItem.isEmpty()) {
                 ItemStack drop = bonusItem.copy();
                 drop.setCount(bonusLogs);
@@ -119,6 +123,28 @@ public class FellingTask {
                 phase = Phase.DONE;
             }
         }
+    }
+
+    private void collectDrops(BlockState state, BlockPos pos) {
+        ItemStack tool = player != null ? player.getMainHandItem() : ItemStack.EMPTY;
+        for (ItemStack stack : Block.getDrops(state, level, pos, level.getBlockEntity(pos), player, tool)) {
+            if (stack.isEmpty()) continue;
+            ItemStack rest = stack.copy();
+            for (ItemStack have : drops) {
+                if (rest.isEmpty()) break;
+                if (!ItemStack.isSameItemSameTags(have, rest)) continue;
+                int moved = Math.min(rest.getCount(), have.getMaxStackSize() - have.getCount());
+                if (moved <= 0) continue;
+                have.grow(moved);
+                rest.shrink(moved);
+            }
+            if (!rest.isEmpty()) drops.add(rest);
+        }
+    }
+
+    private void dropCollected() {
+        for (ItemStack stack : drops) Block.popResource(level, base.above(), stack);
+        drops.clear();
     }
 
     /** Un arbre abattu rend toujours une pousse de son essence (fruitière ou vanilla). */

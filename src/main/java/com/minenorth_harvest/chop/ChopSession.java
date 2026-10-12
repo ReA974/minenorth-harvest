@@ -27,6 +27,7 @@ public class ChopSession {
     public double startTick;
     public long lastSwingTick = Long.MIN_VALUE / 2;
     public long lastActivityTick;
+    public long createdTick;
     public byte lastResult = ChopMath.RESULT_NONE;
     public int resultSeq;
 

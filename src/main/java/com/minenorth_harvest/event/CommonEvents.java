@@ -49,6 +49,20 @@ public final class CommonEvents {
                 level.getGameTime() + com.minenorth_harvest.config.HarvestConfig.OIL_REGEN_DELAY.get() * 20L);
     }
 
+    /** Minerai miné dans une zone mine avec régénération : il reviendra après le délai configuré. */
+    @SubscribeEvent
+    public static void onOreBroken(net.minecraftforge.event.level.BlockEvent.BreakEvent event) {
+        if (!(event.getLevel() instanceof net.minecraft.server.level.ServerLevel level)) return;
+        if (!event.getState().is(net.minecraftforge.common.Tags.Blocks.ORES)) return;
+        com.minenorth_harvest.zone.ZoneData data = com.minenorth_harvest.zone.ZoneData.get(level);
+        com.minenorth_harvest.zone.Zone zone = data.zoneAt(event.getPos(), com.minenorth_harvest.zone.ZoneType.MINE);
+        if (zone == null || !zone.regrow) return;
+        net.minecraft.resources.ResourceLocation id = net.minecraftforge.registries.ForgeRegistries.BLOCKS.getKey(event.getState().getBlock());
+        if (id == null) return;
+        data.addRegrow(event.getPos(), ZoneManager.ORE_REGEN + id,
+                level.getGameTime() + com.minenorth_harvest.config.HarvestConfig.MINE_REGEN_DELAY.get() * 20L);
+    }
+
     @SubscribeEvent
     public static void onRegisterCommands(RegisterCommandsEvent event) {
         ZoneCommand.register(event.getDispatcher());

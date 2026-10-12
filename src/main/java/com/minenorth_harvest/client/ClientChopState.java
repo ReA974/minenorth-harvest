@@ -21,8 +21,13 @@ public final class ClientChopState {
     public static long clientTicks;
     public static long lastSwingClientTick = -1000;
 
+    /** false tant que le clic droit qui a lancé l'abattage n'a pas été relâché (évite l'annulation immédiate). */
+    public static boolean useReleased;
+
     public static void apply(S2CChopState m) {
+        boolean was = active;
         active = m.active();
+        if (active && !was) useReleased = false;
         if (!active) {
             resultSeq = 0;
             return;

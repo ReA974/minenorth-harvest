@@ -55,8 +55,10 @@ public final class ChopManager {
 
     public static void tryStart(ServerPlayer player, BlockPos pos) {
         if (!HarvestConfig.CHOP_ENABLED.get()) return;
-        if (inSession(player)) {
-            cancel(player, true);
+        ChopSession running = SESSIONS.get(player.getUUID());
+        if (running != null) {
+            // un clic droit maintenu renvoie la demande de démarrage : on l'ignore au lieu d'annuler aussitôt
+            if (player.serverLevel().getGameTime() - running.createdTick > 20) cancel(player, true);
             return;
         }
         ServerLevel level = player.serverLevel();
@@ -117,6 +119,7 @@ public final class ChopManager {
         s.period = HarvestConfig.CURSOR_PERIOD.get();
         long now = level.getGameTime();
         s.startTick = now;
+        s.createdTick = now;
         s.lastActivityTick = now;
         moveZone(s, level.random);
         SESSIONS.put(player.getUUID(), s);

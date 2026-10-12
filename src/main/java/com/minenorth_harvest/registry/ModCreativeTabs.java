@@ -28,6 +28,8 @@ public final class ModCreativeTabs {
                 out.accept(ModItems.BAGUETTE.get());
                 for (FruitType type : FruitType.values()) out.accept(ModItems.PIES.get(type).get());
                 out.accept(ModItems.TREE_STUMP.get());
+                out.accept(ModItems.SAWMILL.get());
+                out.accept(ModItems.FOUNDRY.get());
                 out.accept(ModItems.OIL_DEPOSIT.get());
                 out.accept(ModItems.CRUDE_OIL.get());
                 out.accept(ModItems.REFINERY.get());

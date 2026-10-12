@@ -8,7 +8,9 @@ public enum ZoneType {
     /** Zone de chasse : des animaux apparaissent autour des joueurs présents. Détection 2D (hauteur ignorée). */
     CHASSE("chasse"),
     /** Gisement de pétrole : des gisements sont générés dans la roche de la zone et se régénèrent une fois minés. */
-    PETROLE("petrole");
+    PETROLE("petrole"),
+    /** Mine : des minerais sont générés dans la roche de la zone et repoussent une fois minés. */
+    MINE("mine");
 
     private final String id;
 

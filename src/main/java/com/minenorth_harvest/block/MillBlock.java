@@ -46,7 +46,13 @@ public class MillBlock extends Block {
 
     /** Paramètres propres à chaque machine (moulin, raffinerie). */
     public record Machine(VoxelShape shape, Supplier<List<? extends String>> recipes, Supplier<Integer> turns,
-                          String hintKey, String progressKey, SoundEvent sound, ParticleOptions doneParticle) {}
+                          String hintKey, String progressKey, SoundEvent sound, ParticleOptions doneParticle,
+                          Supplier<Double> luck) {
+        public Machine(VoxelShape shape, Supplier<List<? extends String>> recipes, Supplier<Integer> turns,
+                       String hintKey, String progressKey, SoundEvent sound, ParticleOptions doneParticle) {
+            this(shape, recipes, turns, hintKey, progressKey, sound, doneParticle, () -> 0.0);
+        }
+    }
 
     private final Machine machine;
 
@@ -130,12 +136,19 @@ public class MillBlock extends Block {
 
         c.turns = 0;
         if (!player.getAbilities().instabuild) held.shrink(recipe.inCount());
-        ItemStack out = new ItemStack(recipe.output(), recipe.outCount());
+        boolean lucky = machine.luck().get() > 0 && level.getRandom().nextDouble() < machine.luck().get();
+        ItemStack out = new ItemStack(recipe.output(), lucky ? recipe.outCount() * 2 : recipe.outCount());
         Component name = out.getHoverName();
         if (!player.getInventory().add(out)) player.drop(out, false);
         level.playSound(null, pos, SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 0.4f, 1.2f);
         server.sendParticles(machine.doneParticle(), pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5, 12, 0.3, 0.2, 0.3, 0.01);
-        player.displayClientMessage(Component.translatable("message.minenorth_harvest.mill_done", recipe.outCount(), name), true);
+        if (lucky) {
+            level.playSound(null, pos, SoundEvents.PLAYER_LEVELUP, SoundSource.PLAYERS, 0.6f, 1.4f);
+            server.sendParticles(ParticleTypes.TOTEM_OF_UNDYING, pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5, 15, 0.3, 0.3, 0.3, 0.2);
+            player.displayClientMessage(Component.translatable("message.minenorth_harvest.lucky", out.getCount(), name), true);
+        } else {
+            player.displayClientMessage(Component.translatable("message.minenorth_harvest.mill_done", out.getCount(), name), true);
+        }
         return InteractionResult.CONSUME;
     }
 

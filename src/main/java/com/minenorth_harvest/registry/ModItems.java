@@ -58,6 +58,12 @@ public final class ModItems {
         }
     }
 
+    public static final RegistryObject<Item> SAWMILL = ITEMS.register("sawmill",
+            () -> new BlockItem(ModBlocks.SAWMILL.get(), new Item.Properties()));
+
+    public static final RegistryObject<Item> FOUNDRY = ITEMS.register("foundry",
+            () -> new BlockItem(ModBlocks.FOUNDRY.get(), new Item.Properties()));
+
     public static final RegistryObject<Item> ZONE_WAND = ITEMS.register("zone_wand",
             () -> new ZoneWandItem(new Item.Properties().stacksTo(1)));
 

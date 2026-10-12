@@ -2,6 +2,7 @@
   "replace": false,
   "values": [
     "minenorth_harvest:oil_deposit",
-    "minenorth_harvest:refinery"
+    "minenorth_harvest:refinery",
+    "minenorth_harvest:foundry"
   ]
 }

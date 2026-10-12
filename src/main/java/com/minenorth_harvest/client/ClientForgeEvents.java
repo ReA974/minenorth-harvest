@@ -27,7 +27,9 @@ public final class ClientForgeEvents {
 
     @SubscribeEvent
     public static void onClientTick(TickEvent.ClientTickEvent event) {
-        if (event.phase == TickEvent.Phase.END) ClientChopState.clientTicks++;
+        if (event.phase != TickEvent.Phase.END) return;
+        ClientChopState.clientTicks++;
+        if (ClientChopState.active && !Minecraft.getInstance().options.keyUse.isDown()) ClientChopState.useReleased = true;
     }
 
     @SubscribeEvent(priority = EventPriority.HIGH)
@@ -50,7 +52,7 @@ public final class ClientForgeEvents {
             } else if (event.isUseItem()) {
                 event.setCanceled(true);
                 event.setSwingHand(false);
-                if (player.isShiftKeyDown() && event.getHand() == InteractionHand.MAIN_HAND) {
+                if (ClientChopState.useReleased && player.isShiftKeyDown() && event.getHand() == InteractionHand.MAIN_HAND) {
                     ModNetwork.sendToServer(new C2SCancelChop());
                 }
             }

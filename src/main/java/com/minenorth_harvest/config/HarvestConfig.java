@@ -61,6 +61,14 @@ public final class HarvestConfig {
     public static final ForgeConfigSpec.IntValue MILL_TURNS;
     public static final ForgeConfigSpec.IntValue MILL_COOLDOWN;
     public static final ForgeConfigSpec.ConfigValue<java.util.List<? extends String>> MILL_RECIPES;
+    public static final ForgeConfigSpec.IntValue SAWMILL_TURNS;
+    public static final ForgeConfigSpec.ConfigValue<java.util.List<? extends String>> SAWMILL_RECIPES;
+    public static final ForgeConfigSpec.DoubleValue SAWMILL_LUCK;
+    public static final ForgeConfigSpec.IntValue FOUNDRY_TURNS;
+    public static final ForgeConfigSpec.DoubleValue FOUNDRY_LUCK;
+    public static final ForgeConfigSpec.ConfigValue<java.util.List<? extends String>> FOUNDRY_RECIPES;
+    public static final ForgeConfigSpec.IntValue MINE_REGEN_DELAY;
+    public static final ForgeConfigSpec.ConfigValue<java.util.List<? extends String>> MINE_ORES;
     public static final ForgeConfigSpec.IntValue REFINERY_TURNS;
     public static final ForgeConfigSpec.ConfigValue<java.util.List<? extends String>> REFINERY_RECIPES;
 
@@ -141,6 +149,32 @@ public final class HarvestConfig {
         MILL_COOLDOWN = b.comment("Délai minimal entre deux tours, en ticks (anti auto-clic)").defineInRange("turnCooldownTicks", 3, 0, 40);
         MILL_RECIPES = b.comment("Recettes du moulin, format \"entrée*quantité=sortie*quantité\"")
                 .defineList("recipes", java.util.List.of("minecraft:wheat*3=minenorth_harvest:baguette*1"), o -> o instanceof String);
+        b.pop();
+
+        b.comment("Scierie : bûches en main, maintenir clic droit sur la scierie pour scier").push("sawmill");
+        SAWMILL_TURNS = b.comment("Tours de scie pour obtenir un produit (un clic droit maintenu = environ 5 tours par seconde)")
+                .defineInRange("turnsPerProduct", 6, 1, 200);
+        SAWMILL_RECIPES = b.comment("Recettes de la scierie, format \"entrée*quantité=sortie*quantité\" (une bûche donne 6 planches au lieu de 4 à l'établi)")
+                .defineList("recipes", java.util.List.of("minecraft:oak_log*1=minecraft:oak_planks*6", "minecraft:stripped_oak_log*1=minecraft:oak_planks*6", "minecraft:spruce_log*1=minecraft:spruce_planks*6", "minecraft:stripped_spruce_log*1=minecraft:spruce_planks*6", "minecraft:birch_log*1=minecraft:birch_planks*6", "minecraft:stripped_birch_log*1=minecraft:birch_planks*6", "minecraft:jungle_log*1=minecraft:jungle_planks*6", "minecraft:stripped_jungle_log*1=minecraft:jungle_planks*6", "minecraft:acacia_log*1=minecraft:acacia_planks*6", "minecraft:stripped_acacia_log*1=minecraft:acacia_planks*6", "minecraft:dark_oak_log*1=minecraft:dark_oak_planks*6", "minecraft:stripped_dark_oak_log*1=minecraft:dark_oak_planks*6", "minecraft:mangrove_log*1=minecraft:mangrove_planks*6", "minecraft:stripped_mangrove_log*1=minecraft:mangrove_planks*6", "minecraft:cherry_log*1=minecraft:cherry_planks*6", "minecraft:stripped_cherry_log*1=minecraft:cherry_planks*6", "minecraft:bamboo_block*1=minecraft:bamboo_planks*6", "minecraft:stripped_bamboo_block*1=minecraft:bamboo_planks*6"), o -> o instanceof String);
+        SAWMILL_LUCK = b.comment("Chance de 'coup de chance' (production doublée) à chaque produit").defineInRange("luckChance", 0.15, 0.0, 1.0);
+        b.pop();
+
+        b.comment("Fonderie : minerai brut en main, maintenir clic droit pour fondre (plus rentable que le four)").push("foundry");
+        FOUNDRY_TURNS = b.comment("Tours de soufflet pour obtenir un produit").defineInRange("turnsPerProduct", 10, 1, 200);
+        FOUNDRY_LUCK = b.comment("Chance de 'coup de chance' (production doublée) à chaque produit").defineInRange("luckChance", 0.1, 0.0, 1.0);
+        FOUNDRY_RECIPES = b.comment("Recettes de la fonderie, format \"entrée*quantité=sortie*quantité\"")
+                .defineList("recipes", java.util.List.of(
+                        "minecraft:raw_iron*2=minecraft:iron_ingot*3",
+                        "minecraft:raw_copper*2=minecraft:copper_ingot*3",
+                        "minecraft:raw_gold*2=minecraft:gold_ingot*3"), o -> o instanceof String);
+        b.pop();
+
+        b.comment("Mine : zones /recolte zone creer <nom> mine, les minerais de la zone repoussent une fois minés").push("mine");
+        MINE_REGEN_DELAY = b.comment("Délai (secondes) avant qu'un minerai miné en zone mine réapparaisse")
+                .defineInRange("regenDelaySeconds", 600, 5, 86400);
+        MINE_ORES = b.comment("Minerais générés dans la zone, format \"bloc=poids\" (la variante deepslate_ est utilisée dans l'ardoise des abîmes)")
+                .defineList("ores", java.util.List.of("minecraft:coal_ore=6", "minecraft:iron_ore=5", "minecraft:copper_ore=5",
+                        "minecraft:gold_ore=2", "minecraft:redstone_ore=2", "minecraft:lapis_ore=2", "minecraft:diamond_ore=1"), o -> o instanceof String);
         b.pop();
 
         b.comment("Raffinerie : objet en main, maintenir clic droit sur la raffinerie pour raffiner").push("refinery");

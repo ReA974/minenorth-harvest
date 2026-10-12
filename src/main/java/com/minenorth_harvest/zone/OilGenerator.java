@@ -1,6 +1,11 @@
 package com.minenorth_harvest.zone;
 
+import com.minenorth_harvest.config.HarvestConfig;
 import com.minenorth_harvest.registry.ModBlocks;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.registries.ForgeRegistries;
+import java.util.ArrayList;
+import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
@@ -20,6 +25,25 @@ public final class OilGenerator {
         if (zone.volume() > MAX_VOLUME) return new Result(0, 0, true);
         RandomSource random = level.random;
         Block oil = ModBlocks.OIL_DEPOSIT.get();
+        boolean mine = zone.type == ZoneType.MINE;
+        List<Block> ores = new ArrayList<>();
+        List<Integer> weights = new ArrayList<>();
+        int total = 0;
+        if (mine) {
+            for (String line : HarvestConfig.MINE_ORES.get()) {
+                String[] p = line.split("=");
+                ResourceLocation id = ResourceLocation.tryParse(p[0].trim());
+                if (id == null || !ForgeRegistries.BLOCKS.containsKey(id)) continue;
+                int w = 1;
+                if (p.length > 1) {
+                    try { w = Math.max(1, Integer.parseInt(p[1].trim())); } catch (NumberFormatException ignored) {}
+                }
+                ores.add(ForgeRegistries.BLOCKS.getValue(id));
+                weights.add(w);
+                total += w;
+            }
+            if (ores.isEmpty()) return new Result(0, 0, false);
+        }
         int yMin = Math.max(zone.min.getY(), level.getMinBuildHeight());
         int yMax = Math.min(zone.max.getY(), level.getMaxBuildHeight() - 1);
         int placed = 0, chunks = 0;
@@ -37,7 +61,19 @@ public final class OilGenerator {
                             pos.set(x, y, z);
                             BlockState state = level.getBlockState(pos);
                             if (state.is(BlockTags.STONE_ORE_REPLACEABLES) || state.is(BlockTags.DEEPSLATE_ORE_REPLACEABLES)) {
-                                level.setBlock(pos, oil.defaultBlockState(), Block.UPDATE_CLIENTS);
+                                Block put = oil;
+                                if (mine) {
+                                    int roll = random.nextInt(total);
+                                    int i = 0;
+                                    while (roll >= weights.get(i)) roll -= weights.get(i++);
+                                    put = ores.get(i);
+                                    if (state.is(BlockTags.DEEPSLATE_ORE_REPLACEABLES)) {
+                                        ResourceLocation key = ForgeRegistries.BLOCKS.getKey(put);
+                                        ResourceLocation deep = key == null ? null : new ResourceLocation(key.getNamespace(), "deepslate_" + key.getPath());
+                                        if (deep != null && ForgeRegistries.BLOCKS.containsKey(deep)) put = ForgeRegistries.BLOCKS.getValue(deep);
+                                    }
+                                }
+                                level.setBlock(pos, put.defaultBlockState(), Block.UPDATE_CLIENTS);
                                 placed++;
                             }
                         }

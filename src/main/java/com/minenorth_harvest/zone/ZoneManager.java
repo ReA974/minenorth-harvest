@@ -40,6 +40,9 @@ public final class ZoneManager {
     /** Marqueur utilisé dans la file de repousse pour les gisements de pétrole. */
     public static final String OIL_REGEN = "minenorth_harvest:oil_deposit";
 
+    /** Préfixe des entrées de repousse de minerai : "regen:minecraft:iron_ore". */
+    public static final String ORE_REGEN = "regen:";
+
     private record Showing(ServerPlayer player, ServerLevel level, Zone zone, long until) {}
 
     public static void tick() {
@@ -171,6 +174,14 @@ public final class ZoneManager {
                 }
                 continue;
             }
+            if (r.sapling().startsWith(ORE_REGEN)) {
+                ResourceLocation oreId = ResourceLocation.tryParse(r.sapling().substring(ORE_REGEN.length()));
+                Block ore = oreId == null ? null : ForgeRegistries.BLOCKS.getValue(oreId);
+                if (ore != null && level.getBlockState(r.pos()).isAir()) {
+                    level.setBlock(r.pos(), ore.defaultBlockState(), Block.UPDATE_ALL);
+                }
+                continue;
+            }
             if (!level.getBlockState(r.pos()).is(ModBlocks.TREE_STUMP.get())) continue; // déjà replantée / retirée
             ResourceLocation id = ResourceLocation.tryParse(r.sapling());
             Block sapling = id == null ? null : ForgeRegistries.BLOCKS.getValue(id);
@@ -217,7 +228,8 @@ public final class ZoneManager {
         double step = Math.max(1.0, perimeter / 600.0);
         var particle = z.type == ZoneType.VERGER ? ParticleTypes.HAPPY_VILLAGER
                 : z.type == ZoneType.CHASSE ? ParticleTypes.SOUL_FIRE_FLAME
-                : z.type == ZoneType.PETROLE ? ParticleTypes.SMOKE : ParticleTypes.FLAME;
+                : z.type == ZoneType.PETROLE ? ParticleTypes.SMOKE
+                : z.type == ZoneType.MINE ? ParticleTypes.CRIT : ParticleTypes.FLAME;
         double[][] corners = {{x1, y1, z1}, {x2, y1, z1}, {x2, y1, z2}, {x1, y1, z2}};
         for (int i = 0; i < 4; i++) {
             double[] a = corners[i], b = corners[(i + 1) % 4];
