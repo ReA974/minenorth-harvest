@@ -93,9 +93,9 @@ public final class HarvestConfig {
         CHOP_ENABLED = b.comment("Active le mini-jeu (accroupi + clic droit sur un tronc avec une hache)").define("enabled", true);
         MAX_TREE_LOGS = b.comment("Nombre max de bûches pour qu'un arbre soit abattable").defineInRange("maxTreeLogs", 256, 1, 4096);
         MIN_LEAVES = b.comment("Nombre min de feuilles naturelles autour des bûches (évite d'abattre les constructions)").defineInRange("minLeaves", 4, 0, 256);
-        BASE_HITS = b.comment("Coups réussis de base nécessaires").defineInRange("baseHits", 2, 1, 50);
-        LOGS_PER_EXTRA_HIT = b.comment("Un coup de plus nécessaire toutes les X bûches").defineInRange("logsPerExtraHit", 8, 1, 100);
-        MAX_HITS = b.comment("Plafond de coups nécessaires").defineInRange("maxHits", 7, 1, 100);
+        BASE_HITS = b.comment("Coups réussis de base nécessaires").defineInRange("baseHits", 1, 1, 50);
+        LOGS_PER_EXTRA_HIT = b.comment("Un coup de plus nécessaire toutes les X bûches").defineInRange("logsPerExtraHit", 16, 1, 100);
+        MAX_HITS = b.comment("Plafond de coups nécessaires").defineInRange("maxHits", 4, 1, 100);
         ZONE_WIDTH = b.comment("Largeur de la zone verte (fraction de la barre)").defineInRange("zoneWidth", 0.24, 0.02, 1.0);
         PERFECT_WIDTH = b.comment("Largeur de la zone dorée 'parfait' (fraction de la barre)").defineInRange("perfectWidth", 0.07, 0.0, 1.0);
         CURSOR_PERIOD = b.comment("Durée d'un aller-retour du curseur, en ticks (plus petit = plus dur)").defineInRange("cursorPeriodTicks", 22, 6, 200);
@@ -186,7 +186,7 @@ public final class HarvestConfig {
 
         b.comment("Écologie : chaque arbre abattu ajoute 1 'dette', chaque replantation sur une souche en retire 1").push("ecology");
         ECO_DEBT_THRESHOLD = b.comment("À partir de cette dette, la forêt est 'épuisée' : plus de bonus et abattage plus dur (0 = désactivé)").defineInRange("debtThreshold", 3, 0, 100);
-        ECO_EXTRA_HITS = b.comment("Coups supplémentaires quand la forêt est épuisée").defineInRange("extraHits", 2, 0, 50);
+        ECO_EXTRA_HITS = b.comment("Coups supplémentaires quand la forêt est épuisée").defineInRange("extraHits", 1, 0, 50);
         b.pop();
 
         SPEC = b.build();

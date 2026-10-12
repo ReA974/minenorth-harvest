@@ -49,7 +49,7 @@ Le jar se trouve dans `build/libs/minenorth_harvest-1.20.1-1.0.0.jar`. Java 17 r
    - zone **verte** = Bien (+1)
    - à côté = Raté (usure de la hache en plus)
 3. Le curseur ne revient jamais à gauche : à chaque coup réussi la zone se déplace et le curseur accélère.
-   Un arbre classique se coupe en 2 à 3 coups (environ 2 secondes).
+   Un arbre classique se coupe en 1 à 2 coups (environ 1 seconde) ; les gros arbres demandent jusqu'à 4 coups.
 4. Barre pleine → **TIMBER !** l'arbre tombe bloc par bloc, les feuilles orphelines tombent vite.
 5. L'arbre abattu rend **toujours une pousse** de son essence (pommier, oranger… ou vanilla), à ramasser au pied de la souche.
 6. Il reste une **souche** : clic droit dessus avec une pousse pour **replanter**.
