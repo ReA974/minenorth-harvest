@@ -68,7 +68,6 @@
   "hud.minenorth_harvest.combo": "%s  x%s",
   "hud.minenorth_harvest.hint": "Clic gauche : frappe vite pour enchaîner le combo  •  Accroupi + clic droit : abandonner",
   "hud.minenorth_harvest.eco_malus": "Forêt épuisée : replantez pour retrouver vos bonus",
-  "block.minenorth_harvest.mill": "Moulin",
   "item.minenorth_harvest.flour": "Farine",
   "item.minenorth_harvest.dough": "Pâte à pain",
   "item.minenorth_harvest.baguette": "Baguette",
@@ -117,7 +116,6 @@
   "message.minenorth_harvest.pumpjack_need_deposit": "§cLe chevalet se pose sur un gisement de pétrole.",
   "message.minenorth_harvest.pumpjack_dry": "§cPuits à sec : plus de gisement sous le chevalet.",
   "message.minenorth_harvest.pumpjack_empty": "§7Pas encore de brut pompé.",
-  "block.minenorth_harvest.mill_part": "Moulin",
   "block.minenorth_harvest.millstone": "Moulin à meule",
   "item.minenorth_harvest.millstone": "Moulin à meule"
 }

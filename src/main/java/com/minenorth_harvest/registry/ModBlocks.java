@@ -47,21 +47,6 @@ public final class ModBlocks {
                     .sound(SoundType.WOOD)
                     .noOcclusion()));
 
-    public static final RegistryObject<Block> MILL = BLOCKS.register("mill",
-            () -> new com.minenorth_harvest.block.WindmillBlock(BlockBehaviour.Properties.of()
-                    .mapColor(MapColor.STONE)
-                    .strength(2.5f, 6.0f)
-                    .sound(SoundType.STONE)
-                    .noOcclusion()));
-
-    public static final RegistryObject<Block> MILL_PART = BLOCKS.register("mill_part",
-            () -> new com.minenorth_harvest.block.WindmillPartBlock(BlockBehaviour.Properties.of()
-                    .mapColor(MapColor.STONE)
-                    .strength(2.5f, 6.0f)
-                    .sound(SoundType.STONE)
-                    .noLootTable()
-                    .noOcclusion()));
-
     public static final RegistryObject<Block> MILLSTONE = BLOCKS.register("millstone",
             () -> new com.minenorth_harvest.block.MillstoneBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.STONE)

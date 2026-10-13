@@ -41,8 +41,6 @@ public final class ModItems {
             () -> new BlockItem(ModBlocks.TREE_STUMP.get(), new Item.Properties()));
 
     // ---- Boulangerie : moulin -> farine -> pâte -> baguette, tartes aux fruits ----
-    public static final RegistryObject<Item> MILL = ITEMS.register("mill",
-            () -> new BlockItem(ModBlocks.MILL.get(), new Item.Properties()));
     public static final RegistryObject<Item> FLOUR = ITEMS.register("flour", () -> new Item(new Item.Properties()));
     public static final RegistryObject<Item> DOUGH = ITEMS.register("dough", () -> new Item(new Item.Properties()));
     public static final RegistryObject<Item> BAGUETTE = ITEMS.register("baguette",
