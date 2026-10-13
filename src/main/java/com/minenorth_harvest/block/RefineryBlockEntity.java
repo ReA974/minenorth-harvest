@@ -228,12 +228,16 @@ public class RefineryBlockEntity extends BlockEntity {
     private void explode(ServerLevel server) {
         Vec3 c = MultiblockUtil.worldPoint(worldPosition, facing(), 28, 20, 16);
         float power = HarvestConfig.REFINERY_EXPLOSION.get().floatValue();
-        BlockPos mp = worldPosition;
-        server.removeBlock(mp, false);   // retire toute la machine (les cellules suivent)
-        if (power > 0) {
-            server.explode(null, c.x, c.y, c.z, power, true,
-                    HarvestConfig.REFINERY_BREAKS_BLOCKS.get() ? Level.ExplosionInteraction.TNT : Level.ExplosionInteraction.NONE);
-        }
+        // La machine reste en place : l'explosion blesse et met le feu (jamais de casse de blocs, la raffinerie ne disparaît pas),
+        // le lot en cours est perdu et la pression retombe.
+        pressure = 0f;
+        danger = 0;
+        progress = 0f;
+        input = ItemStack.EMPTY;
+        working = false;
+        dirty = true;
+        if (power > 0) server.explode(null, c.x, c.y, c.z, power, true, Level.ExplosionInteraction.NONE);
+        setChanged();
     }
 
     // ------------------------------------------------------------------ client : flammes, fumée, vapeur

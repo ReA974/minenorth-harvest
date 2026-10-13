@@ -19,6 +19,7 @@ public final class ClientModEvents {
         event.registerBlockEntityRenderer(com.minenorth_harvest.registry.ModBlockEntities.REFINERY.get(), RefineryRenderer::new);
         event.registerBlockEntityRenderer(com.minenorth_harvest.registry.ModBlockEntities.PUMPJACK.get(), PumpjackRenderer::new);
         event.registerBlockEntityRenderer(com.minenorth_harvest.registry.ModBlockEntities.MILL.get(), WindmillRenderer::new);
+        event.registerBlockEntityRenderer(com.minenorth_harvest.registry.ModBlockEntities.MILLSTONE.get(), MillstoneRenderer::new);
     }
 
     @SubscribeEvent

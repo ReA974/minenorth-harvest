@@ -25,6 +25,8 @@ public final class ModBlockEntities {
     public static final RegistryObject<BlockEntityType<com.minenorth_harvest.block.PumpjackBlockEntity>> PUMPJACK = TYPES.register("pumpjack",
             () -> BlockEntityType.Builder.of(com.minenorth_harvest.block.PumpjackBlockEntity::new, ModBlocks.PUMPJACK.get()).build(null));
 
+    public static final RegistryObject<BlockEntityType<com.minenorth_harvest.block.MillstoneBlockEntity>> MILLSTONE = TYPES.register("millstone",
+            () -> BlockEntityType.Builder.of(com.minenorth_harvest.block.MillstoneBlockEntity::new, ModBlocks.MILLSTONE.get()).build(null));
     public static final RegistryObject<BlockEntityType<com.minenorth_harvest.block.WindmillBlockEntity>> MILL = TYPES.register("mill",
             () -> BlockEntityType.Builder.of(com.minenorth_harvest.block.WindmillBlockEntity::new, ModBlocks.MILL.get()).build(null));
 

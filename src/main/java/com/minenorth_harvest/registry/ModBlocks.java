@@ -62,6 +62,21 @@ public final class ModBlocks {
                     .noLootTable()
                     .noOcclusion()));
 
+    public static final RegistryObject<Block> MILLSTONE = BLOCKS.register("millstone",
+            () -> new com.minenorth_harvest.block.MillstoneBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.STONE)
+                    .strength(2.5f, 6.0f)
+                    .sound(SoundType.STONE)
+                    .noOcclusion()));
+
+    public static final RegistryObject<Block> MILLSTONE_PART = BLOCKS.register("millstone_part",
+            () -> new com.minenorth_harvest.block.MillstonePartBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.STONE)
+                    .strength(2.5f, 6.0f)
+                    .sound(SoundType.STONE)
+                    .noLootTable()
+                    .noOcclusion()));
+
     public static final RegistryObject<Block> SAWMILL = BLOCKS.register("sawmill",
             () -> new com.minenorth_harvest.block.SawmillBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.WOOD)

@@ -165,3 +165,7 @@ qui l'écoutent bloquent l'abattage. Avec des plugins Bukkit (WorldGuard, GriefP
 **Tous droits réservés - MineNorthRP.** Réutilisation, copie, modification, décompilation / ingénierie
 inverse (y compris par outils d'intelligence artificielle) et utilisation pour entraîner une IA sont
 **interdites** sans autorisation écrite. Voir [LICENSE](LICENSE).
+
+## Moulin à meule et sécurité de la raffinerie (13/10)
+- **Moulin à meule** (`minenorth_harvest:millstone`, multibloc 3 × 3 × 2, recette : briques de pierre, pierre lisse, lingot de fer, planches de chêne) : comme un moulin à huile, une grosse meule de pierre roule dans une cuve autour d'un axe central, tirée par une poutre. Elle tourne doucement au repos et plus vite quand on moud. Même usage et mêmes recettes que le moulin (section `[mill]` de la config) : blé en main, clic droit maintenu. Le moulin à vent reste disponible.
+- **Raffinerie** : si la pression reste trop haute, l'explosion blesse et met le feu mais ne détruit plus de blocs et **la machine ne disparaît plus** : la pression retombe à zéro et seul le lot en cours est perdu (`explosionPower = 0` pour supprimer l'explosion ; `explosionBreaksBlocks` est ignoré).

@@ -58,6 +58,8 @@ public final class ModItems {
         }
     }
 
+    public static final RegistryObject<Item> MILLSTONE = ITEMS.register("millstone",
+            () -> new BlockItem(ModBlocks.MILLSTONE.get(), new Item.Properties()));
     public static final RegistryObject<Item> SAWMILL = ITEMS.register("sawmill",
             () -> new BlockItem(ModBlocks.SAWMILL.get(), new Item.Properties()));
 

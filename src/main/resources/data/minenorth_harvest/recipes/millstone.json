@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "BBB",
+    "SIS",
+    "PPP"
+  ],
+  "key": {
+    "B": {
+      "item": "minecraft:stone_bricks"
+    },
+    "S": {
+      "item": "minecraft:stone"
+    },
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "P": {
+      "item": "minecraft:oak_planks"
+    }
+  },
+  "result": {
+    "item": "minenorth_harvest:millstone"
+  }
+}

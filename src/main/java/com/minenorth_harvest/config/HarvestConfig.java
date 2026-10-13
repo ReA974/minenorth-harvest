@@ -210,9 +210,9 @@ public final class HarvestConfig {
         REFINERY_BATCH_TICKS = b.comment("Duree d'un lot (ticks) quand la pression reste dans la zone verte (20 ticks = 1 s)")
                 .defineInRange("batchTicks", 240, 20, 6000);
         REFINERY_LUCK = b.comment("Chance de 'coup de chance' (production doublee) a chaque lot").defineInRange("luckChance", 0.10, 0.0, 1.0);
-        REFINERY_EXPLOSION = b.comment("Puissance de l'explosion si la pression reste trop haute (0 = la machine disparait sans exploser)")
+        REFINERY_EXPLOSION = b.comment("Puissance de l'explosion si la pression reste trop haute (0 = aucune explosion) ; la raffinerie reste en place, seul le lot en cours est perdu")
                 .defineInRange("explosionPower", 2.5, 0.0, 10.0);
-        REFINERY_BREAKS_BLOCKS = b.comment("true = l'explosion detruit aussi les blocs autour (sinon : degats et feu seulement)").define("explosionBreaksBlocks", false);
+        REFINERY_BREAKS_BLOCKS = b.comment("Ignore : l'explosion ne detruit plus de blocs (degats et feu seulement), la raffinerie ne disparait jamais").define("explosionBreaksBlocks", false);
         REFINERY_RECIPES = b.comment("Recettes de la raffinerie, format \"entrée*quantité=sortie*quantité\"")
                 .defineList("recipes", java.util.List.of("minenorth_harvest:crude_oil*3=minenorth_harvest:gasoline*2"), o -> o instanceof String);
         b.pop();

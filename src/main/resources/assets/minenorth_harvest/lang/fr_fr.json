@@ -117,5 +117,7 @@
   "message.minenorth_harvest.pumpjack_need_deposit": "§cLe chevalet se pose sur un gisement de pétrole.",
   "message.minenorth_harvest.pumpjack_dry": "§cPuits à sec : plus de gisement sous le chevalet.",
   "message.minenorth_harvest.pumpjack_empty": "§7Pas encore de brut pompé.",
-  "block.minenorth_harvest.mill_part": "Moulin"
+  "block.minenorth_harvest.mill_part": "Moulin",
+  "block.minenorth_harvest.millstone": "Moulin à meule",
+  "item.minenorth_harvest.millstone": "Moulin à meule"
 }
