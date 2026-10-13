@@ -75,4 +75,39 @@ final class RenderUtil {
         vc.vertex(m, x, y, z).color(r, g, b, 1f).uv(u, v).overlayCoords(OverlayTexture.NO_OVERLAY)
                 .uv2(LightTexture.FULL_BRIGHT).normal(n, nx, ny, nz).endVertex();
     }
+
+    /** Cuboïde de bloc plein (pixels) : le bloc unitaire mis à l'échelle (x, y, z = coin ; sx, sy, sz = dimensions). */
+    static void drawBox(PoseStack ps, MultiBufferSource buffers, net.minecraft.world.level.block.state.BlockState state, int light,
+                        float x, float y, float z, float sx, float sy, float sz) {
+        ps.pushPose();
+        ps.translate(x * PX, y * PX, z * PX);
+        ps.scale(sx * PX, sy * PX, sz * PX);
+        Minecraft.getInstance().getBlockRenderer().renderSingleBlock(state, ps, buffers, light, OverlayTexture.NO_OVERLAY);
+        ps.popPose();
+    }
+
+    /** Deux plans croisés (flamme) pleine lumière : base au centre (cx, y0, cz), largeur w, hauteur h (pixels). */
+    static void crossQuads(PoseStack ps, VertexConsumer vc, TextureAtlasSprite sp, float cx, float y0, float cz, float w, float h, int rgb) {
+        float r = ((rgb >> 16) & 255) / 255f, g = ((rgb >> 8) & 255) / 255f, b = (rgb & 255) / 255f;
+        PoseStack.Pose pose = ps.last();
+        Matrix4f m = pose.pose();
+        Matrix3f n = pose.normal();
+        float x0 = (cx - w / 2) * PX, x1 = (cx + w / 2) * PX, z0 = (cz - w / 2) * PX, z1 = (cz + w / 2) * PX, ya = y0 * PX, yb = (y0 + h) * PX;
+        float cxp = cx * PX, czp = cz * PX;
+        float u0 = sp.getU0(), u1 = sp.getU1(), v0 = sp.getV0(), v1 = sp.getV1();
+        // plan X
+        qv(vc, m, n, x0, ya, czp, u0, v1, r, g, b, 0, 0, 1); qv(vc, m, n, x1, ya, czp, u1, v1, r, g, b, 0, 0, 1);
+        qv(vc, m, n, x1, yb, czp, u1, v0, r, g, b, 0, 0, 1); qv(vc, m, n, x0, yb, czp, u0, v0, r, g, b, 0, 0, 1);
+        qv(vc, m, n, x0, yb, czp, u0, v0, r, g, b, 0, 0, -1); qv(vc, m, n, x1, yb, czp, u1, v0, r, g, b, 0, 0, -1);
+        qv(vc, m, n, x1, ya, czp, u1, v1, r, g, b, 0, 0, -1); qv(vc, m, n, x0, ya, czp, u0, v1, r, g, b, 0, 0, -1);
+        // plan Z
+        qv(vc, m, n, cxp, ya, z0, u0, v1, r, g, b, 1, 0, 0); qv(vc, m, n, cxp, ya, z1, u1, v1, r, g, b, 1, 0, 0);
+        qv(vc, m, n, cxp, yb, z1, u1, v0, r, g, b, 1, 0, 0); qv(vc, m, n, cxp, yb, z0, u0, v0, r, g, b, 1, 0, 0);
+        qv(vc, m, n, cxp, yb, z0, u0, v0, r, g, b, -1, 0, 0); qv(vc, m, n, cxp, yb, z1, u1, v0, r, g, b, -1, 0, 0);
+        qv(vc, m, n, cxp, ya, z1, u1, v1, r, g, b, -1, 0, 0); qv(vc, m, n, cxp, ya, z0, u0, v1, r, g, b, -1, 0, 0);
+    }
+
+    private static void qv(VertexConsumer vc, Matrix4f m, Matrix3f n, float x, float y, float z, float u, float v, float r, float g, float b, float nx, float ny, float nz) {
+        vertex(vc, m, n, x, y, z, u, v, r, g, b, nx, ny, nz);
+    }
 }

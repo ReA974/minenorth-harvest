@@ -79,7 +79,12 @@ public final class HarvestConfig {
     public static final ForgeConfigSpec.ConfigValue<java.util.List<? extends String>> FOUNDRY_RECIPES;
     public static final ForgeConfigSpec.IntValue MINE_REGEN_DELAY;
     public static final ForgeConfigSpec.ConfigValue<java.util.List<? extends String>> MINE_ORES;
-    public static final ForgeConfigSpec.IntValue REFINERY_TURNS;
+    public static final ForgeConfigSpec.IntValue REFINERY_BATCH_TICKS;
+    public static final ForgeConfigSpec.DoubleValue REFINERY_LUCK;
+    public static final ForgeConfigSpec.DoubleValue REFINERY_EXPLOSION;
+    public static final ForgeConfigSpec.BooleanValue REFINERY_BREAKS_BLOCKS;
+    public static final ForgeConfigSpec.IntValue PUMPJACK_TICKS;
+    public static final ForgeConfigSpec.DoubleValue PUMPJACK_DEPLETE;
     public static final ForgeConfigSpec.ConfigValue<java.util.List<? extends String>> REFINERY_RECIPES;
 
     // ---- Écologie ----
@@ -201,11 +206,20 @@ public final class HarvestConfig {
                         "minecraft:gold_ore=2", "minecraft:redstone_ore=2", "minecraft:lapis_ore=2", "minecraft:diamond_ore=1"), o -> o instanceof String);
         b.pop();
 
-        b.comment("Raffinerie : objet en main, maintenir clic droit sur la raffinerie pour raffiner").push("refinery");
-        REFINERY_TURNS = b.comment("Tours de pompe pour obtenir un produit (un clic droit maintenu = environ 5 tours par seconde)")
-                .defineInRange("turnsPerProduct", 12, 1, 200);
+        b.comment("Raffinerie multibloc : brut + combustible, puis mini-jeu de pression (zone verte 40-70, danger a partir de 90)").push("refinery");
+        REFINERY_BATCH_TICKS = b.comment("Duree d'un lot (ticks) quand la pression reste dans la zone verte (20 ticks = 1 s)")
+                .defineInRange("batchTicks", 240, 20, 6000);
+        REFINERY_LUCK = b.comment("Chance de 'coup de chance' (production doublee) a chaque lot").defineInRange("luckChance", 0.10, 0.0, 1.0);
+        REFINERY_EXPLOSION = b.comment("Puissance de l'explosion si la pression reste trop haute (0 = la machine disparait sans exploser)")
+                .defineInRange("explosionPower", 2.5, 0.0, 10.0);
+        REFINERY_BREAKS_BLOCKS = b.comment("true = l'explosion detruit aussi les blocs autour (sinon : degats et feu seulement)").define("explosionBreaksBlocks", false);
         REFINERY_RECIPES = b.comment("Recettes de la raffinerie, format \"entrée*quantité=sortie*quantité\"")
                 .defineList("recipes", java.util.List.of("minenorth_harvest:crude_oil*3=minenorth_harvest:gasoline*2"), o -> o instanceof String);
+        b.pop();
+
+        b.comment("Chevalet de pompage : pose sur un gisement de petrole, pompe du brut tout seul").push("pumpjack");
+        PUMPJACK_TICKS = b.comment("Ticks pour pomper 1 petrole brut (20 ticks = 1 s ; 400 = 1 brut toutes les 20 s)").defineInRange("ticksPerCrude", 400, 20, 72000);
+        PUMPJACK_DEPLETE = b.comment("Chance qu'un gisement s'epuise (disparait) a chaque brut pompe ; il revient seul en zone petrole avec repousse").defineInRange("depleteChance", 0.02, 0.0, 1.0);
         b.pop();
 
         b.comment("Écologie : chaque arbre abattu ajoute 1 'dette', chaque replantation sur une souche en retire 1").push("ecology");

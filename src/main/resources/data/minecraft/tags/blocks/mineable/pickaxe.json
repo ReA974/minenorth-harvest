@@ -5,6 +5,11 @@
     "minenorth_harvest:refinery",
     "minenorth_harvest:foundry",
     "minenorth_harvest:casting_bucket",
-    "minenorth_harvest:foundry_part"
+    "minenorth_harvest:foundry_part",
+    "minenorth_harvest:refinery_part",
+    "minenorth_harvest:pumpjack",
+    "minenorth_harvest:pumpjack_part",
+    "minenorth_harvest:mill",
+    "minenorth_harvest:mill_part"
   ]
 }

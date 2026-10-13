@@ -1,7 +1,20 @@
 {
-  "variants": {
-    "": {
-      "model": "minenorth_harvest:block/refinery"
-    }
+ "variants": {
+  "facing=north": {
+   "model": "minenorth_harvest:block/refinery_master",
+   "y": 0
+  },
+  "facing=east": {
+   "model": "minenorth_harvest:block/refinery_master",
+   "y": 90
+  },
+  "facing=south": {
+   "model": "minenorth_harvest:block/refinery_master",
+   "y": 180
+  },
+  "facing=west": {
+   "model": "minenorth_harvest:block/refinery_master",
+   "y": 270
   }
+ }
 }

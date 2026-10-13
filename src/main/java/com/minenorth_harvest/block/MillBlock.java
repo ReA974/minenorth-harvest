@@ -94,6 +94,15 @@ public class MillBlock extends Block {
     @Override
     @SuppressWarnings("deprecation")
     public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+        return crank(machine, level, pos, player, hand);
+    }
+
+    /** Machine du moulin d'origine (recettes et tours de la config, section [mill]). */
+    public static final Machine DEFAULT_MILL = new Machine(MILL_SHAPE, HarvestConfig.MILL_RECIPES::get, HarvestConfig.MILL_TURNS::get,
+            "message.minenorth_harvest.mill_hint", "message.minenorth_harvest.mill_progress", SoundEvents.GRINDSTONE_USE, ParticleTypes.WHITE_ASH);
+
+    /** Mouture : objet en main, clic droit maintenu ; utilisable sans instancier de bloc (moulin à vent). */
+    public static InteractionResult crank(Machine machine, Level level, BlockPos pos, Player player, InteractionHand hand) {
         if (hand != InteractionHand.MAIN_HAND) return InteractionResult.PASS;
         ItemStack held = player.getItemInHand(hand);
         Recipe recipe = find(held, machine.recipes().get());

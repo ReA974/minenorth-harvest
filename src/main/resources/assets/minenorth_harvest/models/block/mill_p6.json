@@ -1,0 +1,123 @@
+{
+ "parent": "minecraft:block/block",
+ "textures": {
+  "conc": "minecraft:block/polished_andesite",
+  "iron": "minecraft:block/iron_block",
+  "dark": "minecraft:block/blackstone",
+  "brick": "minecraft:block/bricks",
+  "cop": "minecraft:block/copper_block",
+  "red": "minecraft:block/red_concrete",
+  "yel": "minecraft:block/yellow_concrete",
+  "wht": "minecraft:block/white_concrete",
+  "gray": "minecraft:block/gray_concrete",
+  "stone": "minecraft:block/stone_bricks",
+  "cob": "minecraft:block/cobblestone",
+  "plaster": "minecraft:block/white_concrete",
+  "roof": "minecraft:block/spruce_planks",
+  "wool": "minecraft:block/white_wool",
+  "hay": "minecraft:block/hay_block_side",
+  "wood": "minecraft:block/dark_oak_planks",
+  "chain": "minecraft:block/chain",
+  "particle": "minecraft:block/iron_block"
+ },
+ "elements": [
+  {
+   "from": [
+    6,
+    0,
+    6
+   ],
+   "to": [
+    16,
+    6,
+    16
+   ],
+   "faces": {
+    "north": {
+     "texture": "#plaster"
+    },
+    "west": {
+     "texture": "#plaster"
+    },
+    "up": {
+     "texture": "#plaster"
+    }
+   }
+  },
+  {
+   "from": [
+    7,
+    4,
+    7
+   ],
+   "to": [
+    16,
+    7,
+    16
+   ],
+   "faces": {
+    "north": {
+     "texture": "#wood"
+    },
+    "west": {
+     "texture": "#wood"
+    },
+    "up": {
+     "texture": "#wood"
+    },
+    "down": {
+     "texture": "#wood"
+    }
+   }
+  },
+  {
+   "from": [
+    8,
+    7,
+    8
+   ],
+   "to": [
+    16,
+    15,
+    16
+   ],
+   "faces": {
+    "north": {
+     "texture": "#wood"
+    },
+    "west": {
+     "texture": "#wood"
+    },
+    "up": {
+     "texture": "#wood"
+    },
+    "down": {
+     "texture": "#wood"
+    }
+   }
+  },
+  {
+   "from": [
+    6,
+    15,
+    6
+   ],
+   "to": [
+    16,
+    16,
+    16
+   ],
+   "faces": {
+    "north": {
+     "texture": "#roof"
+    },
+    "west": {
+     "texture": "#roof"
+    },
+    "down": {
+     "texture": "#roof"
+    }
+   }
+  }
+ ]
+}

@@ -90,7 +90,7 @@
   "command.minenorth_harvest.oil_too_big": "Zone trop grande pour générer (max %s blocs)",
   "block.minenorth_harvest.refinery": "Raffinerie",
   "item.minenorth_harvest.gasoline": "Essence",
-  "message.minenorth_harvest.refinery_hint": "§7Prenez du pétrole brut en main et maintenez clic droit pour raffiner.",
+  "message.minenorth_harvest.refinery_hint": "§7Brut en main : remplir le réservoir. Charbon : chauffer le four. Pupitre : pomper (main nue) / vanne (accroupi).",
   "message.minenorth_harvest.refinery_progress": "§6Raffinerie §f[%s§f]",
   "block.minenorth_harvest.sawmill": "Scierie",
   "message.minenorth_harvest.sawmill_hint": "§7Posez des bûches sur le chariot (clic droit), récupérez les planches à main nue.",
@@ -109,5 +109,13 @@
   "block.minenorth_harvest.casting_bucket": "Seau de coulée",
   "item.minenorth_harvest.saw_blade": "Lame de scie",
   "block.minenorth_harvest.sawmill_part": "Scierie",
-  "block.minenorth_harvest.foundry_part": "Four à minerai"
+  "block.minenorth_harvest.foundry_part": "Four à minerai",
+  "block.minenorth_harvest.refinery_part": "Raffinerie",
+  "block.minenorth_harvest.pumpjack": "Chevalet de pompage",
+  "block.minenorth_harvest.pumpjack_part": "Chevalet de pompage",
+  "message.minenorth_harvest.refinery_empty": "§7Rien à récupérer pour l'instant.",
+  "message.minenorth_harvest.pumpjack_need_deposit": "§cLe chevalet se pose sur un gisement de pétrole.",
+  "message.minenorth_harvest.pumpjack_dry": "§cPuits à sec : plus de gisement sous le chevalet.",
+  "message.minenorth_harvest.pumpjack_empty": "§7Pas encore de brut pompé.",
+  "block.minenorth_harvest.mill_part": "Moulin"
 }

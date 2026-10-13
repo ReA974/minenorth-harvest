@@ -5,7 +5,6 @@ import com.minenorth_harvest.block.FruitLeavesBlock;
 import com.minenorth_harvest.block.FruitSaplingBlock;
 import com.minenorth_harvest.block.FruitTreeGrower;
 import com.minenorth_harvest.block.FruitType;
-import com.minenorth_harvest.block.MillBlock;
 import com.minenorth_harvest.block.OilDepositBlock;
 import com.minenorth_harvest.block.TreeStumpBlock;
 import com.minenorth_harvest.config.HarvestConfig;
@@ -26,11 +25,6 @@ import java.util.EnumMap;
 import java.util.Map;
 
 public final class ModBlocks {
-    private static final VoxelShape REFINERY_SHAPE = Shapes.or(
-            Block.box(0, 0, 0, 16, 5, 16),
-            Block.box(2, 5, 2, 14, 12, 14),
-            Block.box(6, 12, 6, 10, 16, 10));
-
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, MineNorthHarvest.MODID);
 
     public static final Map<FruitType, RegistryObject<Block>> LEAVES = new EnumMap<>(FruitType.class);
@@ -54,10 +48,18 @@ public final class ModBlocks {
                     .noOcclusion()));
 
     public static final RegistryObject<Block> MILL = BLOCKS.register("mill",
-            () -> new MillBlock(BlockBehaviour.Properties.of()
+            () -> new com.minenorth_harvest.block.WindmillBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.STONE)
-                    .strength(2.0f, 6.0f)
+                    .strength(2.5f, 6.0f)
                     .sound(SoundType.STONE)
+                    .noOcclusion()));
+
+    public static final RegistryObject<Block> MILL_PART = BLOCKS.register("mill_part",
+            () -> new com.minenorth_harvest.block.WindmillPartBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.STONE)
+                    .strength(2.5f, 6.0f)
+                    .sound(SoundType.STONE)
+                    .noLootTable()
                     .noOcclusion()));
 
     public static final RegistryObject<Block> SAWMILL = BLOCKS.register("sawmill",
@@ -108,14 +110,38 @@ public final class ModBlocks {
                     .sound(SoundType.STONE)));
 
     public static final RegistryObject<Block> REFINERY = BLOCKS.register("refinery",
-            () -> new MillBlock(BlockBehaviour.Properties.of()
+            () -> new com.minenorth_harvest.block.RefineryBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.METAL)
-                    .strength(3.0f, 6.0f)
+                    .strength(4.0f, 8.0f)
                     .requiresCorrectToolForDrops()
                     .sound(SoundType.METAL)
-                    .noOcclusion(),
-                    new MillBlock.Machine(REFINERY_SHAPE, HarvestConfig.REFINERY_RECIPES::get, HarvestConfig.REFINERY_TURNS::get,
-                            "message.minenorth_harvest.refinery_hint", "message.minenorth_harvest.refinery_progress", SoundEvents.BREWING_STAND_BREW, ParticleTypes.LARGE_SMOKE)));
+                    .noOcclusion()));
+
+    public static final RegistryObject<Block> REFINERY_PART = BLOCKS.register("refinery_part",
+            () -> new com.minenorth_harvest.block.RefineryPartBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL)
+                    .strength(4.0f, 8.0f)
+                    .requiresCorrectToolForDrops()
+                    .sound(SoundType.METAL)
+                    .noLootTable()
+                    .noOcclusion()));
+
+    public static final RegistryObject<Block> PUMPJACK = BLOCKS.register("pumpjack",
+            () -> new com.minenorth_harvest.block.PumpjackBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL)
+                    .strength(4.0f, 8.0f)
+                    .requiresCorrectToolForDrops()
+                    .sound(SoundType.METAL)
+                    .noOcclusion()));
+
+    public static final RegistryObject<Block> PUMPJACK_PART = BLOCKS.register("pumpjack_part",
+            () -> new com.minenorth_harvest.block.PumpjackPartBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL)
+                    .strength(4.0f, 8.0f)
+                    .requiresCorrectToolForDrops()
+                    .sound(SoundType.METAL)
+                    .noLootTable()
+                    .noOcclusion()));
 
     private ModBlocks() {}
 }

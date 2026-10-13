@@ -79,6 +79,8 @@ public final class ModItems {
 
     public static final RegistryObject<Item> REFINERY = ITEMS.register("refinery",
             () -> new BlockItem(ModBlocks.REFINERY.get(), new Item.Properties()));
+    public static final RegistryObject<Item> PUMPJACK = ITEMS.register("pumpjack",
+            () -> new BlockItem(ModBlocks.PUMPJACK.get(), new Item.Properties()));
     public static final RegistryObject<Item> GASOLINE = ITEMS.register("gasoline", () -> new Item(new Item.Properties()));
 
     private ModItems() {}

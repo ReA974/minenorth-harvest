@@ -30,6 +30,7 @@ public final class ModCreativeTabs {
                 out.accept(ModItems.CASTING_BUCKET.get());
                 out.accept(ModItems.OIL_DEPOSIT.get());
                 out.accept(ModItems.CRUDE_OIL.get());
+                out.accept(ModItems.PUMPJACK.get());
                 out.accept(ModItems.REFINERY.get());
                 out.accept(ModItems.GASOLINE.get());
                 out.accept(ModItems.ZONE_WAND.get());

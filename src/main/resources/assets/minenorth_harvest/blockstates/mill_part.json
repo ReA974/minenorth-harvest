@@ -1,0 +1,564 @@
+{
+ "variants": {
+  "facing=north,part=0": {
+   "model": "minenorth_harvest:block/mill_p0",
+   "y": 0
+  },
+  "facing=east,part=0": {
+   "model": "minenorth_harvest:block/mill_p0",
+   "y": 90
+  },
+  "facing=south,part=0": {
+   "model": "minenorth_harvest:block/mill_p0",
+   "y": 180
+  },
+  "facing=west,part=0": {
+   "model": "minenorth_harvest:block/mill_p0",
+   "y": 270
+  },
+  "facing=north,part=1": {
+   "model": "minenorth_harvest:block/mill_p1",
+   "y": 0
+  },
+  "facing=east,part=1": {
+   "model": "minenorth_harvest:block/mill_p1",
+   "y": 90
+  },
+  "facing=south,part=1": {
+   "model": "minenorth_harvest:block/mill_p1",
+   "y": 180
+  },
+  "facing=west,part=1": {
+   "model": "minenorth_harvest:block/mill_p1",
+   "y": 270
+  },
+  "facing=north,part=2": {
+   "model": "minenorth_harvest:block/mill_p2",
+   "y": 0
+  },
+  "facing=east,part=2": {
+   "model": "minenorth_harvest:block/mill_p2",
+   "y": 90
+  },
+  "facing=south,part=2": {
+   "model": "minenorth_harvest:block/mill_p2",
+   "y": 180
+  },
+  "facing=west,part=2": {
+   "model": "minenorth_harvest:block/mill_p2",
+   "y": 270
+  },
+  "facing=north,part=3": {
+   "model": "minenorth_harvest:block/mill_p3",
+   "y": 0
+  },
+  "facing=east,part=3": {
+   "model": "minenorth_harvest:block/mill_p3",
+   "y": 90
+  },
+  "facing=south,part=3": {
+   "model": "minenorth_harvest:block/mill_p3",
+   "y": 180
+  },
+  "facing=west,part=3": {
+   "model": "minenorth_harvest:block/mill_p3",
+   "y": 270
+  },
+  "facing=north,part=4": {
+   "model": "minenorth_harvest:block/mill_p4",
+   "y": 0
+  },
+  "facing=east,part=4": {
+   "model": "minenorth_harvest:block/mill_p4",
+   "y": 90
+  },
+  "facing=south,part=4": {
+   "model": "minenorth_harvest:block/mill_p4",
+   "y": 180
+  },
+  "facing=west,part=4": {
+   "model": "minenorth_harvest:block/mill_p4",
+   "y": 270
+  },
+  "facing=north,part=5": {
+   "model": "minenorth_harvest:block/mill_p5",
+   "y": 0
+  },
+  "facing=east,part=5": {
+   "model": "minenorth_harvest:block/mill_p5",
+   "y": 90
+  },
+  "facing=south,part=5": {
+   "model": "minenorth_harvest:block/mill_p5",
+   "y": 180
+  },
+  "facing=west,part=5": {
+   "model": "minenorth_harvest:block/mill_p5",
+   "y": 270
+  },
+  "facing=north,part=6": {
+   "model": "minenorth_harvest:block/mill_p6",
+   "y": 0
+  },
+  "facing=east,part=6": {
+   "model": "minenorth_harvest:block/mill_p6",
+   "y": 90
+  },
+  "facing=south,part=6": {
+   "model": "minenorth_harvest:block/mill_p6",
+   "y": 180
+  },
+  "facing=west,part=6": {
+   "model": "minenorth_harvest:block/mill_p6",
+   "y": 270
+  },
+  "facing=north,part=7": {
+   "model": "minenorth_harvest:block/mill_p7",
+   "y": 0
+  },
+  "facing=east,part=7": {
+   "model": "minenorth_harvest:block/mill_p7",
+   "y": 90
+  },
+  "facing=south,part=7": {
+   "model": "minenorth_harvest:block/mill_p7",
+   "y": 180
+  },
+  "facing=west,part=7": {
+   "model": "minenorth_harvest:block/mill_p7",
+   "y": 270
+  },
+  "facing=north,part=8": {
+   "model": "minenorth_harvest:block/mill_p8",
+   "y": 0
+  },
+  "facing=east,part=8": {
+   "model": "minenorth_harvest:block/mill_p8",
+   "y": 90
+  },
+  "facing=south,part=8": {
+   "model": "minenorth_harvest:block/mill_p8",
+   "y": 180
+  },
+  "facing=west,part=8": {
+   "model": "minenorth_harvest:block/mill_p8",
+   "y": 270
+  },
+  "facing=north,part=9": {
+   "model": "minenorth_harvest:block/mill_p9",
+   "y": 0
+  },
+  "facing=east,part=9": {
+   "model": "minenorth_harvest:block/mill_p9",
+   "y": 90
+  },
+  "facing=south,part=9": {
+   "model": "minenorth_harvest:block/mill_p9",
+   "y": 180
+  },
+  "facing=west,part=9": {
+   "model": "minenorth_harvest:block/mill_p9",
+   "y": 270
+  },
+  "facing=north,part=10": {
+   "model": "minenorth_harvest:block/mill_p10",
+   "y": 0
+  },
+  "facing=east,part=10": {
+   "model": "minenorth_harvest:block/mill_p10",
+   "y": 90
+  },
+  "facing=south,part=10": {
+   "model": "minenorth_harvest:block/mill_p10",
+   "y": 180
+  },
+  "facing=west,part=10": {
+   "model": "minenorth_harvest:block/mill_p10",
+   "y": 270
+  },
+  "facing=north,part=11": {
+   "model": "minenorth_harvest:block/mill_p11",
+   "y": 0
+  },
+  "facing=east,part=11": {
+   "model": "minenorth_harvest:block/mill_p11",
+   "y": 90
+  },
+  "facing=south,part=11": {
+   "model": "minenorth_harvest:block/mill_p11",
+   "y": 180
+  },
+  "facing=west,part=11": {
+   "model": "minenorth_harvest:block/mill_p11",
+   "y": 270
+  },
+  "facing=north,part=12": {
+   "model": "minenorth_harvest:block/mill_p12",
+   "y": 0
+  },
+  "facing=east,part=12": {
+   "model": "minenorth_harvest:block/mill_p12",
+   "y": 90
+  },
+  "facing=south,part=12": {
+   "model": "minenorth_harvest:block/mill_p12",
+   "y": 180
+  },
+  "facing=west,part=12": {
+   "model": "minenorth_harvest:block/mill_p12",
+   "y": 270
+  },
+  "facing=north,part=13": {
+   "model": "minenorth_harvest:block/mill_p13",
+   "y": 0
+  },
+  "facing=east,part=13": {
+   "model": "minenorth_harvest:block/mill_p13",
+   "y": 90
+  },
+  "facing=south,part=13": {
+   "model": "minenorth_harvest:block/mill_p13",
+   "y": 180
+  },
+  "facing=west,part=13": {
+   "model": "minenorth_harvest:block/mill_p13",
+   "y": 270
+  },
+  "facing=north,part=14": {
+   "model": "minenorth_harvest:block/mill_p14",
+   "y": 0
+  },
+  "facing=east,part=14": {
+   "model": "minenorth_harvest:block/mill_p14",
+   "y": 90
+  },
+  "facing=south,part=14": {
+   "model": "minenorth_harvest:block/mill_p14",
+   "y": 180
+  },
+  "facing=west,part=14": {
+   "model": "minenorth_harvest:block/mill_p14",
+   "y": 270
+  },
+  "facing=north,part=15": {
+   "model": "minenorth_harvest:block/mill_p15",
+   "y": 0
+  },
+  "facing=east,part=15": {
+   "model": "minenorth_harvest:block/mill_p15",
+   "y": 90
+  },
+  "facing=south,part=15": {
+   "model": "minenorth_harvest:block/mill_p15",
+   "y": 180
+  },
+  "facing=west,part=15": {
+   "model": "minenorth_harvest:block/mill_p15",
+   "y": 270
+  },
+  "facing=north,part=16": {
+   "model": "minenorth_harvest:block/mill_p16",
+   "y": 0
+  },
+  "facing=east,part=16": {
+   "model": "minenorth_harvest:block/mill_p16",
+   "y": 90
+  },
+  "facing=south,part=16": {
+   "model": "minenorth_harvest:block/mill_p16",
+   "y": 180
+  },
+  "facing=west,part=16": {
+   "model": "minenorth_harvest:block/mill_p16",
+   "y": 270
+  },
+  "facing=north,part=17": {
+   "model": "minenorth_harvest:block/mill_p17",
+   "y": 0
+  },
+  "facing=east,part=17": {
+   "model": "minenorth_harvest:block/mill_p17",
+   "y": 90
+  },
+  "facing=south,part=17": {
+   "model": "minenorth_harvest:block/mill_p17",
+   "y": 180
+  },
+  "facing=west,part=17": {
+   "model": "minenorth_harvest:block/mill_p17",
+   "y": 270
+  },
+  "facing=north,part=18": {
+   "model": "minenorth_harvest:block/mill_p18",
+   "y": 0
+  },
+  "facing=east,part=18": {
+   "model": "minenorth_harvest:block/mill_p18",
+   "y": 90
+  },
+  "facing=south,part=18": {
+   "model": "minenorth_harvest:block/mill_p18",
+   "y": 180
+  },
+  "facing=west,part=18": {
+   "model": "minenorth_harvest:block/mill_p18",
+   "y": 270
+  },
+  "facing=north,part=19": {
+   "model": "minenorth_harvest:block/mill_p19",
+   "y": 0
+  },
+  "facing=east,part=19": {
+   "model": "minenorth_harvest:block/mill_p19",
+   "y": 90
+  },
+  "facing=south,part=19": {
+   "model": "minenorth_harvest:block/mill_p19",
+   "y": 180
+  },
+  "facing=west,part=19": {
+   "model": "minenorth_harvest:block/mill_p19",
+   "y": 270
+  },
+  "facing=north,part=20": {
+   "model": "minenorth_harvest:block/mill_p20",
+   "y": 0
+  },
+  "facing=east,part=20": {
+   "model": "minenorth_harvest:block/mill_p20",
+   "y": 90
+  },
+  "facing=south,part=20": {
+   "model": "minenorth_harvest:block/mill_p20",
+   "y": 180
+  },
+  "facing=west,part=20": {
+   "model": "minenorth_harvest:block/mill_p20",
+   "y": 270
+  },
+  "facing=north,part=21": {
+   "model": "minenorth_harvest:block/mill_p21",
+   "y": 0
+  },
+  "facing=east,part=21": {
+   "model": "minenorth_harvest:block/mill_p21",
+   "y": 90
+  },
+  "facing=south,part=21": {
+   "model": "minenorth_harvest:block/mill_p21",
+   "y": 180
+  },
+  "facing=west,part=21": {
+   "model": "minenorth_harvest:block/mill_p21",
+   "y": 270
+  },
+  "facing=north,part=22": {
+   "model": "minenorth_harvest:block/mill_p22",
+   "y": 0
+  },
+  "facing=east,part=22": {
+   "model": "minenorth_harvest:block/mill_p22",
+   "y": 90
+  },
+  "facing=south,part=22": {
+   "model": "minenorth_harvest:block/mill_p22",
+   "y": 180
+  },
+  "facing=west,part=22": {
+   "model": "minenorth_harvest:block/mill_p22",
+   "y": 270
+  },
+  "facing=north,part=23": {
+   "model": "minenorth_harvest:block/mill_p23",
+   "y": 0
+  },
+  "facing=east,part=23": {
+   "model": "minenorth_harvest:block/mill_p23",
+   "y": 90
+  },
+  "facing=south,part=23": {
+   "model": "minenorth_harvest:block/mill_p23",
+   "y": 180
+  },
+  "facing=west,part=23": {
+   "model": "minenorth_harvest:block/mill_p23",
+   "y": 270
+  },
+  "facing=north,part=24": {
+   "model": "minenorth_harvest:block/mill_p24",
+   "y": 0
+  },
+  "facing=east,part=24": {
+   "model": "minenorth_harvest:block/mill_p24",
+   "y": 90
+  },
+  "facing=south,part=24": {
+   "model": "minenorth_harvest:block/mill_p24",
+   "y": 180
+  },
+  "facing=west,part=24": {
+   "model": "minenorth_harvest:block/mill_p24",
+   "y": 270
+  },
+  "facing=north,part=25": {
+   "model": "minenorth_harvest:block/mill_p25",
+   "y": 0
+  },
+  "facing=east,part=25": {
+   "model": "minenorth_harvest:block/mill_p25",
+   "y": 90
+  },
+  "facing=south,part=25": {
+   "model": "minenorth_harvest:block/mill_p25",
+   "y": 180
+  },
+  "facing=west,part=25": {
+   "model": "minenorth_harvest:block/mill_p25",
+   "y": 270
+  },
+  "facing=north,part=26": {
+   "model": "minenorth_harvest:block/mill_p26",
+   "y": 0
+  },
+  "facing=east,part=26": {
+   "model": "minenorth_harvest:block/mill_p26",
+   "y": 90
+  },
+  "facing=south,part=26": {
+   "model": "minenorth_harvest:block/mill_p26",
+   "y": 180
+  },
+  "facing=west,part=26": {
+   "model": "minenorth_harvest:block/mill_p26",
+   "y": 270
+  },
+  "facing=north,part=27": {
+   "model": "minenorth_harvest:block/mill_p27",
+   "y": 0
+  },
+  "facing=east,part=27": {
+   "model": "minenorth_harvest:block/mill_p27",
+   "y": 90
+  },
+  "facing=south,part=27": {
+   "model": "minenorth_harvest:block/mill_p27",
+   "y": 180
+  },
+  "facing=west,part=27": {
+   "model": "minenorth_harvest:block/mill_p27",
+   "y": 270
+  },
+  "facing=north,part=28": {
+   "model": "minenorth_harvest:block/mill_p28",
+   "y": 0
+  },
+  "facing=east,part=28": {
+   "model": "minenorth_harvest:block/mill_p28",
+   "y": 90
+  },
+  "facing=south,part=28": {
+   "model": "minenorth_harvest:block/mill_p28",
+   "y": 180
+  },
+  "facing=west,part=28": {
+   "model": "minenorth_harvest:block/mill_p28",
+   "y": 270
+  },
+  "facing=north,part=29": {
+   "model": "minenorth_harvest:block/mill_p29",
+   "y": 0
+  },
+  "facing=east,part=29": {
+   "model": "minenorth_harvest:block/mill_p29",
+   "y": 90
+  },
+  "facing=south,part=29": {
+   "model": "minenorth_harvest:block/mill_p29",
+   "y": 180
+  },
+  "facing=west,part=29": {
+   "model": "minenorth_harvest:block/mill_p29",
+   "y": 270
+  },
+  "facing=north,part=30": {
+   "model": "minenorth_harvest:block/mill_p30",
+   "y": 0
+  },
+  "facing=east,part=30": {
+   "model": "minenorth_harvest:block/mill_p30",
+   "y": 90
+  },
+  "facing=south,part=30": {
+   "model": "minenorth_harvest:block/mill_p30",
+   "y": 180
+  },
+  "facing=west,part=30": {
+   "model": "minenorth_harvest:block/mill_p30",
+   "y": 270
+  },
+  "facing=north,part=31": {
+   "model": "minenorth_harvest:block/mill_p31",
+   "y": 0
+  },
+  "facing=east,part=31": {
+   "model": "minenorth_harvest:block/mill_p31",
+   "y": 90
+  },
+  "facing=south,part=31": {
+   "model": "minenorth_harvest:block/mill_p31",
+   "y": 180
+  },
+  "facing=west,part=31": {
+   "model": "minenorth_harvest:block/mill_p31",
+   "y": 270
+  },
+  "facing=north,part=32": {
+   "model": "minenorth_harvest:block/mill_p32",
+   "y": 0
+  },
+  "facing=east,part=32": {
+   "model": "minenorth_harvest:block/mill_p32",
+   "y": 90
+  },
+  "facing=south,part=32": {
+   "model": "minenorth_harvest:block/mill_p32",
+   "y": 180
+  },
+  "facing=west,part=32": {
+   "model": "minenorth_harvest:block/mill_p32",
+   "y": 270
+  },
+  "facing=north,part=33": {
+   "model": "minenorth_harvest:block/mill_p33",
+   "y": 0
+  },
+  "facing=east,part=33": {
+   "model": "minenorth_harvest:block/mill_p33",
+   "y": 90
+  },
+  "facing=south,part=33": {
+   "model": "minenorth_harvest:block/mill_p33",
+   "y": 180
+  },
+  "facing=west,part=33": {
+   "model": "minenorth_harvest:block/mill_p33",
+   "y": 270
+  },
+  "facing=north,part=34": {
+   "model": "minenorth_harvest:block/mill_p34",
+   "y": 0
+  },
+  "facing=east,part=34": {
+   "model": "minenorth_harvest:block/mill_p34",
+   "y": 90
+  },
+  "facing=south,part=34": {
+   "model": "minenorth_harvest:block/mill_p34",
+   "y": 180
+  },
+  "facing=west,part=34": {
+   "model": "minenorth_harvest:block/mill_p34",
+   "y": 270
+  }
+ }
+}

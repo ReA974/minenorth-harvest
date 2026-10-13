@@ -20,5 +20,13 @@ public final class ModBlockEntities {
     public static final RegistryObject<BlockEntityType<CastingBucketBlockEntity>> CASTING_BUCKET = TYPES.register("casting_bucket",
             () -> BlockEntityType.Builder.of(CastingBucketBlockEntity::new, ModBlocks.CASTING_BUCKET.get()).build(null));
 
+    public static final RegistryObject<BlockEntityType<com.minenorth_harvest.block.RefineryBlockEntity>> REFINERY = TYPES.register("refinery",
+            () -> BlockEntityType.Builder.of(com.minenorth_harvest.block.RefineryBlockEntity::new, ModBlocks.REFINERY.get()).build(null));
+    public static final RegistryObject<BlockEntityType<com.minenorth_harvest.block.PumpjackBlockEntity>> PUMPJACK = TYPES.register("pumpjack",
+            () -> BlockEntityType.Builder.of(com.minenorth_harvest.block.PumpjackBlockEntity::new, ModBlocks.PUMPJACK.get()).build(null));
+
+    public static final RegistryObject<BlockEntityType<com.minenorth_harvest.block.WindmillBlockEntity>> MILL = TYPES.register("mill",
+            () -> BlockEntityType.Builder.of(com.minenorth_harvest.block.WindmillBlockEntity::new, ModBlocks.MILL.get()).build(null));
+
     private ModBlockEntities() {}
 }

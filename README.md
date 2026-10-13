@@ -36,7 +36,7 @@ Le jar se trouve dans `build/libs/minenorth_harvest-1.20.1-1.0.0.jar`. Java 17 r
 | Cuire | Four, fumoir ou feu de camp | **Baguette** |
 | Pâtisser | Établi : farine + sucre + œuf + 2 fruits | **Tarte** aux pommes / à l'orange / au citron / aux cerises / aux poires |
 
-- Moulin : recette *meule + 3 pierres lisses* (supprime `data/minenorth_harvest/recipes/mill.json` si tu préfères le vendre ou le donner).
+- **Moulin à vent** (multibloc 3 × 3 × 4 : ailes qui tournent, meule visible derrière la fenêtre, manivelle) : blé en main, **clic droit maintenu** n'importe où sur le moulin ; tout s'emballe pendant qu'on moud. Recette *meule + 3 pierres lisses* (supprime `data/minenorth_harvest/recipes/mill.json` si tu préfères le vendre ou le donner).
 - Section `[mill]` de la config : tours par produit, délai anti auto-clic, et **recettes du moulin**
   (`"minecraft:wheat*3=minenorth_harvest:flour*1"` ; ajoute des lignes pour moudre autre chose).
 - Le pain vanilla (3 blé) existe toujours : pour la revente, fais racheter farine, baguettes et tartes dans tes shops.
@@ -64,10 +64,19 @@ Casser les bûches à la main reste possible mais plus lent (`manualLogBreakSpee
 - Le brut est un combustible de four (2400 ticks, plus que le charbon).
 - Très inflammable : feu, lave ou briquet à côté d'un gisement = **explosion**, qui peut s'enchaîner sur les gisements voisins.
 
-### Raffinerie
-- **Raffinerie** : comme le moulin, objet en main + **maintenir clic droit** (12 tours). 3 **Pétrole brut** → 2 **Essence** (combustible de four, 6400 ticks).
-- Section `[refinery]` de la config : tours par produit et recettes (même format que le moulin).
-- Recette : 5 lingots de fer, 1 lingot de cuivre, 2 seaux, 1 haut fourneau (supprime `recipes/refinery.json` pour la vendre ou la donner).
+### Raffinerie (multibloc 3 × 2 × 4, mini-jeu de pression)
+Grande installation : réservoir de brut, four de chauffe, **colonne de distillation**, torchère qui brûle, pupitre à cadran, collecteur d'essence.
+1. **Brut en main** (clic droit n'importe où) : remplit le réservoir (visible dans le regard). **Charbon / combustible en main** : alimente le four.
+2. Le four chauffe et la **pression monte** (le cadran s'anime, vert 40-70, rouge dès 90).
+3. **Au pupitre (avant droit)** : clic droit à main nue = **coup de pompe** (la pression monte) ; **accroupi** = **vanne** (elle redescend, jet de vapeur).
+4. Le lot avance **à pleine vitesse dans la zone verte**, lentement en dessous, pas du tout au-dessus.
+5. Trop haut trop longtemps (≥ 90, puis 100 pendant 2,5 s) : alarme puis **EXPLOSION** (la machine disparaît ; `explosionPower`, `explosionBreaksBlocks`).
+6. **Au collecteur (arrière droit)** : clic droit à main nue = récupérer l'**essence** (3 brut → 2 essence ; 10 % de coup de chance = doublé).
+- Section `[refinery]` : `batchTicks`, `luckChance`, `explosionPower`, `explosionBreaksBlocks`, `recipes`. Il faut la place pour le poser.
+
+### Chevalet de pompage (multibloc 3 × 3 × 3)
+- À poser **sur un gisement de pétrole** (le bloc juste dessous). Il pompe **1 brut toutes les 20 s** tout seul (balancier, tige polie et contrepoids animés), jusqu'à 64 en stock : **clic droit à main nue** pour récupérer.
+- Chaque brut a 2 % de chance d'**épuiser le gisement** (puits à sec) ; il revient seul en zone pétrole avec repousse. Section `[pumpjack]` : `ticksPerCrude`, `depleteChance`.
 
 ### Scierie (3D animée, multibloc 2 × 3 × 2)
 - **Grande machine** : elle occupe **2 de large, 3 de long et 2 de haut** (il faut la place pour la poser, sinon rien ne se passe). Le bloc que vous visez en la posant est le centre ; elle s'orientera face à vous. La casser (n'importe quelle partie) la retire en entier.
