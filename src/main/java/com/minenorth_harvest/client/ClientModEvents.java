@@ -12,6 +12,13 @@ public final class ClientModEvents {
     private ClientModEvents() {}
 
     @SubscribeEvent
+    public static void registerRenderers(net.minecraftforge.client.event.EntityRenderersEvent.RegisterRenderers event) {
+        event.registerBlockEntityRenderer(com.minenorth_harvest.registry.ModBlockEntities.SAWMILL.get(), SawmillRenderer::new);
+        event.registerBlockEntityRenderer(com.minenorth_harvest.registry.ModBlockEntities.ORE_FURNACE.get(), OreFurnaceRenderer::new);
+        event.registerBlockEntityRenderer(com.minenorth_harvest.registry.ModBlockEntities.CASTING_BUCKET.get(), CastingBucketRenderer::new);
+    }
+
+    @SubscribeEvent
     public static void registerOverlays(RegisterGuiOverlaysEvent event) {
         event.registerAbove(VanillaGuiOverlay.HOTBAR.id(), "chop_minigame", ChopOverlay.INSTANCE);
     }

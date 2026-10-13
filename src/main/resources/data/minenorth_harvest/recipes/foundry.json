@@ -4,7 +4,7 @@
   "pattern": [
     "BBB",
     "BFB",
-    "SSS"
+    "SIS"
   ],
   "key": {
     "B": {
@@ -15,6 +15,9 @@
     },
     "S": {
       "item": "minecraft:smooth_stone"
+    },
+    "I": {
+      "item": "minecraft:iron_ingot"
     }
   },
   "result": {

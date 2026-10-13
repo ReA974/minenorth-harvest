@@ -64,6 +64,11 @@ public final class ModItems {
     public static final RegistryObject<Item> FOUNDRY = ITEMS.register("foundry",
             () -> new BlockItem(ModBlocks.FOUNDRY.get(), new Item.Properties()));
 
+    public static final RegistryObject<Item> CASTING_BUCKET = ITEMS.register("casting_bucket",
+            () -> new BlockItem(ModBlocks.CASTING_BUCKET.get(), new Item.Properties()));
+    /** Lame de la scierie : sert uniquement au rendu animé (jamais obtenue en jeu). */
+    public static final RegistryObject<Item> SAW_BLADE = ITEMS.register("saw_blade", () -> new Item(new Item.Properties()));
+
     public static final RegistryObject<Item> ZONE_WAND = ITEMS.register("zone_wand",
             () -> new ZoneWandItem(new Item.Properties().stacksTo(1)));
 

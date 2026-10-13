@@ -30,6 +30,7 @@ public final class ModCreativeTabs {
                 out.accept(ModItems.TREE_STUMP.get());
                 out.accept(ModItems.SAWMILL.get());
                 out.accept(ModItems.FOUNDRY.get());
+                out.accept(ModItems.CASTING_BUCKET.get());
                 out.accept(ModItems.OIL_DEPOSIT.get());
                 out.accept(ModItems.CRUDE_OIL.get());
                 out.accept(ModItems.REFINERY.get());

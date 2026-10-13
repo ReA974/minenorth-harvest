@@ -31,18 +31,6 @@ public final class ModBlocks {
             Block.box(2, 5, 2, 14, 12, 14),
             Block.box(6, 12, 6, 10, 16, 10));
 
-    private static final VoxelShape SAWMILL_SHAPE = Shapes.or(
-            Block.box(0, 6, 0, 16, 10, 16),
-            Block.box(0, 0, 0, 3, 6, 3),
-            Block.box(13, 0, 0, 16, 6, 3),
-            Block.box(0, 0, 13, 3, 6, 16),
-            Block.box(13, 0, 13, 16, 6, 16),
-            Block.box(7, 10, 2, 9, 16, 14));
-
-    private static final VoxelShape FOUNDRY_SHAPE = Shapes.or(
-            Block.box(1, 0, 1, 15, 12, 15),
-            Block.box(10, 12, 10, 14, 16, 14));
-
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, MineNorthHarvest.MODID);
 
     public static final Map<FruitType, RegistryObject<Block>> LEAVES = new EnumMap<>(FruitType.class);
@@ -73,24 +61,27 @@ public final class ModBlocks {
                     .noOcclusion()));
 
     public static final RegistryObject<Block> SAWMILL = BLOCKS.register("sawmill",
-            () -> new MillBlock(BlockBehaviour.Properties.of()
+            () -> new com.minenorth_harvest.block.SawmillBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.WOOD)
                     .strength(2.5f)
                     .sound(SoundType.WOOD)
-                    .noOcclusion(),
-                    new MillBlock.Machine(SAWMILL_SHAPE, HarvestConfig.SAWMILL_RECIPES::get, HarvestConfig.SAWMILL_TURNS::get,
-                            "message.minenorth_harvest.sawmill_hint", "message.minenorth_harvest.sawmill_progress", SoundEvents.AXE_STRIP, ParticleTypes.CRIT, HarvestConfig.SAWMILL_LUCK::get)));
+                    .noOcclusion()));
 
     public static final RegistryObject<Block> FOUNDRY = BLOCKS.register("foundry",
-            () -> new MillBlock(BlockBehaviour.Properties.of()
+            () -> new com.minenorth_harvest.block.OreFurnaceBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.STONE)
                     .strength(3.0f, 6.0f)
                     .requiresCorrectToolForDrops()
                     .sound(SoundType.STONE)
-                    .noOcclusion(),
-                    new MillBlock.Machine(FOUNDRY_SHAPE, HarvestConfig.FOUNDRY_RECIPES::get, HarvestConfig.FOUNDRY_TURNS::get,
-                            "message.minenorth_harvest.foundry_hint", "message.minenorth_harvest.foundry_progress",
-                            SoundEvents.BLASTFURNACE_FIRE_CRACKLE, ParticleTypes.FLAME, HarvestConfig.FOUNDRY_LUCK::get)));
+                    .lightLevel(st -> st.getValue(com.minenorth_harvest.block.OreFurnaceBlock.LIT) ? 13 : 0)
+                    .noOcclusion()));
+
+    public static final RegistryObject<Block> CASTING_BUCKET = BLOCKS.register("casting_bucket",
+            () -> new com.minenorth_harvest.block.CastingBucketBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL)
+                    .strength(1.5f)
+                    .sound(SoundType.METAL)
+                    .noOcclusion()));
 
     public static final RegistryObject<Block> OIL_DEPOSIT = BLOCKS.register("oil_deposit",
             () -> new OilDepositBlock(BlockBehaviour.Properties.of()

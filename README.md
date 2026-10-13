@@ -41,22 +41,22 @@ Le jar se trouve dans `build/libs/minenorth_harvest-1.20.1-1.0.0.jar`. Java 17 r
   (`"minecraft:wheat*3=minenorth_harvest:flour*1"` ; ajoute des lignes pour moudre autre chose).
 - Le pain vanilla (3 blé) existe toujours : pour la revente, fais racheter farine, baguettes et tartes dans tes shops.
 
-## Bûcheron : mini-jeu d'abattage
+## Bûcheron : la furie de la hache
 
 1. Dans une **zone de bûcheronnage**, hache en main, **accroupi + clic droit** sur le tronc d'un arbre naturel.
-2. Une barre apparaît : un curseur fait des allers-retours. **Clic gauche** quand il est dans la zone :
-   - zone **dorée** = PARFAIT (+2, combo, chance de bûche bonus)
-   - zone **verte** = Bien (+1)
-   - à côté = Raté (usure de la hache en plus)
-3. Le curseur ne revient jamais à gauche : à chaque coup réussi la zone se déplace et le curseur accélère.
-   Un arbre classique se coupe en 1 à 2 coups (environ 1 seconde) ; les gros arbres demandent jusqu'à 4 coups.
-4. Barre pleine → **TIMBER !** l'arbre tombe bloc par bloc, les feuilles orphelines tombent vite.
-5. L'arbre abattu rend **toujours une pousse** de son essence (pommier, oranger… ou vanilla), à ramasser au pied de la souche.
-6. Il reste une **souche** : clic droit dessus avec une pousse pour **replanter**.
+2. Une jauge apparaît : **martelez le clic gauche** !
+   - chaque coup rapporte 1 point ;
+   - frappez vite (moins de 8 ticks entre deux coups) pour monter le **combo** : 1, puis 2, puis 3 points par coup ;
+   - à partir de x6 c'est la **FURIE** : flammes, étincelles, son de plus en plus aigu, chance de bûche bonus ;
+   - si vous ralentissez, la jauge **se vide**.
+3. Jauge pleine → **TIMBER !** l'arbre tombe bloc par bloc, les feuilles orphelines tombent vite.
+4. L'arbre abattu rend **toujours une pousse** de son essence, à ramasser au pied de la souche.
+5. Il reste une **souche** : clic droit dessus avec une pousse pour **replanter**.
 
-Accroupi + clic droit pendant le mini-jeu = abandonner. S'éloigner, changer d'objet ou attendre 20 s annule aussi.
-Casser les bûches d'un arbre naturel à la main reste possible mais plus lent (`manualLogBreakSpeed`).
-Les constructions (bûches sans feuilles naturelles) ne sont pas concernées.
+Un petit arbre = environ 10 points (3 à 5 secondes de furie), les gros arbres jusqu'à 24.
+Réglages dans `[lumberjack]` : `rageBasePoints`, `rageLogsPerPoint`, `rageMaxPoints`, `rageComboWindowTicks`, `rageDecayDelayTicks`, `rageDecayIntervalTicks`.
+Accroupi + clic droit (après avoir relâché le clic) = abandonner. S'éloigner, changer d'objet ou attendre 20 s annule aussi.
+Casser les bûches à la main reste possible mais plus lent (`manualLogBreakSpeed`). Les constructions (bûches sans feuilles naturelles) ne sont pas concernées.
 
 ### Pétrole
 - **Gisement de pétrole** : minerai noir, à la pioche (pierre minimum). Donne 1 à 3 **Pétrole brut** (Fortune ok, Silk Touch = le bloc).
@@ -69,13 +69,18 @@ Les constructions (bûches sans feuilles naturelles) ne sont pas concernées.
 - Section `[refinery]` de la config : tours par produit et recettes (même format que le moulin).
 - Recette : 5 lingots de fer, 1 lingot de cuivre, 2 seaux, 1 haut fourneau (supprime `recipes/refinery.json` pour la vendre ou la donner).
 
-### Scierie
-- **Scierie** : bûches en main + **maintenir clic droit** (6 tours). 1 bûche → **6 planches** (4 à l'établi), toutes essences vanilla + bambou. Section `[sawmill]` de la config.
-- **Coup de chance** (15 %) : la production est doublée (son, totem, message). Recette : fer + planches + bâtons.
+### Scierie (3D animée)
+- Clic droit avec des **bûches** : elles se posent sur le **chariot** (jusqu'à 16). La scie démarre toute seule : le tronc glisse sous la **lame qui tourne**, sciure et bruit de scie, et ressort en **planches** à l'avant.
+- **Clic droit à main nue** : récupérer les planches (accroupi : reprendre les bûches non sciées).
+- 1 bûche → **6 planches** (4 à l'établi), toutes essences vanilla + bambou. 15 % de **coup de chance** (planches doublées).
+- Section `[sawmill]` : `sawTicks` (80 = 4 s par bûche), `luckChance`, `recipes`. Recette : fer, planches, bâtons.
 
-### Mine et Fonderie
-- Zone **mine** (`/recolte zone creer <nom> mine`) : la roche se remplit de minerais (liste pondérée `[mine] ores`, variantes deepslate auto, `densite` réglable, `generer` pour regénérer). Un minerai miné **repousse** après 600 s (`/recolte zone repousse <nom> false` pour désactiver).
-- **Fonderie** : minerai brut en main + maintenir clic droit (10 tours). 2 minerai brut → **3 lingots** (fer, cuivre, or), plus rentable que le four. Coup de chance 10 % = lingots doublés. Section `[foundry]`.
+### Mine et four à minerai (3D animé)
+- Zone **mine** (`/recolte zone creer <nom> mine`) : la roche se remplit de minerais (liste pondérée `[mine] ores`, variantes deepslate auto, `densite` réglable, `generer` pour regénérer). Un minerai miné **repousse** après 600 s.
+- **Four à minerai** : clic droit avec du **minerai brut** (fer, cuivre, or) puis du **combustible** (charbon, bois…). Il s'allume (flammes, fumée de cheminée, lueur). **Clic droit à main nue = coup de soufflet** : il chauffe plus vite.
+- Posez un **Seau de coulée** (fer + argile) **devant le bec** : le métal fondu **coule** en jet lumineux dans le seau. Sans seau, le métal attend dans le four.
+- Le seau est brûlant puis refroidit (`coolTicks`, 5 s) : **clic droit avec un seau d'eau = trempe** (vapeur, instantané). Une fois solide, clic droit pour prendre les **lingots**. 2 minerais bruts → 3 lingots, **coup de chance** 10 % = lingots doublés.
+- Section `[foundry]` : `smeltTicks`, `coolTicks`, `bellowsBoostTicks`, `bellowsMaxTicks`, `luckChance`, `recipes`.
 
 ### Écologie
 Chaque arbre abattu = +1 dette, chaque replantation sur une souche = −1.

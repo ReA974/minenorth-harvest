@@ -25,6 +25,7 @@ public class MineNorthHarvest {
     public MineNorthHarvest() {
         IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
         ModBlocks.BLOCKS.register(modBus);
+        com.minenorth_harvest.registry.ModBlockEntities.TYPES.register(modBus);
         ModItems.ITEMS.register(modBus);
         ModCreativeTabs.TABS.register(modBus);
 

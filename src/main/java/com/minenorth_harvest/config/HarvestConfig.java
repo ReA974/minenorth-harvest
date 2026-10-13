@@ -35,6 +35,12 @@ public final class HarvestConfig {
     public static final ForgeConfigSpec.BooleanValue FAST_LEAF_DECAY;
     public static final ForgeConfigSpec.BooleanValue LEAVE_STUMP;
     public static final ForgeConfigSpec.IntValue LOGS_PER_TICK;
+    public static final ForgeConfigSpec.IntValue RAGE_BASE;
+    public static final ForgeConfigSpec.IntValue RAGE_LOGS_PER_POINT;
+    public static final ForgeConfigSpec.IntValue RAGE_MAX;
+    public static final ForgeConfigSpec.IntValue RAGE_COMBO_WINDOW;
+    public static final ForgeConfigSpec.IntValue RAGE_DECAY_DELAY;
+    public static final ForgeConfigSpec.IntValue RAGE_DECAY_INTERVAL;
 
     // ---- Zones ----
     public static final ForgeConfigSpec.BooleanValue REQUIRE_ZONE;
@@ -61,10 +67,13 @@ public final class HarvestConfig {
     public static final ForgeConfigSpec.IntValue MILL_TURNS;
     public static final ForgeConfigSpec.IntValue MILL_COOLDOWN;
     public static final ForgeConfigSpec.ConfigValue<java.util.List<? extends String>> MILL_RECIPES;
-    public static final ForgeConfigSpec.IntValue SAWMILL_TURNS;
+    public static final ForgeConfigSpec.IntValue SAW_TICKS;
     public static final ForgeConfigSpec.ConfigValue<java.util.List<? extends String>> SAWMILL_RECIPES;
     public static final ForgeConfigSpec.DoubleValue SAWMILL_LUCK;
-    public static final ForgeConfigSpec.IntValue FOUNDRY_TURNS;
+    public static final ForgeConfigSpec.IntValue SMELT_TICKS;
+    public static final ForgeConfigSpec.IntValue COOL_TICKS;
+    public static final ForgeConfigSpec.IntValue BELLOWS_BOOST_TICKS;
+    public static final ForgeConfigSpec.IntValue BELLOWS_MAX_TICKS;
     public static final ForgeConfigSpec.DoubleValue FOUNDRY_LUCK;
     public static final ForgeConfigSpec.ConfigValue<java.util.List<? extends String>> FOUNDRY_RECIPES;
     public static final ForgeConfigSpec.IntValue MINE_REGEN_DELAY;
@@ -108,6 +117,12 @@ public final class HarvestConfig {
                 .defineInRange("manualLogBreakSpeed", 0.4, 0.01, 1.0);
         FAST_LEAF_DECAY = b.comment("Les feuilles orphelines tombent vite après l'abattage").define("fastLeafDecay", true);
         LEAVE_STUMP = b.comment("Laisser une souche à replanter").define("leaveStump", true);
+        RAGE_BASE = b.comment("Furie du bûcheron : points de base à remplir (chaque coup rapporte 1 à 3 points selon le combo)").defineInRange("rageBasePoints", 10, 1, 200);
+        RAGE_LOGS_PER_POINT = b.comment("1 point de plus tous les X bûches de l'arbre").defineInRange("rageLogsPerPoint", 4, 1, 100);
+        RAGE_MAX = b.comment("Plafond de points").defineInRange("rageMaxPoints", 24, 1, 500);
+        RAGE_COMBO_WINDOW = b.comment("Un coup frappé moins de X ticks après le précédent augmente le combo").defineInRange("rageComboWindowTicks", 8, 2, 40);
+        RAGE_DECAY_DELAY = b.comment("Sans coup depuis X ticks, la jauge se vide").defineInRange("rageDecayDelayTicks", 12, 2, 200);
+        RAGE_DECAY_INTERVAL = b.comment("Quand elle se vide : 1 point perdu tous les X ticks").defineInRange("rageDecayIntervalTicks", 6, 1, 100);
         LOGS_PER_TICK = b.comment("Bûches retirées par tick pendant la chute (effet visuel)").defineInRange("logsPerTick", 8, 1, 64);
         b.pop();
 
@@ -152,15 +167,21 @@ public final class HarvestConfig {
         b.pop();
 
         b.comment("Scierie : bûches en main, maintenir clic droit sur la scierie pour scier").push("sawmill");
-        SAWMILL_TURNS = b.comment("Tours de scie pour obtenir un produit (un clic droit maintenu = environ 5 tours par seconde)")
-                .defineInRange("turnsPerProduct", 6, 1, 200);
+        SAW_TICKS = b.comment("Durée (ticks) pour scier une bûche : le tronc passe sous la lame (20 ticks = 1 s)")
+                .defineInRange("sawTicks", 80, 10, 1200);
         SAWMILL_RECIPES = b.comment("Recettes de la scierie, format \"entrée*quantité=sortie*quantité\" (une bûche donne 6 planches au lieu de 4 à l'établi)")
                 .defineList("recipes", java.util.List.of("minecraft:oak_log*1=minecraft:oak_planks*6", "minecraft:stripped_oak_log*1=minecraft:oak_planks*6", "minecraft:spruce_log*1=minecraft:spruce_planks*6", "minecraft:stripped_spruce_log*1=minecraft:spruce_planks*6", "minecraft:birch_log*1=minecraft:birch_planks*6", "minecraft:stripped_birch_log*1=minecraft:birch_planks*6", "minecraft:jungle_log*1=minecraft:jungle_planks*6", "minecraft:stripped_jungle_log*1=minecraft:jungle_planks*6", "minecraft:acacia_log*1=minecraft:acacia_planks*6", "minecraft:stripped_acacia_log*1=minecraft:acacia_planks*6", "minecraft:dark_oak_log*1=minecraft:dark_oak_planks*6", "minecraft:stripped_dark_oak_log*1=minecraft:dark_oak_planks*6", "minecraft:mangrove_log*1=minecraft:mangrove_planks*6", "minecraft:stripped_mangrove_log*1=minecraft:mangrove_planks*6", "minecraft:cherry_log*1=minecraft:cherry_planks*6", "minecraft:stripped_cherry_log*1=minecraft:cherry_planks*6", "minecraft:bamboo_block*1=minecraft:bamboo_planks*6", "minecraft:stripped_bamboo_block*1=minecraft:bamboo_planks*6"), o -> o instanceof String);
         SAWMILL_LUCK = b.comment("Chance de 'coup de chance' (production doublée) à chaque produit").defineInRange("luckChance", 0.15, 0.0, 1.0);
         b.pop();
 
         b.comment("Fonderie : minerai brut en main, maintenir clic droit pour fondre (plus rentable que le four)").push("foundry");
-        FOUNDRY_TURNS = b.comment("Tours de soufflet pour obtenir un produit").defineInRange("turnsPerProduct", 10, 1, 200);
+        SMELT_TICKS = b.comment("Durée (ticks) d'une fonte quand le four brûle (le soufflet l'accélère)")
+                .defineInRange("smeltTicks", 200, 20, 6000);
+        COOL_TICKS = b.comment("Durée (ticks) avant que le métal versé dans le seau soit solide (trempe à l'eau = instantané)")
+                .defineInRange("coolTicks", 100, 10, 6000);
+        BELLOWS_BOOST_TICKS = b.comment("Chaque coup de soufflet accélère le four pendant X ticks")
+                .defineInRange("bellowsBoostTicks", 30, 5, 400);
+        BELLOWS_MAX_TICKS = b.comment("Accélération maximale cumulée (ticks)").defineInRange("bellowsMaxTicks", 120, 10, 1200);
         FOUNDRY_LUCK = b.comment("Chance de 'coup de chance' (production doublée) à chaque produit").defineInRange("luckChance", 0.1, 0.0, 1.0);
         FOUNDRY_RECIPES = b.comment("Recettes de la fonderie, format \"entrée*quantité=sortie*quantité\"")
                 .defineList("recipes", java.util.List.of(

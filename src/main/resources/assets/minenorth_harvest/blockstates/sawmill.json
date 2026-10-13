@@ -1,7 +1,20 @@
 {
   "variants": {
-    "": {
-      "model": "minenorth_harvest:block/sawmill"
+    "facing=north": {
+      "model": "minenorth_harvest:block/sawmill",
+      "y": 0
+    },
+    "facing=east": {
+      "model": "minenorth_harvest:block/sawmill",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "minenorth_harvest:block/sawmill",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "minenorth_harvest:block/sawmill",
+      "y": 270
     }
   }
 }

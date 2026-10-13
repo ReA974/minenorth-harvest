@@ -107,9 +107,9 @@ public final class ChopManager {
 
         boolean exhausted = HarvestData.isForestExhausted(player);
 
-        int required = HarvestConfig.BASE_HITS.get() + tree.logs().size() / HarvestConfig.LOGS_PER_EXTRA_HIT.get();
-        required = Math.min(required, HarvestConfig.MAX_HITS.get());
-        if (exhausted) required += HarvestConfig.ECO_EXTRA_HITS.get();
+        int required = HarvestConfig.RAGE_BASE.get() + tree.logs().size() / HarvestConfig.RAGE_LOGS_PER_POINT.get();
+        required = Math.min(required, HarvestConfig.RAGE_MAX.get());
+        if (exhausted) required += HarvestConfig.ECO_EXTRA_HITS.get() * 3;
         required = Math.max(1, required);
 
         ChopSession s = new ChopSession(player, pos.immutable(), tree.base(), tree.logs(), required, exhausted);
@@ -143,7 +143,8 @@ public final class ChopManager {
 
     // ------------------------------------------------------------------ coups
 
-    public static void swing(ServerPlayer player, float clientCursor) {
+    /** Furie du bûcheron : on frappe le plus vite possible, le combo multiplie les points, la jauge se vide si on ralentit. */
+    public static void swing(ServerPlayer player, float ignoredClientCursor) {
         ChopSession s = SESSIONS.get(player.getUUID());
         if (s == null) return;
         ServerLevel level = player.serverLevel();
@@ -155,67 +156,41 @@ public final class ChopManager {
             return;
         }
 
-        // Validation anti-triche légère : la position envoyée doit correspondre au curseur
-        // à un instant récent (tolère la latence). Sinon on prend la valeur serveur.
-        float cursor = s.cursorAt(now);
-        if (clientCursor >= 0f && clientCursor <= 1f) {
-            for (double t = now - 8; t <= now + 1; t += 0.25) {
-                if (Math.abs(s.cursorAt(t) - clientCursor) < 0.025f) {
-                    cursor = clientCursor;
-                    break;
-                }
-            }
-        }
-
+        boolean chained = s.lastSwingTick > Long.MIN_VALUE / 4 && now - s.lastSwingTick <= HarvestConfig.RAGE_COMBO_WINDOW.get();
+        s.combo = chained ? s.combo + 1 : 0;
         s.lastSwingTick = now;
         s.lastActivityTick = now;
+        s.lastDecayTick = now;
         s.swings++;
-        byte result = ChopMath.evaluate(cursor, s.zoneCenter, s.zoneWidth, s.perfectWidth);
+        int gain = 1 + Math.min(2, s.combo / 3);
+        byte result = gain >= 3 ? ChopMath.RESULT_PERFECT : gain == 2 ? ChopMath.RESULT_GOOD : ChopMath.RESULT_MISS;
         s.lastResult = result;
         s.resultSeq++;
+        s.progress += gain;
+        if (gain >= 3) s.perfects++;
 
         ItemStack axe = player.getMainHandItem();
-        int damage = 1 + (result == ChopMath.RESULT_MISS ? HarvestConfig.MISS_EXTRA_DAMAGE.get() : 0);
         if (!player.getAbilities().instabuild) {
-            axe.hurtAndBreak(damage, player, p -> p.broadcastBreakEvent(InteractionHand.MAIN_HAND));
+            axe.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(InteractionHand.MAIN_HAND));
         }
         player.swing(InteractionHand.MAIN_HAND, true);
 
         BlockState targetState = level.getBlockState(s.target);
         double x = s.target.getX() + 0.5, y = s.target.getY() + 0.5, z = s.target.getZ() + 0.5;
-        switch (result) {
-            case ChopMath.RESULT_PERFECT -> {
-                s.progress += 2;
-                s.combo++;
-                s.perfects++;
-                level.playSound(null, s.target, SoundEvents.AXE_STRIP, SoundSource.PLAYERS, 1.0f, 1.2f);
-                level.playSound(null, s.target, SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.PLAYERS, 0.5f, 0.8f + 0.1f * Math.min(s.combo, 6));
-                level.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, targetState), x, y, z, 20, 0.3, 0.3, 0.3, 0.15);
-                level.sendParticles(ParticleTypes.CRIT, x, y, z, 10, 0.3, 0.3, 0.3, 0.2);
-            }
-            case ChopMath.RESULT_GOOD -> {
-                s.progress += 1;
-                s.combo = 0;
-                level.playSound(null, s.target, SoundEvents.AXE_STRIP, SoundSource.PLAYERS, 1.0f, 1.0f);
-                level.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, targetState), x, y, z, 10, 0.3, 0.3, 0.3, 0.1);
-            }
-            default -> {
-                s.combo = 0;
-                level.playSound(null, s.target, SoundEvents.WOOD_HIT, SoundSource.PLAYERS, 1.0f, 0.6f);
-            }
+        float pitch = 0.8f + 0.06f * Math.min(s.combo, 10);
+        level.playSound(null, s.target, SoundEvents.AXE_STRIP, SoundSource.PLAYERS, 1.0f, pitch);
+        level.playSound(null, s.target, SoundEvents.WOOD_HIT, SoundSource.PLAYERS, 0.7f, pitch);
+        int chips = 6 + gain * 6;
+        level.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, targetState), x, y, z, chips, 0.3, 0.3, 0.3, 0.1 + 0.05 * gain);
+        if (gain >= 3) {
+            level.sendParticles(ParticleTypes.CRIT, x, y, z, 10, 0.3, 0.3, 0.3, 0.2);
+            level.sendParticles(ParticleTypes.FLAME, x, y, z, 4, 0.25, 0.25, 0.25, 0.03);
+            level.playSound(null, s.target, SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.PLAYERS, 0.4f, pitch);
         }
 
         if (s.progress >= s.required) {
             finish(s);
             return;
-        }
-
-        if (result != ChopMath.RESULT_MISS) {
-            // le curseur continue sa course (pas de retour à gauche) mais accélère
-            int newPeriod = Math.max(HarvestConfig.MIN_CURSOR_PERIOD.get(), s.period - 2);
-            s.startTick = ChopMath.rebase(now, s.startTick, s.period, newPeriod);
-            s.period = newPeriod;
-            moveZone(s, level.random);
         }
         sync(s);
     }
@@ -308,7 +283,15 @@ public final class ChopManager {
         List<ServerPlayer> toCancel = new ArrayList<>();
         for (ChopSession s : SESSIONS.values()) {
             long now = s.player.serverLevel().getGameTime();
-            if (!validate(s) || now - s.lastActivityTick > timeout) toCancel.add(s.player);
+            if (!validate(s) || now - s.lastActivityTick > timeout) { toCancel.add(s.player); continue; }
+            // la jauge se vide si on ralentit : il faut garder la cadence
+            if (s.progress > 0 && now - s.lastActivityTick > HarvestConfig.RAGE_DECAY_DELAY.get()
+                    && now - s.lastDecayTick >= HarvestConfig.RAGE_DECAY_INTERVAL.get()) {
+                s.lastDecayTick = now;
+                s.progress--;
+                s.combo = 0;
+                sync(s);
+            }
         }
         for (ServerPlayer p : toCancel) cancel(p, true);
     }
