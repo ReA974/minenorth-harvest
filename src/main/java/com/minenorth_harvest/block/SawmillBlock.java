@@ -17,6 +17,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -40,11 +41,34 @@ import java.util.List;
 public class SawmillBlock extends BaseEntityBlock {
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
 
-    private static final VoxelShape SHAPE = Shapes.or(
-            Block.box(0, 0, 0, 16, 8, 16),
-            Block.box(1, 8, 7, 3, 16, 9),
-            Block.box(13, 8, 7, 15, 16, 9),
-            Block.box(1, 15, 7, 15, 16, 9));
+    private static final VoxelShape SHAPE = Shapes.block();
+
+    /**
+     * Cellules occupées en plus du bloc maître (décalages x, y, z pour une scierie orientée au nord) :
+     * 2 de large (x), 2 de haut (y), 3 de long (z : une cellule devant, le maître, une derrière).
+     */
+    public static final int[][] PARTS = {
+            {0, 0, -1}, {0, 0, 1}, {1, 0, -1}, {1, 0, 0}, {1, 0, 1},
+            {0, 1, -1}, {0, 1, 0}, {0, 1, 1}, {1, 1, -1}, {1, 1, 0}, {1, 1, 1}};
+
+    public static Rotation rotationFor(Direction facing) {
+        return switch (facing) {
+            case EAST -> Rotation.CLOCKWISE_90;
+            case SOUTH -> Rotation.CLOCKWISE_180;
+            case WEST -> Rotation.COUNTERCLOCKWISE_90;
+            default -> Rotation.NONE;
+        };
+    }
+
+    public static BlockPos partPos(BlockPos master, Direction facing, int index) {
+        int[] o = PARTS[index];
+        return master.offset(new BlockPos(o[0], o[1], o[2]).rotate(rotationFor(facing)));
+    }
+
+    public static BlockPos masterOf(BlockPos part, Direction facing, int index) {
+        int[] o = PARTS[index];
+        return part.subtract(new BlockPos(o[0], o[1], o[2]).rotate(rotationFor(facing)));
+    }
 
     public SawmillBlock(Properties properties) {
         super(properties);
@@ -58,7 +82,23 @@ public class SawmillBlock extends BaseEntityBlock {
 
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext ctx) {
-        return defaultBlockState().setValue(FACING, ctx.getHorizontalDirection().getOpposite());
+        Direction facing = ctx.getHorizontalDirection().getOpposite();
+        Level level = ctx.getLevel();
+        BlockPos pos = ctx.getClickedPos();
+        for (int i = 0; i < PARTS.length; i++) {
+            BlockPos p = partPos(pos, facing, i);
+            if (p.getY() >= level.getMaxBuildHeight() || !level.getBlockState(p).canBeReplaced(ctx)) return null; // pas la place
+        }
+        return defaultBlockState().setValue(FACING, facing);
+    }
+
+    @Override
+    public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable net.minecraft.world.entity.LivingEntity placer, ItemStack stack) {
+        Direction facing = state.getValue(FACING);
+        for (int i = 0; i < PARTS.length; i++) {
+            level.setBlock(partPos(pos, facing, i), com.minenorth_harvest.registry.ModBlocks.SAWMILL_PART.get().defaultBlockState()
+                    .setValue(SawmillPartBlock.FACING, facing).setValue(SawmillPartBlock.PART, i), Block.UPDATE_ALL);
+        }
     }
 
     @Override
@@ -140,6 +180,15 @@ public class SawmillBlock extends BaseEntityBlock {
         if (!state.is(newState.getBlock()) && level.getBlockEntity(pos) instanceof SawmillBlockEntity be) {
             dropAll(level, pos, be.input());
             dropAll(level, pos, be.output());
+        }
+        if (!state.is(newState.getBlock())) { // le maître part : toutes les cellules annexes disparaissent
+            Direction facing = state.getValue(FACING);
+            for (int i = 0; i < PARTS.length; i++) {
+                BlockPos p = partPos(pos, facing, i);
+                if (level.getBlockState(p).is(com.minenorth_harvest.registry.ModBlocks.SAWMILL_PART.get())) {
+                    level.setBlock(p, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
+                }
+            }
         }
         super.onRemove(state, level, pos, newState, moved);
     }

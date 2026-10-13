@@ -2,6 +2,7 @@
   "replace": false,
   "values": [
     "minenorth_harvest:tree_stump",
-    "minenorth_harvest:sawmill"
+    "minenorth_harvest:sawmill",
+    "minenorth_harvest:sawmill_part"
   ]
 }

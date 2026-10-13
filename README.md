@@ -69,7 +69,8 @@ Casser les bûches à la main reste possible mais plus lent (`manualLogBreakSpee
 - Section `[refinery]` de la config : tours par produit et recettes (même format que le moulin).
 - Recette : 5 lingots de fer, 1 lingot de cuivre, 2 seaux, 1 haut fourneau (supprime `recipes/refinery.json` pour la vendre ou la donner).
 
-### Scierie (3D animée)
+### Scierie (3D animée, multibloc 2 × 3 × 2)
+- **Grande machine** : elle occupe **2 de large, 3 de long et 2 de haut** (il faut la place pour la poser, sinon rien ne se passe). Le bloc que vous visez en la posant est le centre ; elle s'orientera face à vous. La casser (n'importe quelle partie) la retire en entier.
 - Clic droit avec des **bûches** : elles se posent sur le **chariot** (jusqu'à 16). La scie démarre toute seule : le tronc glisse sous la **lame qui tourne**, sciure et bruit de scie, et ressort en **planches** à l'avant.
 - **Clic droit à main nue** : récupérer les planches (accroupi : reprendre les bûches non sciées).
 - 1 bûche → **6 planches** (4 à l'établi), toutes essences vanilla + bambou. 15 % de **coup de chance** (planches doublées).

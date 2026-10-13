@@ -67,6 +67,14 @@ public final class ModBlocks {
                     .sound(SoundType.WOOD)
                     .noOcclusion()));
 
+    public static final RegistryObject<Block> SAWMILL_PART = BLOCKS.register("sawmill_part",
+            () -> new com.minenorth_harvest.block.SawmillPartBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.WOOD)
+                    .strength(2.5f)
+                    .sound(SoundType.WOOD)
+                    .noLootTable()
+                    .noOcclusion()));
+
     public static final RegistryObject<Block> FOUNDRY = BLOCKS.register("foundry",
             () -> new com.minenorth_harvest.block.OreFurnaceBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.STONE)

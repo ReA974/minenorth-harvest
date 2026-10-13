@@ -37,6 +37,25 @@ public class SawmillBlockEntity extends BlockEntity {
         super(ModBlockEntities.SAWMILL.get(), pos, state);
     }
 
+    /** Point du monde d'un point du modèle (en pixels, repère du maître orienté au nord). */
+    public net.minecraft.world.phys.Vec3 worldPoint(double px, double py, double pz) {
+        net.minecraft.core.Direction f = getBlockState().getValue(SawmillBlock.FACING);
+        double dx = px / 16.0 - 0.5, dz = pz / 16.0 - 0.5;
+        double rx, rz;
+        switch (f) {
+            case EAST -> { rx = -dz; rz = dx; }
+            case SOUTH -> { rx = -dx; rz = -dz; }
+            case WEST -> { rx = dz; rz = -dx; }
+            default -> { rx = dx; rz = dz; }
+        }
+        return new net.minecraft.world.phys.Vec3(worldPosition.getX() + 0.5 + rx, worldPosition.getY() + py / 16.0, worldPosition.getZ() + 0.5 + rz);
+    }
+
+    @Override
+    public net.minecraft.world.phys.AABB getRenderBoundingBox() {
+        return new net.minecraft.world.phys.AABB(worldPosition).inflate(4, 3, 4);
+    }
+
     public ItemStack input() { return input; }
     public ItemStack output() { return output; }
     public long cycleStart() { return cycleStart; }
@@ -93,8 +112,9 @@ public class SawmillBlockEntity extends BlockEntity {
                 level.playSound(null, pos, SoundEvents.GRINDSTONE_USE, SoundSource.BLOCKS, 0.5f, 1.4f + level.random.nextFloat() * 0.3f);
             }
             Block planks = Block.byItem(r.output());
+            var blade = be.worldPoint(16, 19, 16);
             server.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, planks.defaultBlockState()),
-                    pos.getX() + 0.5, pos.getY() + 0.75, pos.getZ() + 0.5, 3, 0.18, 0.1, 0.18, 0.04);
+                    blade.x, blade.y, blade.z, 4, 0.25, 0.12, 0.25, 0.05);
         }
         if (t >= be.cycleLen) {
             be.input.shrink(r.inCount());
@@ -106,7 +126,8 @@ public class SawmillBlockEntity extends BlockEntity {
             level.playSound(null, pos, SoundEvents.WOOD_BREAK, SoundSource.BLOCKS, 0.8f, 0.9f);
             if (lucky) {
                 level.playSound(null, pos, SoundEvents.PLAYER_LEVELUP, SoundSource.BLOCKS, 0.5f, 1.5f);
-                server.sendParticles(ParticleTypes.TOTEM_OF_UNDYING, pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5, 12, 0.3, 0.3, 0.3, 0.2);
+                var top = be.worldPoint(16, 34, 16);
+                server.sendParticles(ParticleTypes.TOTEM_OF_UNDYING, top.x, top.y, top.z, 14, 0.4, 0.3, 0.4, 0.2);
             }
             be.sync();
         }

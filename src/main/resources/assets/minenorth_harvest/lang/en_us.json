@@ -107,5 +107,6 @@
   "message.minenorth_harvest.furnace_hint": "§7Minerai brut + combustible dans le four, puis clic droit à main nue : soufflet !",
   "message.minenorth_harvest.furnace_bucket": "§cPlacez un seau de coulée devant le bec du four.",
   "block.minenorth_harvest.casting_bucket": "Seau de coulée",
-  "item.minenorth_harvest.saw_blade": "Lame de scie"
+  "item.minenorth_harvest.saw_blade": "Lame de scie",
+  "block.minenorth_harvest.sawmill_part": "Scierie"
 }
