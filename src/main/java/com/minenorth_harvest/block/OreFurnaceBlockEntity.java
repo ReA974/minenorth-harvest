@@ -124,7 +124,7 @@ public class OreFurnaceBlockEntity extends BlockEntity {
     public static void serverTick(Level level, BlockPos pos, BlockState state, OreFurnaceBlockEntity be) {
         if (!(level instanceof ServerLevel server)) return;
         boolean dirty = false;
-        MachineRecipes.Recipe r = be.ore.isEmpty() ? null : MachineRecipes.find(be.ore, HarvestConfig.FOUNDRY_RECIPES.get());
+        MachineRecipes.Recipe r = be.ore.isEmpty() ? null : MachineRecipes.findFoundry(be.ore);
         boolean canSmelt = r != null && be.ore.getCount() >= r.inCount() && be.pending.isEmpty();
 
         if (be.burn > 0) {
@@ -132,7 +132,11 @@ public class OreFurnaceBlockEntity extends BlockEntity {
         }
         if (be.boost > 0) be.boost--;
 
-        if (be.burn <= 0 && canSmelt && !be.fuel.isEmpty()) {
+        // Sans combustible (par défaut) : le four chauffe tout seul tant qu'il a du minerai à fondre.
+        boolean needsFuel = HarvestConfig.FOUNDRY_NEEDS_FUEL.get();
+        if (!needsFuel && canSmelt) be.burn = Math.max(be.burn, 40);
+
+        if (needsFuel && be.burn <= 0 && canSmelt && !be.fuel.isEmpty()) {
             int time = burnTimeOf(be.fuel);
             if (time > 0) {
                 be.burn = time;

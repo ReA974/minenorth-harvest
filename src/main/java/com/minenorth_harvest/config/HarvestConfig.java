@@ -75,6 +75,7 @@ public final class HarvestConfig {
     public static final ForgeConfigSpec.IntValue BELLOWS_BOOST_TICKS;
     public static final ForgeConfigSpec.IntValue BELLOWS_MAX_TICKS;
     public static final ForgeConfigSpec.DoubleValue FOUNDRY_LUCK;
+    public static final ForgeConfigSpec.BooleanValue FOUNDRY_NEEDS_FUEL;
     public static final ForgeConfigSpec.ConfigValue<java.util.List<? extends String>> FOUNDRY_RECIPES;
     public static final ForgeConfigSpec.IntValue MINE_REGEN_DELAY;
     public static final ForgeConfigSpec.ConfigValue<java.util.List<? extends String>> MINE_ORES;
@@ -182,6 +183,8 @@ public final class HarvestConfig {
         BELLOWS_BOOST_TICKS = b.comment("Chaque coup de soufflet accélère le four pendant X ticks")
                 .defineInRange("bellowsBoostTicks", 30, 5, 400);
         BELLOWS_MAX_TICKS = b.comment("Accélération maximale cumulée (ticks)").defineInRange("bellowsMaxTicks", 120, 10, 1200);
+        FOUNDRY_NEEDS_FUEL = b.comment("Le four à minerai exige du combustible (charbon, bois...) ; false = il chauffe seul")
+                .define("needsFuel", false);
         FOUNDRY_LUCK = b.comment("Chance de 'coup de chance' (production doublée) à chaque produit").defineInRange("luckChance", 0.1, 0.0, 1.0);
         FOUNDRY_RECIPES = b.comment("Recettes de la fonderie, format \"entrée*quantité=sortie*quantité\"")
                 .defineList("recipes", java.util.List.of(

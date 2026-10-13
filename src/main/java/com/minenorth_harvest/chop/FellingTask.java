@@ -43,6 +43,9 @@ public class FellingTask {
     private final List<BlockPos> leafQueue = new ArrayList<>();
     private int minX, minY, minZ, maxX, maxY, maxZ;
 
+    private boolean stumpPlaced;
+    private final List<BlockPos> broken = new ArrayList<>();
+
     private final boolean bypassProtection;
     @Nullable private final String regrowSapling;
     @Nullable private final String dropSapling;
@@ -96,18 +99,12 @@ public class FellingTask {
 
             collectDrops(state, pos);
             level.destroyBlock(pos, false, player);
+            broken.add(pos);
 
-            if (pos.equals(base) && HarvestConfig.LEAVE_STUMP.get()
-                    && level.getBlockState(pos.below()).is(BlockTags.DIRT)
-                    && level.getBlockState(pos).isAir()) {
-                level.setBlock(pos, ModBlocks.TREE_STUMP.get().defaultBlockState(), Block.UPDATE_ALL);
-                if (regrowSapling != null) {
-                    ZoneData.get(level).addRegrow(pos, regrowSapling,
-                            level.getGameTime() + HarvestConfig.REGROW_DELAY.get() * 20L);
-                }
-            }
+            if (pos.equals(base)) placeStump(pos);
         }
         if (index >= logs.size()) {
+            if (!stumpPlaced) placeLowestStump();
             dropCollected();
             if (bonusLogs > 0 && !bonusItem.isEmpty()) {
                 ItemStack drop = bonusItem.copy();
@@ -123,6 +120,40 @@ public class FellingTask {
                 phase = Phase.DONE;
             }
         }
+    }
+
+    /** Pose la souche (et programme la repousse en zone) à la place de la bûche de pied abattue. */
+    private boolean placeStump(BlockPos pos) {
+        if (stumpPlaced || !HarvestConfig.LEAVE_STUMP.get()) return false;
+        if (!level.getBlockState(pos).isAir() || !canHoldStump(pos.below())) return false;
+        level.setBlock(pos, ModBlocks.TREE_STUMP.get().defaultBlockState(), Block.UPDATE_ALL);
+        stumpPlaced = true;
+        if (regrowSapling != null) {
+            ZoneData.get(level).addRegrow(pos, regrowSapling, level.getGameTime() + HarvestConfig.REGROW_DELAY.get() * 20L);
+        }
+        return true;
+    }
+
+    /** Filet de sécurité : si le pied « officiel » n'a pas pu porter la souche, on prend la bûche abattue la plus basse. */
+    private void placeLowestStump() {
+        if (!HarvestConfig.LEAVE_STUMP.get()) return;
+        List<BlockPos> candidates = new ArrayList<>(broken);
+        candidates.sort(java.util.Comparator.<BlockPos>comparingInt(BlockPos::getY)
+                .thenComparingDouble(b -> b.distSqr(base)));
+        for (BlockPos p : candidates) if (placeStump(p)) return;
+        com.mojang.logging.LogUtils.getLogger().info("Abattage en {} : aucune souche posée ({} bûches cassées sur {}, pied {}, sous le pied : {}).",
+                base, broken.size(), logs.size(), level.getBlockState(base), level.getBlockState(base.below()));
+    }
+
+    /**
+     * Une souche tient sur de la terre, mais aussi sur n'importe quel sol plein (herbe de construction, terre
+     * modifiée, dalle...) : seuls le vide, les liquides, les bûches et les feuilles sont refusés.
+     */
+    private boolean canHoldStump(BlockPos below) {
+        BlockState s = level.getBlockState(below);
+        if (s.is(BlockTags.DIRT)) return true;
+        return !s.isAir() && s.getFluidState().isEmpty() && !s.is(BlockTags.LOGS) && !s.is(BlockTags.LEAVES)
+                && s.isFaceSturdy(level, below, net.minecraft.core.Direction.UP);
     }
 
     private void collectDrops(BlockState state, BlockPos pos) {

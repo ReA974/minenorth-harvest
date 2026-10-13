@@ -104,7 +104,7 @@
   "hud.minenorth_harvest.fury": "FURIE !",
   "message.minenorth_harvest.bucket_empty": "§7Seau de coulée vide. Posez-le devant le bec du four.",
   "message.minenorth_harvest.bucket_hot": "§cAïe, c'est brûlant ! §7Attendez que ça refroidisse (ou trempez-le à l'eau).",
-  "message.minenorth_harvest.furnace_hint": "§7Minerai brut + combustible dans le four, puis clic droit à main nue : soufflet !",
+  "message.minenorth_harvest.furnace_hint": "§7Mettez du minerai (brut ou en bloc) dans le four, puis clic droit à main nue : soufflet !",
   "message.minenorth_harvest.furnace_bucket": "§cPlacez un seau de coulée devant le bec du four.",
   "block.minenorth_harvest.casting_bucket": "Seau de coulée",
   "item.minenorth_harvest.saw_blade": "Lame de scie",

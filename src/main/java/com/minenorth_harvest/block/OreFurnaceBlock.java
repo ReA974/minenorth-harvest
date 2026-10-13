@@ -137,14 +137,14 @@ public class OreFurnaceBlock extends BaseEntityBlock {
 
         ItemStack held = player.getItemInHand(hand);
         if (!held.isEmpty()) {
-            if (MachineRecipes.find(held, HarvestConfig.FOUNDRY_RECIPES.get()) != null) {
+            if (MachineRecipes.findFoundry(held) != null) {
                 int moved = be.insertOre(held);
                 if (moved > 0) {
                     if (!player.getAbilities().instabuild) held.shrink(moved);
                     level.playSound(null, pos, SoundEvents.STONE_PLACE, SoundSource.BLOCKS, 0.8f, 0.7f);
                     return InteractionResult.CONSUME;
                 }
-            } else if (OreFurnaceBlockEntity.burnTimeOf(held) > 0) {
+            } else if (HarvestConfig.FOUNDRY_NEEDS_FUEL.get() && OreFurnaceBlockEntity.burnTimeOf(held) > 0) {
                 int moved = be.insertFuel(held);
                 if (moved > 0) {
                     if (!player.getAbilities().instabuild) held.shrink(moved);

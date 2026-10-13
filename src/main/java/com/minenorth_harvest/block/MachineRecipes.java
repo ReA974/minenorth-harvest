@@ -24,6 +24,19 @@ public final class MachineRecipes {
         return null;
     }
 
+    /** Minerais en bloc fondus même si la config ne les liste pas (même rendement que le minerai brut : 2 -> 3). */
+    private static final List<String> FOUNDRY_ORES = List.of(
+            "minecraft:iron_ore*2=minecraft:iron_ingot*3", "minecraft:deepslate_iron_ore*2=minecraft:iron_ingot*3",
+            "minecraft:copper_ore*2=minecraft:copper_ingot*3", "minecraft:deepslate_copper_ore*2=minecraft:copper_ingot*3",
+            "minecraft:gold_ore*2=minecraft:gold_ingot*3", "minecraft:deepslate_gold_ore*2=minecraft:gold_ingot*3");
+
+    /** Recette de la fonderie : celles de la config d'abord, puis les minerais en bloc. */
+    @Nullable
+    public static Recipe findFoundry(ItemStack held) {
+        Recipe r = find(held, com.minenorth_harvest.config.HarvestConfig.FOUNDRY_RECIPES.get());
+        return r != null ? r : find(held, FOUNDRY_ORES);
+    }
+
     @Nullable
     public static Recipe parse(String line) {
         String[] sides = line.split("=");
