@@ -42,6 +42,11 @@ public class OreFurnaceBlockEntity extends BlockEntity {
         super(ModBlockEntities.ORE_FURNACE.get(), pos, state);
     }
 
+    @Override
+    public net.minecraft.world.phys.AABB getRenderBoundingBox() {
+        return new net.minecraft.world.phys.AABB(worldPosition).inflate(3, 2, 3);
+    }
+
     public ItemStack ore() { return ore; }
     public ItemStack fuel() { return fuel; }
     public ItemStack pending() { return pending; }

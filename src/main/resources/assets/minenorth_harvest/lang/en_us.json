@@ -108,5 +108,6 @@
   "message.minenorth_harvest.furnace_bucket": "§cPlacez un seau de coulée devant le bec du four.",
   "block.minenorth_harvest.casting_bucket": "Seau de coulée",
   "item.minenorth_harvest.saw_blade": "Lame de scie",
-  "block.minenorth_harvest.sawmill_part": "Scierie"
+  "block.minenorth_harvest.sawmill_part": "Scierie",
+  "block.minenorth_harvest.foundry_part": "Four à minerai"
 }

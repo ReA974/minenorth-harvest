@@ -78,7 +78,7 @@ Casser les bûches à la main reste possible mais plus lent (`manualLogBreakSpee
 
 ### Mine et four à minerai (3D animé)
 - Zone **mine** (`/recolte zone creer <nom> mine`) : la roche se remplit de minerais (liste pondérée `[mine] ores`, variantes deepslate auto, `densite` réglable, `generer` pour regénérer). Un minerai miné **repousse** après 600 s.
-- **Four à minerai** : clic droit avec du **minerai brut** (fer, cuivre, or) puis du **combustible** (charbon, bois…). Il s'allume (flammes, fumée de cheminée, lueur). **Clic droit à main nue = coup de soufflet** : il chauffe plus vite.
+- **Four à minerai** (multibloc **2 de large × 2 de profondeur × 2 de haut** : tour de coulée en fer, foyer en briques avec gueule, cheminée, bec de coulée à l'avant ; il faut la place pour le poser, le casser retire tout) : clic droit avec du **minerai brut** (fer, cuivre, or) puis du **combustible** (charbon, bois…). Il s'allume (flammes, fumée de cheminée, lueur). **Clic droit à main nue = coup de soufflet** : il chauffe plus vite.
 - Posez un **Seau de coulée** (fer + argile) **devant le bec** : le métal fondu **coule** en jet lumineux dans le seau. Sans seau, le métal attend dans le four.
 - Le seau est brûlant puis refroidit (`coolTicks`, 5 s) : **clic droit avec un seau d'eau = trempe** (vapeur, instantané). Une fois solide, clic droit pour prendre les **lingots**. 2 minerais bruts → 3 lingots, **coup de chance** 10 % = lingots doublés.
 - Section `[foundry]` : `smeltTicks`, `coolTicks`, `bellowsBoostTicks`, `bellowsMaxTicks`, `luckChance`, `recipes`.

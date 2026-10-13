@@ -84,6 +84,15 @@ public final class ModBlocks {
                     .lightLevel(st -> st.getValue(com.minenorth_harvest.block.OreFurnaceBlock.LIT) ? 13 : 0)
                     .noOcclusion()));
 
+    public static final RegistryObject<Block> FOUNDRY_PART = BLOCKS.register("foundry_part",
+            () -> new com.minenorth_harvest.block.OreFurnacePartBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.STONE)
+                    .strength(3.0f, 6.0f)
+                    .requiresCorrectToolForDrops()
+                    .sound(SoundType.STONE)
+                    .noLootTable()
+                    .noOcclusion()));
+
     public static final RegistryObject<Block> CASTING_BUCKET = BLOCKS.register("casting_bucket",
             () -> new com.minenorth_harvest.block.CastingBucketBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.METAL)

@@ -24,7 +24,7 @@ public class OreFurnaceRenderer implements BlockEntityRenderer<OreFurnaceBlockEn
         RenderUtil.orient(ps, facing);
         // bec à (8, 8, -8) : le jet tombe jusqu'à la surface du seau
         RenderUtil.glowBox(ps, RenderUtil.glowBuffer(buffers), RenderUtil.sprite("block/lava_flow"),
-                7.4f + wob, 5.2f, -8.6f, 8.6f + wob, 8.1f, -7.4f, rgb, false);
+                7.4f + wob, 5.3f, -8.6f, 8.6f + wob, 12.6f, -7.4f, rgb, false);
         ps.popPose();
     }
 

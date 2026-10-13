@@ -4,6 +4,7 @@
     "minenorth_harvest:oil_deposit",
     "minenorth_harvest:refinery",
     "minenorth_harvest:foundry",
-    "minenorth_harvest:casting_bucket"
+    "minenorth_harvest:casting_bucket",
+    "minenorth_harvest:foundry_part"
   ]
 }

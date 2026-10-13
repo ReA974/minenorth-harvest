@@ -43,6 +43,31 @@ public class OreFurnaceBlock extends BaseEntityBlock {
 
     private static final VoxelShape SHAPE = Block.box(0, 0, 0, 16, 16, 16);
 
+    /** Cellules annexes (x, y, z pour un four orienté au nord) : 2 de large, 2 de profondeur (vers l'arrière), 2 de haut. */
+    public static final int[][] PARTS = {{1, 0, 0}, {0, 0, 1}, {1, 0, 1}, {0, 1, 0}, {1, 1, 0}, {0, 1, 1}, {1, 1, 1}};
+
+    public static BlockPos partPos(BlockPos master, Direction facing, int index) {
+        int[] o = PARTS[index];
+        return master.offset(new BlockPos(o[0], o[1], o[2]).rotate(SawmillBlock.rotationFor(facing)));
+    }
+
+    public static BlockPos masterOf(BlockPos part, Direction facing, int index) {
+        int[] o = PARTS[index];
+        return part.subtract(new BlockPos(o[0], o[1], o[2]).rotate(SawmillBlock.rotationFor(facing)));
+    }
+
+    /** Point du monde d'un point du modèle (pixels, repère du maître orienté au nord). */
+    public static net.minecraft.world.phys.Vec3 worldPoint(BlockPos master, Direction f, double px, double py, double pz) {
+        double dx = px / 16.0 - 0.5, dz = pz / 16.0 - 0.5, rx, rz;
+        switch (f) {
+            case EAST -> { rx = -dz; rz = dx; }
+            case SOUTH -> { rx = -dx; rz = -dz; }
+            case WEST -> { rx = dz; rz = -dx; }
+            default -> { rx = dx; rz = dz; }
+        }
+        return new net.minecraft.world.phys.Vec3(master.getX() + 0.5 + rx, master.getY() + py / 16.0, master.getZ() + 0.5 + rz);
+    }
+
     public OreFurnaceBlock(Properties properties) {
         super(properties);
         registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(LIT, false));
@@ -55,7 +80,22 @@ public class OreFurnaceBlock extends BaseEntityBlock {
 
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext ctx) {
-        return defaultBlockState().setValue(FACING, ctx.getHorizontalDirection().getOpposite());
+        Direction facing = ctx.getHorizontalDirection().getOpposite();
+        Level level = ctx.getLevel();
+        for (int i = 0; i < PARTS.length; i++) {
+            BlockPos p = partPos(ctx.getClickedPos(), facing, i);
+            if (p.getY() >= level.getMaxBuildHeight() || !level.getBlockState(p).canBeReplaced(ctx)) return null; // pas la place
+        }
+        return defaultBlockState().setValue(FACING, facing).setValue(LIT, false);
+    }
+
+    @Override
+    public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable net.minecraft.world.entity.LivingEntity placer, ItemStack stack) {
+        Direction facing = state.getValue(FACING);
+        for (int i = 0; i < PARTS.length; i++) {
+            level.setBlock(partPos(pos, facing, i), com.minenorth_harvest.registry.ModBlocks.FOUNDRY_PART.get().defaultBlockState()
+                    .setValue(OreFurnacePartBlock.FACING, facing).setValue(OreFurnacePartBlock.PART, i), Block.UPDATE_ALL);
+        }
     }
 
     @Override
@@ -142,6 +182,15 @@ public class OreFurnaceBlock extends BaseEntityBlock {
             Containers.dropItemStack(level, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, be.fuel().copy());
             Containers.dropItemStack(level, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, be.pending().copy());
         }
+        if (!state.is(newState.getBlock())) { // le maître part : toutes les cellules annexes disparaissent
+            Direction facing = state.getValue(FACING);
+            for (int i = 0; i < PARTS.length; i++) {
+                BlockPos part = partPos(pos, facing, i);
+                if (level.getBlockState(part).is(com.minenorth_harvest.registry.ModBlocks.FOUNDRY_PART.get())) {
+                    level.setBlock(part, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
+                }
+            }
+        }
         super.onRemove(state, level, pos, newState, moved);
     }
 
@@ -151,11 +200,12 @@ public class OreFurnaceBlock extends BaseEntityBlock {
         if (!state.getValue(LIT)) return;
         Direction f = state.getValue(FACING);
         if (random.nextInt(3) == 0) {
-            level.addParticle(ParticleTypes.FLAME, pos.getX() + 0.5 + f.getStepX() * 0.42 + (random.nextDouble() - 0.5) * 0.3,
-                    pos.getY() + 0.4 + random.nextDouble() * 0.2, pos.getZ() + 0.5 + f.getStepZ() * 0.42 + (random.nextDouble() - 0.5) * 0.3, 0, 0.01, 0);
+            var m = worldPoint(pos, f, 19 + random.nextDouble() * 9, 4 + random.nextDouble() * 6, -0.5);
+            level.addParticle(ParticleTypes.FLAME, m.x, m.y, m.z, 0, 0.01, 0);
         }
-        if (random.nextInt(4) == 0) {
-            level.addParticle(ParticleTypes.CAMPFIRE_COSY_SMOKE, pos.getX() + 0.7, pos.getY() + 1.4, pos.getZ() + 0.7, 0, 0.06, 0);
+        if (random.nextInt(3) == 0) {
+            var c = worldPoint(pos, f, 25.5, 32, 23.5);
+            level.addParticle(ParticleTypes.CAMPFIRE_COSY_SMOKE, c.x, c.y, c.z, 0, 0.06, 0);
         }
         if (random.nextInt(30) == 0) {
             level.playLocalSound(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, SoundEvents.BLASTFURNACE_FIRE_CRACKLE,
