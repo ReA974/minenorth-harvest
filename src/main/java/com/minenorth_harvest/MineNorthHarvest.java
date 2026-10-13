@@ -27,7 +27,6 @@ public class MineNorthHarvest {
         ModBlocks.BLOCKS.register(modBus);
         com.minenorth_harvest.registry.ModBlockEntities.TYPES.register(modBus);
         ModItems.ITEMS.register(modBus);
-        ModCreativeTabs.TABS.register(modBus);
 
         // Config côté serveur uniquement : le client ne crée aucun fichier (les valeurs par défaut s'appliquent).
         if (net.minecraftforge.fml.loading.FMLEnvironment.dist == net.minecraftforge.api.distmarker.Dist.DEDICATED_SERVER) {

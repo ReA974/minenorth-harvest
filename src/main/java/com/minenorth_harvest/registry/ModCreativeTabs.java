@@ -12,10 +12,7 @@ import net.minecraftforge.registries.RegistryObject;
 public final class ModCreativeTabs {
     public static final DeferredRegister<CreativeModeTab> TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MineNorthHarvest.MODID);
 
-    public static final RegistryObject<CreativeModeTab> MAIN = TABS.register("main", () -> CreativeModeTab.builder()
-            .title(Component.translatable("itemGroup.minenorth_harvest"))
-            .icon(() -> new ItemStack(ModItems.ORANGE.get()))
-            .displayItems((params, out) -> {
+    public static final net.minecraft.world.item.CreativeModeTab.DisplayItemsGenerator TAB_ITEMS = (params, out) -> {
                 for (FruitType type : FruitType.values()) out.accept(ModItems.SAPLINGS.get(type).get());
                 for (FruitType type : FruitType.values()) out.accept(ModItems.LEAVES.get(type).get());
                 out.accept(ModItems.ORANGE.get());
@@ -36,8 +33,7 @@ public final class ModCreativeTabs {
                 out.accept(ModItems.REFINERY.get());
                 out.accept(ModItems.GASOLINE.get());
                 out.accept(ModItems.ZONE_WAND.get());
-            })
-            .build());
+            };
 
     private ModCreativeTabs() {}
 }
