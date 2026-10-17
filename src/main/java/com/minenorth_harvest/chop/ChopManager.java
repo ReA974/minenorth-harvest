@@ -41,6 +41,8 @@ public final class ChopManager {
     private ChopManager() {}
 
     private static final Map<UUID, ChopSession> SESSIONS = new HashMap<>();
+    /** Dernier essai de démarrage par joueur (tick) : le paquet C2SStartChop déclenche une analyse d'arbre, on ne la refait pas plus d'une fois par demi-seconde. */
+    private static final Map<UUID, Long> LAST_TRY = new HashMap<>();
     private static final List<FellingTask> FELLING = new ArrayList<>();
 
     public static boolean inSession(ServerPlayer player) {
@@ -64,6 +66,9 @@ public final class ChopManager {
         ServerLevel level = player.serverLevel();
         if (!level.isLoaded(pos) || player.distanceToSqr(pos.getCenter()) > 36.0) return;
         if (player.isSpectator()) return;
+        long nowTry = level.getGameTime();
+        Long lastTry = LAST_TRY.put(player.getUUID(), nowTry);
+        if (lastTry != null && nowTry - lastTry < 10) return;
         BlockState state = level.getBlockState(pos);
         if (!state.is(BlockTags.LOGS)) return;
         if (!isAxe(player.getMainHandItem())) {
@@ -129,6 +134,38 @@ public final class ChopManager {
                 ? "message.minenorth_harvest.start_exhausted"
                 : "message.minenorth_harvest.start"), true);
         sync(s);
+    }
+
+    /**
+     * Tronçonneuse, début du clic droit maintenu sur une bûche : renvoie la durée d'abattage en ticks, 0 si ce n'est pas un arbre à abattre
+     * (bloc de bois isolé, construction : le moteur tourne seulement), -1 si c'est refusé (message déjà affiché : arbre trop gros,
+     * hors zone de bûcheronnage, protégé…). Mêmes conditions que {@link #fellWithChainsaw}.
+     */
+    public static int chainsawNeeded(ServerPlayer player, BlockPos pos) {
+        if (!HarvestConfig.CHOP_ENABLED.get() || player.isSpectator()) return 0;
+        ServerLevel level = player.serverLevel();
+        if (!level.getBlockState(pos).is(BlockTags.LOGS)) return 0;
+        for (FellingTask t : FELLING) if (t.contains(pos)) return -1;
+        TreeScanner.Tree tree = TreeScanner.scan(level, pos, HarvestConfig.MAX_TREE_LOGS.get());
+        if (tree.tooBig()) {
+            player.displayClientMessage(Component.translatable("message.minenorth_harvest.tree_too_big"), true);
+            return -1;
+        }
+        if (tree.naturalLeaves() < HarvestConfig.MIN_LEAVES.get()) return 0;
+        ZoneData zones = ZoneData.get(level);
+        Zone zone = zones.zoneAt(tree.base(), ZoneType.BUCHERON);
+        if (zone == null) zone = zones.zoneAt(pos, ZoneType.BUCHERON);
+        if (zone == null && HarvestConfig.REQUIRE_ZONE.get()) {
+            player.displayClientMessage(Component.translatable("message.minenorth_harvest.outside_zone"), true);
+            return -1;
+        }
+        boolean bypass = zone != null && HarvestConfig.ZONES_BYPASS_PROTECTION.get();
+        if (!bypass && MinecraftForge.EVENT_BUS.post(new BlockEvent.BreakEvent(level, tree.base(), level.getBlockState(tree.base()), player))) {
+            player.displayClientMessage(Component.translatable("message.minenorth_harvest.protected"), true);
+            return -1;
+        }
+        int ticks = 40 + 3 * tree.logs().size() + (HarvestData.isForestExhausted(player) ? 40 : 0);
+        return Math.min(ticks, 240);
     }
 
     /**
@@ -341,10 +378,14 @@ public final class ChopManager {
 
     public static void onLogout(ServerPlayer player) {
         SESSIONS.remove(player.getUUID());
+        LAST_TRY.remove(player.getUUID());
+        com.minenorth_harvest.item.ChainsawItem.forget(player.getUUID());
+        com.minenorth_harvest.item.JackhammerItem.forget(player.getUUID());
     }
 
     public static void clearAll() {
         SESSIONS.clear();
+        LAST_TRY.clear();
         FELLING.clear();
     }
 }
