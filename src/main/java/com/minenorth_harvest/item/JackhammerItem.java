@@ -111,13 +111,19 @@ public class JackhammerItem extends PickaxeItem {
             DRILLS.put(p.getUUID(), d);
         }
         BlockState state = level.getBlockState(pos);
-        d.progress += state.getDestroyProgress(p, level, pos);
+        // Vitesse propre au marteau-piqueur (indépendante de la main, des effets et des autres mods) : pioche = rapide, reste = lent.
+        float hardness = state.getDestroySpeed(level, pos);
+        float speed = state.is(net.minecraft.tags.BlockTags.MINEABLE_WITH_PICKAXE) ? 14f : 3f;
+        d.progress += speed / Math.max(0.2f, hardness) / 30f;
         int stage = Math.min(9, (int) (d.progress * 10f));
         if (stage != d.stage) { d.stage = stage; sl.destroyBlockProgress(p.getId(), pos, stage); }
         if (d.progress >= 1f) {
             sl.destroyBlockProgress(p.getId(), pos, -1);
             DRILLS.remove(p.getUUID());
-            p.gameMode.destroyBlock(pos);   // casse normale : drops, protections, événements, mineBlock (essence)
+            if (!p.gameMode.destroyBlock(pos)) {   // casse normale : drops, protections, événements, mineBlock (essence)
+                p.displayClientMessage(Component.literal("§cCe bloc est protégé ici."), true);
+                p.stopUsingItem();
+            }
         }
     }
 
@@ -144,5 +150,10 @@ public class JackhammerItem extends PickaxeItem {
         tip.add(Component.literal("§8Casse la roche et les minerais très vite"));
         tip.add(Component.literal("§8Clic droit MAINTENU sur un bloc : il perce, puis enchaîne"));
         tip.add(Component.literal("§8Accroupi + clic droit : plein d'essence"));
+    }
+
+    @Override
+    public void initializeClient(java.util.function.Consumer<net.minecraftforge.client.extensions.common.IClientItemExtensions> consumer) {
+        consumer.accept(com.minenorth_harvest.client.ToolPoses.extension(com.minenorth_harvest.client.ToolPoses.JACKHAMMER));
     }
 }

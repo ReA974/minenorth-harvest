@@ -153,4 +153,9 @@ public class ChainsawItem extends AxeItem {
         tip.add(Component.literal("§8Clic droit MAINTENU sur un arbre (zone de bûcheronnage) : il tombe d'un coup, sans mini-jeu"));
         tip.add(Component.literal("§8Clic droit ailleurs : moteur · accroupi + clic droit : plein d'essence"));
     }
+
+    @Override
+    public void initializeClient(java.util.function.Consumer<net.minecraftforge.client.extensions.common.IClientItemExtensions> consumer) {
+        consumer.accept(com.minenorth_harvest.client.ToolPoses.extension(com.minenorth_harvest.client.ToolPoses.CHAINSAW));
+    }
 }
