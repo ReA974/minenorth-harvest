@@ -1,0 +1,25 @@
+{
+ "type": "minecraft:crafting_shaped",
+ "pattern": [
+  "CCI",
+  "LPI",
+  " II"
+ ],
+ "key": {
+  "C": {
+   "item": "minecraft:chain"
+  },
+  "I": {
+   "item": "minecraft:iron_ingot"
+  },
+  "L": {
+   "item": "minecraft:lever"
+  },
+  "P": {
+   "item": "minecraft:piston"
+  }
+ },
+ "result": {
+  "item": "minenorth_harvest:chainsaw"
+ }
+}

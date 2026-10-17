@@ -69,6 +69,12 @@ public final class ModItems {
     /** Lame de la scierie : sert uniquement au rendu animé (jamais obtenue en jeu). */
     public static final RegistryObject<Item> SAW_BLADE = ITEMS.register("saw_blade", () -> new Item(new Item.Properties()));
 
+    /** Outils à moteur (essence) : tronçonneuse (abat un arbre sans mini-jeu) et marteau-piqueur. */
+    public static final RegistryObject<Item> CHAINSAW = ITEMS.register("chainsaw",
+            () -> new com.minenorth_harvest.item.ChainsawItem(new Item.Properties()));
+    public static final RegistryObject<Item> JACKHAMMER = ITEMS.register("jackhammer",
+            () -> new com.minenorth_harvest.item.JackhammerItem(new Item.Properties()));
+
     public static final RegistryObject<Item> ZONE_WAND = ITEMS.register("zone_wand",
             () -> new ZoneWandItem(new Item.Properties().stacksTo(1)));
 

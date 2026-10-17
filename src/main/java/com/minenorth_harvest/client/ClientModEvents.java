@@ -22,6 +22,11 @@ public final class ClientModEvents {
     }
 
     @SubscribeEvent
+    public static void clientSetup(net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent event) {
+        event.enqueueWork(ToolAnim::register);
+    }
+
+    @SubscribeEvent
     public static void registerOverlays(RegisterGuiOverlaysEvent event) {
         event.registerAbove(VanillaGuiOverlay.HOTBAR.id(), "chop_minigame", ChopOverlay.INSTANCE);
     }

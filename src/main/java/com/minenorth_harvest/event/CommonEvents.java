@@ -127,6 +127,14 @@ public final class CommonEvents {
         ZoneManager.clearAll();
     }
 
+    /** Tronçonneuse : casser une bûche d'un arbre naturel abat tout l'arbre, sans mini-jeu. */
+    @SubscribeEvent(priority = EventPriority.HIGH)
+    public static void onChainsawLog(net.minecraftforge.event.level.BlockEvent.BreakEvent event) {
+        if (!(event.getPlayer() instanceof ServerPlayer sp) || !(sp.getMainHandItem().getItem() instanceof com.minenorth_harvest.item.ChainsawItem)) return;
+        if (!event.getState().is(BlockTags.LOGS) || ChopManager.inSession(sp)) return;
+        if (ChopManager.fellWithChainsaw(sp, event.getPos())) event.setCanceled(true);
+    }
+
     /**
      * - Pendant le mini-jeu : impossible de casser à la main (serveur).
      * - Hors mini-jeu : casser une bûche d'arbre naturel à la main est plus lent (client + serveur, même calcul).

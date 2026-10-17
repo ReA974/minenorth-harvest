@@ -48,7 +48,7 @@ public final class ChopManager {
     }
 
     public static boolean isAxe(ItemStack stack) {
-        return !stack.isEmpty() && stack.canPerformAction(ToolActions.AXE_DIG);
+        return !stack.isEmpty() && !(stack.getItem() instanceof com.minenorth_harvest.item.ChainsawItem) && stack.canPerformAction(ToolActions.AXE_DIG);
     }
 
     // ------------------------------------------------------------------ démarrage
@@ -129,6 +129,49 @@ public final class ChopManager {
                 ? "message.minenorth_harvest.start_exhausted"
                 : "message.minenorth_harvest.start"), true);
         sync(s);
+    }
+
+    /**
+     * Tronçonneuse : abat l'arbre visé d'un coup, SANS mini-jeu (mêmes conditions que le mini-jeu : arbre naturel, zone de bûcheronnage,
+     * protections, dette écologique). Renvoie vrai si l'arbre est abattu (le bloc cassé ne doit alors pas l'être à part).
+     */
+    public static boolean fellWithChainsaw(ServerPlayer player, BlockPos pos) {
+        if (!HarvestConfig.CHOP_ENABLED.get() || player.isSpectator()) return false;
+        ServerLevel level = player.serverLevel();
+        BlockState state = level.getBlockState(pos);
+        if (!state.is(BlockTags.LOGS) || player.distanceToSqr(pos.getCenter()) > 64.0) return false;
+        for (FellingTask t : FELLING) if (t.contains(pos)) return true;
+        TreeScanner.Tree tree = TreeScanner.scan(level, pos, HarvestConfig.MAX_TREE_LOGS.get());
+        if (tree.tooBig()) {
+            player.displayClientMessage(Component.translatable("message.minenorth_harvest.tree_too_big"), true);
+            return false;
+        }
+        if (tree.naturalLeaves() < HarvestConfig.MIN_LEAVES.get()) return false;   // pas un arbre naturel : simple bloc de bois
+        ZoneData zones = ZoneData.get(level);
+        Zone zone = zones.zoneAt(tree.base(), ZoneType.BUCHERON);
+        if (zone == null) zone = zones.zoneAt(pos, ZoneType.BUCHERON);
+        if (zone == null && HarvestConfig.REQUIRE_ZONE.get()) {
+            player.displayClientMessage(Component.translatable("message.minenorth_harvest.outside_zone"), true);
+            return false;
+        }
+        boolean bypass = zone != null && HarvestConfig.ZONES_BYPASS_PROTECTION.get();
+        if (!bypass && MinecraftForge.EVENT_BUS.post(new BlockEvent.BreakEvent(level, tree.base(), level.getBlockState(tree.base()), player))) {
+            player.displayClientMessage(Component.translatable("message.minenorth_harvest.protected"), true);
+            return false;
+        }
+        ItemStack saw = player.getMainHandItem();
+        if (!com.minenorth_harvest.item.PowerTool.consume(player, saw, com.minenorth_harvest.item.PowerTool.PER_TREE)) {
+            player.displayClientMessage(Component.literal("§cPlus assez d'essence pour abattre l'arbre."), true);
+            return false;
+        }
+        HarvestData.onTreeFelled(player);
+        level.playSound(null, pos, SoundEvents.ZOMBIE_BREAK_WOODEN_DOOR, SoundSource.BLOCKS, 0.7f, 0.6f);
+        String sapling = saplingFor(tree, state);
+        String regrowSapling = zone != null && zone.regrow ? sapling : null;
+        FELLING.add(new FellingTask(level, player, tree.logs(), tree.base(), 0, bypass, regrowSapling, sapling));
+        player.displayClientMessage(Component.translatable(HarvestData.isForestExhausted(player)
+                ? "message.minenorth_harvest.timber_exhausted" : "message.minenorth_harvest.timber", 0), true);
+        return true;
     }
 
     private static void moveZone(ChopSession s, RandomSource random) {

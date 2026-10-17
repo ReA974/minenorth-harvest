@@ -33,6 +33,8 @@ public final class ModCreativeTabs {
                 out.accept(ModItems.PUMPJACK.get());
                 out.accept(ModItems.REFINERY.get());
                 out.accept(ModItems.GASOLINE.get());
+                out.accept(com.minenorth_harvest.item.PowerTool.full(new ItemStack(ModItems.CHAINSAW.get())));
+                out.accept(com.minenorth_harvest.item.PowerTool.full(new ItemStack(ModItems.JACKHAMMER.get())));
                 out.accept(ModItems.ZONE_WAND.get());
             };
 
