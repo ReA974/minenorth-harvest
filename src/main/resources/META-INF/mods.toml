@@ -26,3 +26,10 @@ zones de bûcheronnage et vergers créés à la baguette.
     versionRange="[1.20.1,1.21)"
     ordering="NONE"
     side="BOTH"
+
+[[dependencies.minenorth_harvest]]
+modId="minenorthapi"
+mandatory=true
+versionRange="[1.0.0,2)"
+ordering="AFTER"
+side="BOTH"
