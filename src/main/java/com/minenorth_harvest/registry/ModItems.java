@@ -37,6 +37,9 @@ public final class ModItems {
         }
     }
 
+    public static final RegistryObject<Item> SINK = ITEMS.register("sink",
+            () -> new BlockItem(ModBlocks.SINK.get(), new Item.Properties()));
+
     public static final RegistryObject<Item> TREE_STUMP = ITEMS.register("tree_stump",
             () -> new BlockItem(ModBlocks.TREE_STUMP.get(), new Item.Properties()));
 

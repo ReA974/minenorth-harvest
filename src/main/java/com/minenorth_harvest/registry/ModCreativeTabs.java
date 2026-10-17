@@ -25,6 +25,7 @@ public final class ModCreativeTabs {
                 out.accept(ModItems.BAGUETTE.get());
                 for (FruitType type : FruitType.values()) out.accept(ModItems.PIES.get(type).get());
                 out.accept(ModItems.TREE_STUMP.get());
+                out.accept(ModItems.SINK.get());
                 out.accept(ModItems.SAWMILL.get());
                 out.accept(ModItems.FOUNDRY.get());
                 out.accept(ModItems.CASTING_BUCKET.get());

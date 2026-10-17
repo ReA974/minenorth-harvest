@@ -1,0 +1,19 @@
+{
+ "variants": {
+  "facing=north": {
+   "model": "minenorth_harvest:block/sink"
+  },
+  "facing=east": {
+   "model": "minenorth_harvest:block/sink",
+   "y": 90
+  },
+  "facing=south": {
+   "model": "minenorth_harvest:block/sink",
+   "y": 180
+  },
+  "facing=west": {
+   "model": "minenorth_harvest:block/sink",
+   "y": 270
+  }
+ }
+}

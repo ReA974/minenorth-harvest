@@ -40,6 +40,9 @@ public final class ModBlocks {
         }
     }
 
+    /** Évier à eau illimitée (remplit seaux et bouteilles). */
+    public static final RegistryObject<Block> SINK = BLOCKS.register("sink", com.minenorth_harvest.block.SinkBlock::new);
+
     public static final RegistryObject<Block> TREE_STUMP = BLOCKS.register("tree_stump",
             () -> new TreeStumpBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.WOOD)

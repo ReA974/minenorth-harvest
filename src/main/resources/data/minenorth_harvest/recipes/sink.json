@@ -1,0 +1,25 @@
+{
+ "type": "minecraft:crafting_shaped",
+ "pattern": [
+  "IBI",
+  "SCS",
+  "SSS"
+ ],
+ "key": {
+  "I": {
+   "item": "minecraft:iron_ingot"
+  },
+  "B": {
+   "item": "minecraft:bucket"
+  },
+  "S": {
+   "item": "minecraft:stone"
+  },
+  "C": {
+   "item": "minecraft:cauldron"
+  }
+ },
+ "result": {
+  "item": "minenorth_harvest:sink"
+ }
+}

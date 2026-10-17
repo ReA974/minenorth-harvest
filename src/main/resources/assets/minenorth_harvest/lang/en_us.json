@@ -119,5 +119,7 @@
   "block.minenorth_harvest.millstone": "Moulin à meule",
   "item.minenorth_harvest.millstone": "Moulin à meule",
   "item.minenorth_harvest.chainsaw": "Tronçonneuse",
-  "item.minenorth_harvest.jackhammer": "Marteau-piqueur"
+  "item.minenorth_harvest.jackhammer": "Marteau-piqueur",
+  "block.minenorth_harvest.sink": "Évier",
+  "item.minenorth_harvest.sink": "Évier"
 }

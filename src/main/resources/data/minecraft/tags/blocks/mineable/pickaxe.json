@@ -10,6 +10,7 @@
     "minenorth_harvest:pumpjack",
     "minenorth_harvest:pumpjack_part",
     "minenorth_harvest:mill",
-    "minenorth_harvest:mill_part"
+    "minenorth_harvest:mill_part",
+    "minenorth_harvest:sink"
   ]
 }
