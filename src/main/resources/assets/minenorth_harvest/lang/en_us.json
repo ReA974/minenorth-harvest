@@ -124,5 +124,12 @@
   "message.minenorth_harvest.pumpjack_far": "§cTrop loin du cheval à bascule.",
   "item.minenorth_harvest.zone_wand.tip4": "§7Accroupi + clic droit : §fmenu des zones pétrole (chevaux à bascule)",
   "block.minenorth_harvest.millstone_part": "Moulin à meule",
-  "message.minenorth_harvest.zone_enter.chasse": "§8Zone de chasse : §f%s §7— du gibier rôde !"
+  "message.minenorth_harvest.zone_enter.chasse": "§8Zone de chasse : §f%s §7— du gibier rôde !",
+  "subtitles.minenorth_harvest.jackhammer_start": "Le marteau-piqueur démarre",
+  "subtitles.minenorth_harvest.jackhammer_loop": "Le marteau-piqueur martèle",
+  "subtitles.minenorth_harvest.jackhammer_end": "Le marteau-piqueur s'arrête",
+  "subtitles.minenorth_harvest.chainsaw_start": "La tronçonneuse démarre",
+  "subtitles.minenorth_harvest.chainsaw_idle": "La tronçonneuse tourne au ralenti",
+  "subtitles.minenorth_harvest.chainsaw_cut": "La tronçonneuse coupe",
+  "subtitles.minenorth_harvest.chainsaw_stop": "La tronçonneuse s'arrête"
 }

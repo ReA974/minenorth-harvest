@@ -70,12 +70,13 @@ public final class PowerTool {
         return false;
     }
 
-    /** Son et particules du moteur en marche (serveur : entendu par tous les joueurs proches). */
+    /**
+     * Particules du moteur en marche (serveur : vues de tous les joueurs proches). Les BRUITS ne sont plus joués ici : chaque client joue les vrais sons
+     * du marteau-piqueur et de la tronçonneuse (ToolSounds), qui suivent le joueur. Les paramètres de son sont ignorés (compatibilité des appels).
+     */
     public static void fx(Player p, SoundEvent a, SoundEvent b, float pitchA, ParticleOptions particle) {
         if (!(p.level() instanceof ServerLevel level)) return;
         long t = level.getGameTime();
-        if (t % 3 == 0) level.playSound(null, p.blockPosition(), a, SoundSource.PLAYERS, 0.5f, pitchA + (t % 6 == 0 ? 0.15f : 0f));
-        if (b != null && t % 6 == 0) level.playSound(null, p.blockPosition(), b, SoundSource.PLAYERS, 0.4f, 0.9f);
         if (t % 4 == 0) {
             var look = p.getLookAngle();
             level.sendParticles(particle, p.getX() + look.x * 0.9, p.getEyeY() - 0.5 + look.y * 0.9, p.getZ() + look.z * 0.9, 2, 0.1, 0.1, 0.1, 0.02);

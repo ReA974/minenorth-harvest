@@ -1,0 +1,72 @@
+{
+  "jackhammer_start": {
+    "sounds": [
+      {
+        "name": "minenorth_harvest:tool/jackhammer_start",
+        "attenuation_distance": 40,
+        "stream": false
+      }
+    ],
+    "subtitle": "subtitles.minenorth_harvest.jackhammer_start"
+  },
+  "jackhammer_loop": {
+    "sounds": [
+      {
+        "name": "minenorth_harvest:tool/jackhammer_loop",
+        "attenuation_distance": 40,
+        "stream": false
+      }
+    ],
+    "subtitle": "subtitles.minenorth_harvest.jackhammer_loop"
+  },
+  "jackhammer_end": {
+    "sounds": [
+      {
+        "name": "minenorth_harvest:tool/jackhammer_end",
+        "attenuation_distance": 40,
+        "stream": false
+      }
+    ],
+    "subtitle": "subtitles.minenorth_harvest.jackhammer_end"
+  },
+  "chainsaw_start": {
+    "sounds": [
+      {
+        "name": "minenorth_harvest:tool/chainsaw_start",
+        "attenuation_distance": 40,
+        "stream": false
+      }
+    ],
+    "subtitle": "subtitles.minenorth_harvest.chainsaw_start"
+  },
+  "chainsaw_idle": {
+    "sounds": [
+      {
+        "name": "minenorth_harvest:tool/chainsaw_idle",
+        "attenuation_distance": 40,
+        "stream": false
+      }
+    ],
+    "subtitle": "subtitles.minenorth_harvest.chainsaw_idle"
+  },
+  "chainsaw_cut": {
+    "sounds": [
+      {
+        "name": "minenorth_harvest:tool/chainsaw_cut",
+        "attenuation_distance": 40,
+        "stream": false
+      }
+    ],
+    "subtitle": "subtitles.minenorth_harvest.chainsaw_cut"
+  },
+  "chainsaw_stop": {
+    "sounds": [
+      {
+        "name": "minenorth_harvest:tool/chainsaw_stop",
+        "attenuation_distance": 40,
+        "stream": false
+      }
+    ],
+    "subtitle": "subtitles.minenorth_harvest.chainsaw_stop"
+  }
+}
