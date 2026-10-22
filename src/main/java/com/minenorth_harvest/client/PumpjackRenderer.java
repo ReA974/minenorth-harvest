@@ -76,15 +76,6 @@ public class PumpjackRenderer implements BlockEntityRenderer<PumpjackBlockEntity
             ps.popPose();
         }
 
-        // --- pétrole en attente : bidon qui flotte au-dessus du puits
-        if (be.stored() > 0) {
-            ps.pushPose();
-            ps.translate(8f * RenderUtil.PX, (30f + 1.2f * (float) Math.sin(time * 0.15f)) * RenderUtil.PX, 8f * RenderUtil.PX);
-            ps.mulPose(Axis.YP.rotationDegrees(time * 3f));
-            ps.scale(0.5f, 0.5f, 0.5f);
-            Minecraft.getInstance().getItemRenderer().renderStatic(new ItemStack(ModItems.CRUDE_OIL.get()), ItemDisplayContext.GROUND, light, OverlayTexture.NO_OVERLAY, ps, buffers, be.getLevel(), 0);
-            ps.popPose();
-        }
         ps.popPose();
     }
 }

@@ -37,18 +37,6 @@ public final class CommonEvents {
         else if (event.getItemStack().is(ModItems.GASOLINE.get())) event.setBurnTime(6400);
     }
 
-    /** Gisement miné dans une zone pétrole avec régénération : il reviendra après le délai configuré. */
-    @SubscribeEvent
-    public static void onOilBroken(net.minecraftforge.event.level.BlockEvent.BreakEvent event) {
-        if (!(event.getLevel() instanceof net.minecraft.server.level.ServerLevel level)) return;
-        if (!event.getState().is(com.minenorth_harvest.registry.ModBlocks.OIL_DEPOSIT.get())) return;
-        com.minenorth_harvest.zone.ZoneData data = com.minenorth_harvest.zone.ZoneData.get(level);
-        com.minenorth_harvest.zone.Zone zone = data.zoneAt(event.getPos(), com.minenorth_harvest.zone.ZoneType.PETROLE);
-        if (zone == null || !zone.regrow) return;
-        data.addRegrow(event.getPos(), ZoneManager.OIL_REGEN,
-                level.getGameTime() + com.minenorth_harvest.config.HarvestConfig.OIL_REGEN_DELAY.get() * 20L);
-    }
-
     /** Minerai miné dans une zone mine avec régénération : il reviendra après le délai configuré. */
     @SubscribeEvent
     public static void onOreBroken(net.minecraftforge.event.level.BlockEvent.BreakEvent event) {
@@ -92,6 +80,14 @@ public final class CommonEvents {
         sl.levelEvent(2001, pos, net.minecraft.world.level.block.Block.getId(state));
     }
 
+    /** Anciens mondes : le gisement de pétrole (« sillon ») n'existe plus. Ses blocs et objets disparaissent sans erreur au chargement. */
+    @SubscribeEvent
+    public static void onMissingMappings(net.minecraftforge.registries.MissingMappingsEvent event) {
+        net.minecraft.resources.ResourceLocation old = new net.minecraft.resources.ResourceLocation(MineNorthHarvest.MODID, "oil_deposit");
+        for (var m : event.getAllMappings(net.minecraftforge.registries.ForgeRegistries.Keys.BLOCKS)) if (old.equals(m.getKey())) m.ignore();
+        for (var m : event.getAllMappings(net.minecraftforge.registries.ForgeRegistries.Keys.ITEMS)) if (old.equals(m.getKey())) m.ignore();
+    }
+
     @SubscribeEvent
     public static void onRegisterCommands(RegisterCommandsEvent event) {
         ZoneCommand.register(event.getDispatcher());
@@ -102,6 +98,7 @@ public final class CommonEvents {
         if (event.phase == TickEvent.Phase.END) {
             ChopManager.tick();
             ZoneManager.tick();
+            com.minenorth_harvest.zone.PumpGame.tick(event.getServer());
         }
     }
 
@@ -109,6 +106,7 @@ public final class CommonEvents {
     public static void onLogout(PlayerEvent.PlayerLoggedOutEvent event) {
         if (event.getEntity() instanceof ServerPlayer sp) {
             ChopManager.onLogout(sp);
+            com.minenorth_harvest.zone.PumpGame.forget(sp.getUUID());
             ZoneManager.onLogout(sp);
             ZoneSelection.clear(sp.getUUID());
         }

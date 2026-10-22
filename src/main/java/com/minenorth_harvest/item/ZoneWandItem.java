@@ -29,9 +29,18 @@ public class ZoneWandItem extends Item {
     @Override
     public InteractionResult useOn(UseOnContext ctx) {
         if (!ctx.getLevel().isClientSide && ctx.getPlayer() instanceof ServerPlayer sp && sp.hasPermissions(2)) {
-            ZoneSelection.set(sp, ctx.getClickedPos(), false);
+            if (sp.isShiftKeyDown()) com.minenorth_harvest.zone.OilAdmin.open(sp);   // accroupi : menu des zones pétrole
+            else ZoneSelection.set(sp, ctx.getClickedPos(), false);
         }
         return InteractionResult.sidedSuccess(ctx.getLevel().isClientSide);
+    }
+
+    /** Accroupi + clic droit dans le vide : menu des zones pétrole (création de zone, chevaux à bascule). */
+    @Override
+    public net.minecraft.world.InteractionResultHolder<ItemStack> use(Level level, Player player, net.minecraft.world.InteractionHand hand) {
+        ItemStack st = player.getItemInHand(hand);
+        if (!level.isClientSide && player instanceof ServerPlayer sp && sp.hasPermissions(2) && sp.isShiftKeyDown()) com.minenorth_harvest.zone.OilAdmin.open(sp);
+        return net.minecraft.world.InteractionResultHolder.sidedSuccess(st, level.isClientSide);
     }
 
     /** Empêche de casser des blocs avec la baguette (y compris en créatif). */
@@ -50,5 +59,6 @@ public class ZoneWandItem extends Item {
         tooltip.add(Component.translatable("item.minenorth_harvest.zone_wand.tip1"));
         tooltip.add(Component.translatable("item.minenorth_harvest.zone_wand.tip2"));
         tooltip.add(Component.translatable("item.minenorth_harvest.zone_wand.tip3"));
+        tooltip.add(Component.translatable("item.minenorth_harvest.zone_wand.tip4"));
     }
 }

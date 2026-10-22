@@ -2,43 +2,35 @@ package com.minenorth_harvest.block;
 
 import com.minenorth_harvest.config.HarvestConfig;
 import com.minenorth_harvest.registry.ModBlockEntities;
-import com.minenorth_harvest.registry.ModBlocks;
-import com.minenorth_harvest.registry.ModItems;
-import com.minenorth_harvest.zone.ZoneData;
-import com.minenorth_harvest.zone.ZoneManager;
-import com.minenorth_harvest.zone.ZoneType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
-/** Chevalet de pompage : posé sur un gisement de pétrole, il pompe du brut tout seul (animation côté client tant qu'il travaille). */
+/**
+ * Cheval à bascule : réserve de pétrole du puits (se vide au fil des parties, se remplit de nouveau après oilRegenDelaySeconds) et état d'animation
+ * (le balancier travaille pendant une partie de mini-jeu).
+ */
 public class PumpjackBlockEntity extends BlockEntity {
-    public static final int MAX_BUFFER = 64;
-
-    private int stored;
-    private int progress;
+    /** -1 = jamais utilisé : réserve pleine. */
+    private int reserve = -1;
+    /** Instant (tick de jeu) où le puits à sec se remplit de nouveau, 0 = pas à sec. */
+    private long dryUntil;
     private boolean working;
-    private boolean dry;
+    private long workingUntil;
 
     public PumpjackBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.PUMPJACK.get(), pos, state);
     }
 
-    public int stored() { return stored; }
     public boolean working() { return working; }
-    public boolean dry() { return dry; }
     public Direction facing() { return getBlockState().getValue(PumpjackBlock.FACING); }
 
     @Override
@@ -46,40 +38,41 @@ public class PumpjackBlockEntity extends BlockEntity {
         return new net.minecraft.world.phys.AABB(worldPosition).inflate(4, 3, 4);
     }
 
-    public ItemStack take() {
-        ItemStack out = stored > 0 ? new ItemStack(ModItems.CRUDE_OIL.get(), stored) : ItemStack.EMPTY;
-        stored = 0;
+    public int reserve() {
+        int max = HarvestConfig.PUMP_RESERVE.get();
+        return reserve < 0 ? max : Math.min(reserve, max);
+    }
+
+    /** Puits à sec à cet instant ? (le remplit de nouveau si le délai est passé) */
+    public boolean isDry(long now) {
+        if (dryUntil == 0) return false;
+        if (now >= dryUntil) {
+            dryUntil = 0;
+            reserve = -1;
+            sync();
+            return false;
+        }
+        return true;
+    }
+
+    public long dryRemainingTicks(long now) { return Math.max(0, dryUntil - now); }
+
+    /** Retire du pétrole de la réserve ; à zéro, le puits est à sec jusqu'à la reconstitution. */
+    public void consume(int n, long now) {
+        reserve = Math.max(0, reserve() - n);
+        if (reserve == 0) dryUntil = now + HarvestConfig.OIL_REGEN_DELAY.get() * 20L;
         sync();
-        return out;
+    }
+
+    /** Le balancier travaille jusqu'à cet instant (tick de jeu). */
+    public void workUntil(long tick) {
+        workingUntil = Math.max(workingUntil, tick);
+        if (!working) { working = true; sync(); }
     }
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, PumpjackBlockEntity be) {
-        if (!(level instanceof ServerLevel server)) return;
-        boolean deposit = level.getBlockState(pos.below()).is(ModBlocks.OIL_DEPOSIT.get());
-        boolean work = deposit && be.stored < MAX_BUFFER;
-        boolean dry = !deposit;
-        boolean changed = false;
-        if (work != be.working || dry != be.dry) { be.working = work; be.dry = dry; changed = true; }
-        if (work) {
-            be.progress++;
-            if (be.progress % 30 == 0) level.playSound(null, pos, SoundEvents.PISTON_CONTRACT, SoundSource.BLOCKS, 0.35f, 0.55f);
-            if (be.progress >= HarvestConfig.PUMPJACK_TICKS.get()) {
-                be.progress = 0;
-                be.stored++;
-                changed = true;
-                if (level.random.nextDouble() < HarvestConfig.PUMPJACK_DEPLETE.get()) {
-                    BlockPos well = pos.below();
-                    level.setBlock(well, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);   // puits tari
-                    ZoneData data = ZoneData.get(server);
-                    var zone = data.zoneAt(well, ZoneType.PETROLE);
-                    if (zone != null && zone.regrow) {
-                        data.addRegrow(well, ZoneManager.OIL_REGEN, level.getGameTime() + HarvestConfig.OIL_REGEN_DELAY.get() * 20L);
-                    }
-                }
-            }
-        }
-        if (changed) be.sync();
-        be.setChanged();
+        if (be.working && level.getGameTime() >= be.workingUntil) { be.working = false; be.sync(); }
+        if (be.dryUntil != 0 && level.getGameTime() >= be.dryUntil) { be.dryUntil = 0; be.reserve = -1; be.sync(); }
     }
 
     private void sync() {
@@ -90,19 +83,18 @@ public class PumpjackBlockEntity extends BlockEntity {
     @Override
     protected void saveAdditional(CompoundTag tag) {
         super.saveAdditional(tag);
-        tag.putInt("stored", stored);
-        tag.putInt("progress", progress);
+        tag.putInt("reserve", reserve);
+        tag.putLong("dryUntil", dryUntil);
         tag.putBoolean("working", working);
-        tag.putBoolean("dry", dry);
     }
 
     @Override
     public void load(CompoundTag tag) {
         super.load(tag);
-        stored = tag.getInt("stored");
-        progress = tag.getInt("progress");
+        reserve = tag.contains("reserve") ? tag.getInt("reserve") : -1;
+        dryUntil = tag.getLong("dryUntil");
         working = tag.getBoolean("working");
-        dry = tag.getBoolean("dry");
+        workingUntil = 0;
     }
 
     @Override

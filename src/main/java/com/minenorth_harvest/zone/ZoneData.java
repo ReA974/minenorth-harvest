@@ -2,6 +2,7 @@ package com.minenorth_harvest.zone;
 
 import com.minenorth_harvest.MineNorthHarvest;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
@@ -24,6 +25,48 @@ public class ZoneData extends SavedData {
 
     private final Map<String, Zone> zones = new LinkedHashMap<>();
     private final List<Regrow> regrows = new ArrayList<>();
+    private final List<Site> sites = new ArrayList<>();
+
+    /** Emplacement d'un cheval à bascule dans une zone pétrole (bloc maître + orientation). respawnAt : instant de remise en place (0 = en place). */
+    public static final class Site {
+        public final BlockPos pos;
+        public final Direction facing;
+        public final String zone;
+        public long respawnAt;
+        public boolean placedOnce;
+
+        public Site(BlockPos pos, Direction facing, String zone) {
+            this.pos = pos.immutable();
+            this.facing = facing;
+            this.zone = zone;
+        }
+    }
+
+    public List<Site> sites() { return sites; }
+
+    public List<Site> sitesIn(Zone zone) {
+        List<Site> out = new ArrayList<>();
+        for (Site s : sites) if (s.zone.equalsIgnoreCase(zone.name)) out.add(s);
+        return out;
+    }
+
+    @Nullable
+    public Site siteAt(BlockPos pos) {
+        for (Site s : sites) if (s.pos.equals(pos)) return s;
+        return null;
+    }
+
+    public void addSite(Site site) {
+        sites.removeIf(s -> s.pos.equals(site.pos));
+        sites.add(site);
+        setDirty();
+    }
+
+    public boolean removeSite(BlockPos pos) {
+        boolean r = sites.removeIf(s -> s.pos.equals(pos));
+        if (r) setDirty();
+        return r;
+    }
 
     public static ZoneData get(ServerLevel level) {
         return level.getDataStorage().computeIfAbsent(ZoneData::load, ZoneData::new, NAME);
@@ -41,7 +84,10 @@ public class ZoneData extends SavedData {
 
     public boolean remove(String name) {
         boolean r = zones.remove(name.toLowerCase()) != null;
-        if (r) setDirty();
+        if (r) {
+            sites.removeIf(s -> s.zone.equalsIgnoreCase(name));
+            setDirty();
+        }
         return r;
     }
 
@@ -86,6 +132,14 @@ public class ZoneData extends SavedData {
             CompoundTag r = rl.getCompound(i);
             d.regrows.add(new Regrow(NbtUtils.readBlockPos(r.getCompound("pos")), r.getString("sapling"), r.getLong("due")));
         }
+        ListTag sl = tag.getList("sites", Tag.TAG_COMPOUND);
+        for (int i = 0; i < sl.size(); i++) {
+            CompoundTag t = sl.getCompound(i);
+            Site s = new Site(NbtUtils.readBlockPos(t.getCompound("pos")), Direction.from3DDataValue(t.getInt("facing")), t.getString("zone"));
+            s.respawnAt = t.getLong("respawnAt");
+            s.placedOnce = t.getBoolean("placedOnce");
+            d.sites.add(s);
+        }
         return d;
     }
 
@@ -103,6 +157,17 @@ public class ZoneData extends SavedData {
             rl.add(t);
         }
         tag.put("regrows", rl);
+        ListTag sl = new ListTag();
+        for (Site s : sites) {
+            CompoundTag t = new CompoundTag();
+            t.put("pos", NbtUtils.writeBlockPos(s.pos));
+            t.putInt("facing", s.facing.get3DDataValue());
+            t.putString("zone", s.zone);
+            t.putLong("respawnAt", s.respawnAt);
+            t.putBoolean("placedOnce", s.placedOnce);
+            sl.add(t);
+        }
+        tag.put("sites", sl);
         return tag;
     }
 }

@@ -140,7 +140,8 @@ public final class ZoneCommand {
         reply(c, Component.translatable("command.minenorth_harvest.zone_created",
                 name, Component.translatable("zone.minenorth_harvest." + type.id()), zone.volume()));
         if (c.getSource().getPlayer() != null) ZoneManager.show(c.getSource().getPlayer(), zone, 10);
-        if (type == ZoneType.PETROLE || type == ZoneType.MINE) sendGenerated(c, zone, OilGenerator.generate(level, zone));
+        if (type == ZoneType.MINE) sendGenerated(c, zone, OilGenerator.generate(level, zone));
+        if (type == ZoneType.PETROLE) PumpSites.restoreNow(level, zone);
         return 1;
     }
 
@@ -201,7 +202,7 @@ public final class ZoneCommand {
                 z.min.toShortString(), z.max.toShortString(),
                 z.type == ZoneType.BUCHERON || z.type == ZoneType.MINE ? (z.regrow ? "oui" : "non") : "-",
                 z.type == ZoneType.VERGER ? (z.speed > 0 ? "x" + z.speed : "config")
-                        : z.type == ZoneType.PETROLE || z.type == ZoneType.MINE ? Math.round(z.density * 100) + "%" : "-"));
+                        : z.type == ZoneType.MINE ? Math.round(z.density * 100) + "%" : z.type == ZoneType.PETROLE ? ZoneData.get(c.getSource().getLevel()).sitesIn(z).size() + " puits" : "-"));
     }
 
     private static int show(CommandContext<CommandSourceStack> c) throws CommandSyntaxException {
@@ -232,7 +233,12 @@ public final class ZoneCommand {
     private static int generate(CommandContext<CommandSourceStack> c) {
         Zone z = find(c);
         if (z == null) return 0;
-        if (z.type != ZoneType.PETROLE && z.type != ZoneType.MINE) {
+        if (z.type == ZoneType.PETROLE) {
+            PumpSites.restoreNow(c.getSource().getLevel(), z);
+            reply(c, Component.literal("§aChevaux à bascule de la zone " + z.name + " remis en place."));
+            return 1;
+        }
+        if (z.type != ZoneType.MINE) {
             c.getSource().sendFailure(Component.translatable("command.minenorth_harvest.zone_not_oil", z.name));
             return 0;
         }

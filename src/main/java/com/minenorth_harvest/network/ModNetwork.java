@@ -9,7 +9,7 @@ import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.network.simple.SimpleChannel;
 
 public final class ModNetwork {
-    private static final String VERSION = "1";
+    private static final String VERSION = "2";
     public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
             new ResourceLocation(MineNorthHarvest.MODID, "main"),
             () -> VERSION, VERSION::equals, VERSION::equals);
@@ -37,6 +37,18 @@ public final class ModNetwork {
         CHANNEL.messageBuilder(S2CSyncConfig.class, id++, NetworkDirection.PLAY_TO_CLIENT)
                 .encoder(S2CSyncConfig::encode).decoder(S2CSyncConfig::decode)
                 .consumerMainThread(S2CSyncConfig::handle).add();
+        CHANNEL.messageBuilder(S2CPump.class, id++, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(S2CPump::encode).decoder(S2CPump::decode)
+                .consumerMainThread(S2CPump::handle).add();
+        CHANNEL.messageBuilder(C2SPump.class, id++, NetworkDirection.PLAY_TO_SERVER)
+                .encoder(C2SPump::encode).decoder(C2SPump::decode)
+                .consumerMainThread(C2SPump::handle).add();
+        CHANNEL.messageBuilder(S2COilAdmin.class, id++, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(S2COilAdmin::encode).decoder(S2COilAdmin::decode)
+                .consumerMainThread(S2COilAdmin::handle).add();
+        CHANNEL.messageBuilder(C2SOilAdmin.class, id++, NetworkDirection.PLAY_TO_SERVER)
+                .encoder(C2SOilAdmin::encode).decoder(C2SOilAdmin::decode)
+                .consumerMainThread(C2SOilAdmin::handle).add();
     }
 
     public static void sendTo(ServerPlayer player, Object msg) {

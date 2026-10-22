@@ -60,6 +60,7 @@ public final class ZoneManager {
                 ZoneData data = ZoneData.get(level);
                 boostOrchards(level, data);
                 processRegrows(level, data);
+                PumpSites.tick(level, data);
             }
         }
     }
@@ -168,12 +169,7 @@ public final class ZoneManager {
             if (r.due() > now || !level.isLoaded(r.pos())) continue;
             it.remove();
             changed = true;
-            if (OIL_REGEN.equals(r.sapling())) { // gisement miné : il réapparaît s'il ne reste que du vide
-                if (level.getBlockState(r.pos()).isAir()) {
-                    level.setBlock(r.pos(), ModBlocks.OIL_DEPOSIT.get().defaultBlockState(), Block.UPDATE_ALL);
-                }
-                continue;
-            }
+            if (OIL_REGEN.equals(r.sapling())) continue;   // ancienne entrée de gisement de pétrole (supprimé) : abandonnée
             if (r.sapling().startsWith(ORE_REGEN)) {
                 ResourceLocation oreId = ResourceLocation.tryParse(r.sapling().substring(ORE_REGEN.length()));
                 Block ore = oreId == null ? null : ForgeRegistries.BLOCKS.getValue(oreId);

@@ -1,7 +1,6 @@
 package com.minenorth_harvest.zone;
 
 import com.minenorth_harvest.config.HarvestConfig;
-import com.minenorth_harvest.registry.ModBlocks;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistries;
 import java.util.ArrayList;
@@ -24,8 +23,8 @@ public final class OilGenerator {
     public static Result generate(ServerLevel level, Zone zone) {
         if (zone.volume() > MAX_VOLUME) return new Result(0, 0, true);
         RandomSource random = level.random;
-        Block oil = ModBlocks.OIL_DEPOSIT.get();
-        boolean mine = zone.type == ZoneType.MINE;
+        if (zone.type != ZoneType.MINE) return new Result(0, 0, false);   // zone pétrole : ses chevaux à bascule sont gérés par PumpSites
+        boolean mine = true;
         List<Block> ores = new ArrayList<>();
         List<Integer> weights = new ArrayList<>();
         int total = 0;
@@ -61,7 +60,7 @@ public final class OilGenerator {
                             pos.set(x, y, z);
                             BlockState state = level.getBlockState(pos);
                             if (state.is(BlockTags.STONE_ORE_REPLACEABLES) || state.is(BlockTags.DEEPSLATE_ORE_REPLACEABLES)) {
-                                Block put = oil;
+                                Block put = null;
                                 if (mine) {
                                     int roll = random.nextInt(total);
                                     int i = 0;

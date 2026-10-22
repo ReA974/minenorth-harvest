@@ -5,7 +5,6 @@ import com.minenorth_harvest.block.FruitLeavesBlock;
 import com.minenorth_harvest.block.FruitSaplingBlock;
 import com.minenorth_harvest.block.FruitTreeGrower;
 import com.minenorth_harvest.block.FruitType;
-import com.minenorth_harvest.block.OilDepositBlock;
 import com.minenorth_harvest.block.TreeStumpBlock;
 import com.minenorth_harvest.config.HarvestConfig;
 import net.minecraft.core.particles.ParticleTypes;
@@ -105,13 +104,6 @@ public final class ModBlocks {
                     .sound(SoundType.METAL)
                     .noOcclusion()));
 
-    public static final RegistryObject<Block> OIL_DEPOSIT = BLOCKS.register("oil_deposit",
-            () -> new OilDepositBlock(BlockBehaviour.Properties.of()
-                    .mapColor(MapColor.COLOR_BLACK)
-                    .strength(3.0f, 3.0f)
-                    .requiresCorrectToolForDrops()
-                    .sound(SoundType.STONE)));
-
     public static final RegistryObject<Block> REFINERY = BLOCKS.register("refinery",
             () -> new com.minenorth_harvest.block.RefineryBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.METAL)
@@ -132,16 +124,14 @@ public final class ModBlocks {
     public static final RegistryObject<Block> PUMPJACK = BLOCKS.register("pumpjack",
             () -> new com.minenorth_harvest.block.PumpjackBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.METAL)
-                    .strength(4.0f, 8.0f)
-                    .requiresCorrectToolForDrops()
+                    .strength(-1.0f, 3600000.0f)
                     .sound(SoundType.METAL)
                     .noOcclusion()));
 
     public static final RegistryObject<Block> PUMPJACK_PART = BLOCKS.register("pumpjack_part",
             () -> new com.minenorth_harvest.block.PumpjackPartBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.METAL)
-                    .strength(4.0f, 8.0f)
-                    .requiresCorrectToolForDrops()
+                    .strength(-1.0f, 3600000.0f)
                     .sound(SoundType.METAL)
                     .noLootTable()
                     .noOcclusion()));

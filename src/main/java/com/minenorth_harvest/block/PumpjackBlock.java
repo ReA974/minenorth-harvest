@@ -18,6 +18,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import com.minenorth_harvest.zone.PumpGame;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -33,7 +36,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-/** Chevalet de pompage (bloc maître) : se pose SUR un gisement de pétrole ; clic droit à main nue pour récupérer le brut. */
+/** Cheval à bascule (bloc maître) : placé par les zones pétrole ; clic droit = mini-jeu de rythme qui fait sortir le pétrole brut. */
 public class PumpjackBlock extends BaseEntityBlock {
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
 
@@ -47,24 +50,37 @@ public class PumpjackBlock extends BaseEntityBlock {
         builder.add(FACING);
     }
 
+    /** Aucun joueur ne pose un cheval à bascule : ils sont placés par les zones pétrole (menu admin de la baguette de zone). */
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext ctx) {
-        Direction facing = ctx.getHorizontalDirection().getOpposite();
-        if (!ctx.getLevel().getBlockState(ctx.getClickedPos().below()).is(ModBlocks.OIL_DEPOSIT.get())) {
-            if (ctx.getPlayer() != null) ctx.getPlayer().displayClientMessage(Component.translatable("message.minenorth_harvest.pumpjack_need_deposit"), true);
-            return null;   // il faut un gisement de pétrole juste dessous
-        }
-        if (!MultiblockUtil.fits(ctx, PumpjackLayout.PARTS, facing)) return null;
-        return defaultBlockState().setValue(FACING, facing);
+        if (ctx.getPlayer() != null) ctx.getPlayer().displayClientMessage(Component.literal("§cLes chevaux à bascule se placent depuis le menu des zones pétrole (baguette de zone, accroupi + clic droit)."), true);
+        return null;
     }
 
-    @Override
-    public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
-        Direction facing = state.getValue(FACING);
+    /** Construit le cheval (bloc maître + cellules annexes) à cet emplacement si la place est libre. */
+    public static boolean build(Level level, BlockPos pos, Direction facing) {
+        if (pos.getY() + 3 >= level.getMaxBuildHeight() || pos.getY() < level.getMinBuildHeight()) return false;
+        if (!replaceable(level, pos)) return false;
+        for (int[] o : PumpjackLayout.PARTS) if (!replaceable(level, MultiblockUtil.partPos(pos, facing, o))) return false;
+        level.setBlock(pos, ModBlocks.PUMPJACK.get().defaultBlockState().setValue(FACING, facing), Block.UPDATE_ALL);
         for (int i = 0; i < PumpjackLayout.PARTS.length; i++) {
             level.setBlock(MultiblockUtil.partPos(pos, facing, PumpjackLayout.PARTS[i]), ModBlocks.PUMPJACK_PART.get().defaultBlockState()
                     .setValue(PumpjackPartBlock.FACING, facing).setValue(PumpjackPartBlock.PART, i), Block.UPDATE_ALL);
         }
+        return true;
+    }
+
+    private static boolean replaceable(Level level, BlockPos p) {
+        BlockState st = level.getBlockState(p);
+        return st.isAir() || st.canBeReplaced();
+    }
+
+    /** Démonte le cheval (bloc maître et cellules annexes) sans rien donner. */
+    public static void demolish(Level level, BlockPos pos) {
+        BlockState st = level.getBlockState(pos);
+        if (!st.is(ModBlocks.PUMPJACK.get())) return;
+        MultiblockUtil.removeParts(level, pos, st.getValue(FACING), PumpjackLayout.PARTS, ModBlocks.PUMPJACK_PART.get());
+        level.setBlock(pos, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
     }
 
     @Override
@@ -101,25 +117,10 @@ public class PumpjackBlock extends BaseEntityBlock {
     @SuppressWarnings("deprecation")
     public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         if (hand != InteractionHand.MAIN_HAND) return InteractionResult.PASS;
-        if (!(level.getBlockEntity(pos) instanceof PumpjackBlockEntity be)) return InteractionResult.PASS;
         if (level.isClientSide) return InteractionResult.SUCCESS;
-        if (be.dry()) {
-            player.displayClientMessage(Component.translatable("message.minenorth_harvest.pumpjack_dry"), true);
-            return InteractionResult.CONSUME;
+        if (player instanceof ServerPlayer sp && level instanceof ServerLevel sl && level.getBlockEntity(pos) instanceof PumpjackBlockEntity be) {
+            PumpGame.begin(sp, sl, pos, be);
         }
-        ItemStack out = be.take();
-        if (out.isEmpty()) {
-            player.displayClientMessage(Component.translatable("message.minenorth_harvest.pumpjack_empty"), true);
-            return InteractionResult.CONSUME;
-        }
-        Component name = out.getHoverName();
-        int count = out.getCount();
-        while (!out.isEmpty()) {
-            ItemStack part = out.split(Math.min(out.getCount(), out.getMaxStackSize()));
-            if (!player.getInventory().add(part)) player.drop(part, false);
-        }
-        level.playSound(null, pos, SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 0.5f, 1.0f);
-        player.displayClientMessage(Component.translatable("message.minenorth_harvest.mill_done", count, name), true);
         return InteractionResult.CONSUME;
     }
 
@@ -127,9 +128,6 @@ public class PumpjackBlock extends BaseEntityBlock {
     @SuppressWarnings("deprecation")
     public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moved) {
         if (!state.is(newState.getBlock())) {
-            if (level.getBlockEntity(pos) instanceof PumpjackBlockEntity be && be.stored() > 0) {
-                net.minecraft.world.Containers.dropItemStack(level, pos.getX() + 0.5, pos.getY() + 0.8, pos.getZ() + 0.5, be.take());
-            }
             MultiblockUtil.removeParts(level, pos, state.getValue(FACING), PumpjackLayout.PARTS, ModBlocks.PUMPJACK_PART.get());
         }
         super.onRemove(state, level, pos, newState, moved);

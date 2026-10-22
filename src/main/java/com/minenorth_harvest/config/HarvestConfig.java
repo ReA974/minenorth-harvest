@@ -83,8 +83,7 @@ public final class HarvestConfig {
     public static final ForgeConfigSpec.DoubleValue REFINERY_LUCK;
     public static final ForgeConfigSpec.DoubleValue REFINERY_EXPLOSION;
     public static final ForgeConfigSpec.BooleanValue REFINERY_BREAKS_BLOCKS;
-    public static final ForgeConfigSpec.IntValue PUMPJACK_TICKS;
-    public static final ForgeConfigSpec.DoubleValue PUMPJACK_DEPLETE;
+    public static final ForgeConfigSpec.IntValue PUMP_RESERVE, PUMP_PERFECT_OIL, PUMP_GOOD_OIL, PUMP_ROUNDS, PUMP_COOLDOWN;
     public static final ForgeConfigSpec.ConfigValue<java.util.List<? extends String>> REFINERY_RECIPES;
 
     // ---- Écologie ----
@@ -139,7 +138,7 @@ public final class HarvestConfig {
                 .define("zonesBypassProtection", true);
         REGROW_DELAY = b.comment("Zones avec repousse : délai (secondes) avant qu'une pousse soit replantée automatiquement sur une souche oubliée")
                 .defineInRange("regrowDelaySeconds", 600, 5, 86400);
-        OIL_REGEN_DELAY = b.comment("Zones pétrole avec régénération : délai (secondes) avant qu'un gisement miné réapparaisse")
+        OIL_REGEN_DELAY = b.comment("Zones pétrole : délai (secondes) avant qu'un cheval à bascule à sec se remplisse de nouveau, et avant qu'un cheval retiré (admin) réapparaisse (si la repousse de la zone est active)")
                 .defineInRange("oilRegenDelaySeconds", 900, 5, 86400);
         ORCHARD_SPEED = b.comment("Zones verger : multiplicateur de vitesse de pousse des fruits quand un joueur est dans la zone (modifiable par zone)")
                 .defineInRange("orchardSpeedMultiplier", 5.0, 1.0, 100.0);
@@ -217,9 +216,12 @@ public final class HarvestConfig {
                 .defineList("recipes", java.util.List.of("minenorth_harvest:crude_oil*3=minenorth_harvest:gasoline*2"), o -> o instanceof String);
         b.pop();
 
-        b.comment("Chevalet de pompage : pose sur un gisement de petrole, pompe du brut tout seul").push("pumpjack");
-        PUMPJACK_TICKS = b.comment("Ticks pour pomper 1 petrole brut (20 ticks = 1 s ; 400 = 1 brut toutes les 20 s)").defineInRange("ticksPerCrude", 400, 20, 72000);
-        PUMPJACK_DEPLETE = b.comment("Chance qu'un gisement s'epuise (disparait) a chaque brut pompe ; il revient seul en zone petrole avec repousse").defineInRange("depleteChance", 0.02, 0.0, 1.0);
+        b.comment("Cheval à bascule (zones pétrole) : clic droit = mini-jeu de rythme ; le serveur valide le timing, la durée et le délai entre deux parties").push("pumpjack");
+        PUMP_RESERVE = b.comment("Pétrole brut disponible par cheval avant qu'il soit à sec (il se remplit de nouveau après oilRegenDelaySeconds)").defineInRange("reserve", 40, 1, 1000);
+        PUMP_PERFECT_OIL = b.comment("Pétrole brut par coup PARFAIT").defineInRange("perfectOil", 3, 0, 64);
+        PUMP_GOOD_OIL = b.comment("Pétrole brut par coup BIEN").defineInRange("goodOil", 1, 0, 64);
+        PUMP_ROUNDS = b.comment("Nombre de coups par partie").defineInRange("rounds", 8, 3, 16);
+        PUMP_COOLDOWN = b.comment("Secondes d'attente entre deux parties d'un même joueur (opérateurs compris)").defineInRange("cooldownSeconds", 20, 0, 3600);
         b.pop();
 
         b.comment("Écologie : chaque arbre abattu ajoute 1 'dette', chaque replantation sur une souche en retire 1").push("ecology");
