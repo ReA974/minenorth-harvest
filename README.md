@@ -59,10 +59,8 @@ Accroupi + clic droit (après avoir relâché le clic) = abandonner. S'éloigner
 Casser les bûches à la main reste possible mais plus lent (`manualLogBreakSpeed`). Les constructions (bûches sans feuilles naturelles) ne sont pas concernées.
 
 ### Pétrole
-- **Gisement de pétrole** : minerai noir, à la pioche (pierre minimum). Donne 1 à 3 **Pétrole brut** (Fortune ok, Silk Touch = le bloc).
-  Il ne génère **pas** naturellement : les gisements n'existent que dans les **zones pétrole** (voir plus bas).
+- Le **pétrole brut** s'obtient aux **chevaux à bascule** des **zones pétrole** (voir « Cheval à bascule » plus bas). Il n'y a plus de gisement à miner.
 - Le brut est un combustible de four (2400 ticks, plus que le charbon).
-- Très inflammable : feu, lave ou briquet à côté d'un gisement = **explosion**, qui peut s'enchaîner sur les gisements voisins.
 
 ### Raffinerie (multibloc 3 × 2 × 4, mini-jeu de pression)
 Grande installation : réservoir de brut, four de chauffe, **colonne de distillation**, torchère qui brûle, pupitre à cadran, collecteur d'essence.
@@ -74,9 +72,12 @@ Grande installation : réservoir de brut, four de chauffe, **colonne de distilla
 6. **Au collecteur (arrière droit)** : clic droit à main nue = récupérer l'**essence** (3 brut → 2 essence ; 10 % de coup de chance = doublé).
 - Section `[refinery]` : `batchTicks`, `luckChance`, `explosionPower`, `explosionBreaksBlocks`, `recipes`. Il faut la place pour le poser.
 
-### Chevalet de pompage (multibloc 3 × 3 × 3)
-- À poser **sur un gisement de pétrole** (le bloc juste dessous). Il pompe **1 brut toutes les 20 s** tout seul (balancier, tige polie et contrepoids animés), jusqu'à 64 en stock : **clic droit à main nue** pour récupérer.
-- Chaque brut a 2 % de chance d'**épuiser le gisement** (puits à sec) ; il revient seul en zone pétrole avec repousse. Section `[pumpjack]` : `ticksPerCrude`, `depleteChance`.
+### Cheval à bascule (multibloc 3 × 3 × 3, mini-jeu de rythme)
+- Les chevaux à bascule sont **toujours présents dans les zones pétrole** : placés par la zone (l'admin choisit leurs emplacements dans le menu, voir « Zones »), **ni posables ni cassables par les joueurs** (seul un admin en créatif peut en retirer un ; il réapparaît après `oilRegenDelaySeconds` si la repousse de la zone est active).
+- **Clic droit sur le cheval** = petit mini-jeu : un curseur traverse la barre à chaque manche (8 manches, de plus en plus rapides) ; on appuie sur **Espace ou clic** quand il passe sur la **cible verte** (parfait) ou **jaune** (bien). **Parfait = 3 pétrole brut, bien = 1**, raté = 0. Le cheval pompe en 3D à chaque coup : éclaboussures de pétrole, bruits, balancier qui s'emballe.
+- **Anti-triche** : le serveur choisit la graine, chronomètre la partie avec sa propre horloge, n'accepte qu'un appui par manche, refuse les instants impossibles, plafonne le gain à la **réserve du puits** et impose un **délai entre deux parties**. Les opérateurs sont soumis aux mêmes règles.
+- Chaque cheval a une **réserve** (40 brut par défaut) : quand elle est vide, le puits est **à sec** et se remplit de nouveau après `oilRegenDelaySeconds` (900 s).
+- Section `[pumpjack]` : `reserve`, `perfectOil`, `goodOil`, `rounds`, `cooldownSeconds`.
 
 ### Scierie (3D animée, multibloc 2 × 3 × 2)
 - **Grande machine** : elle occupe **2 de large, 3 de long et 2 de haut** (il faut la place pour la poser, sinon rien ne se passe). Le bloc que vous visez en la posant est le centre ; elle s'orientera face à vous. La casser (n'importe quelle partie) la retire en entier.
@@ -104,8 +105,9 @@ Deux types de zones, propres à chaque dimension :
   Les protections (claims) y sont ignorées pour l'abattage (`zonesBypassProtection`).
   Avec la **repousse** (activée par défaut), une souche oubliée est replantée automatiquement après 10 min.
 - **verger** : dès qu'un joueur est dans la zone, les fruits y poussent **5× plus vite**.
-- **petrole** : la roche de la zone se remplit de gisements (`densite`, 6 % par défaut). Un gisement miné **réapparaît** après `oilRegenDelaySeconds` (900 s, désactivable avec `/recolte zone repousse <nom> false`).
-  `/recolte zone generer <nom>` (re)génère, `/recolte zone densite <nom> <0-1>` règle la part de roche.  Les chunks de la zone sont chargés automatiquement pour la génération.
+- **petrole** : porte les **chevaux à bascule** (emplacements choisis par l'admin). Gérée **en jeu**, sans commande : **Baguette de zone, accroupi + clic droit** (sur un bloc ou dans le vide) ouvre le menu « Zones pétrole » :
+  créer une zone avec la sélection de la baguette (nom + bouton), **+ Cheval ici** (pose un cheval à votre position, orienté vers vous, dans la zone), **✖** pour retirer un cheval, **Remettre en place**, **Repousse** oui/non, **Afficher le contour**, **Supprimer la zone** (confirmation).
+  Les anciens gisements de pétrole ont disparu (leurs blocs et objets sont supprimés sans erreur au chargement d'un ancien monde).
 - **chasse** : des animaux apparaissent autour des joueurs présents (port de `chasse.sk`). Hauteur ignorée.
 
 ### Créer une zone avec la baguette (comme WorldEdit)
@@ -113,7 +115,7 @@ Deux types de zones, propres à chaque dimension :
 1. `/recolte baguette` → tu reçois la **Baguette de zone**.
 2. **Clic gauche** sur un bloc = point 1, **clic droit** sur un autre bloc = point 2
    (le contour s'affiche en particules).
-3. `/recolte zone creer <nom> bucheron`, `... verger`, `... chasse` ou `... petrole`.
+3. `/recolte zone creer <nom> bucheron`, `... verger`, `... chasse` ou `... mine` ; une zone **pétrole** se crée dans le menu de la baguette (accroupi + clic droit).
 
 Pense à prendre la hauteur : clique un bloc au sol d'un coin, et un bloc en hauteur au coin opposé
 (au-dessus de la cime des arbres).
