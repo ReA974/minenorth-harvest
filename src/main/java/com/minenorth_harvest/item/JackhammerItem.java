@@ -120,11 +120,30 @@ public class JackhammerItem extends PickaxeItem {
         if (d.progress >= 1f) {
             sl.destroyBlockProgress(p.getId(), pos, -1);
             DRILLS.remove(p.getUUID());
-            if (!p.gameMode.destroyBlock(pos)) {   // casse normale : drops, protections, événements, mineBlock (essence)
+            if (!breakWithDrops(sl, p, st, pos)) {
                 p.displayClientMessage(Component.literal("§cCe bloc est protégé ici."), true);
                 p.stopUsingItem();
             }
         }
+    }
+
+    /**
+     * Casse le bloc comme un joueur : événement de casse (protections, zones), consommation d'essence (mineBlock), puis drops calculés avec le marteau
+     * comme outil et déposés explicitement. Le chemin vanilla (gameMode.destroyBlock) cassait le bloc sans rien donner quand l'outil est en cours d'utilisation.
+     */
+    private static boolean breakWithDrops(ServerLevel sl, ServerPlayer p, ItemStack tool, BlockPos pos) {
+        BlockState state = sl.getBlockState(pos);
+        if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.level.BlockEvent.BreakEvent(sl, pos, state, p))) return false;
+        net.minecraft.world.level.block.entity.BlockEntity be = sl.getBlockEntity(pos);
+        boolean drop = !p.isCreative() && (!state.requiresCorrectToolForDrops() || tool.isCorrectToolForDrops(state));
+        List<ItemStack> drops = drop ? net.minecraft.world.level.block.Block.getDrops(state, sl, pos, be, p, tool) : List.of();
+        tool.mineBlock(sl, state, pos, p);
+        if (!sl.removeBlock(pos, false)) return true;
+        state.getBlock().destroy(sl, pos, state);
+        for (ItemStack d : drops) net.minecraft.world.level.block.Block.popResource(sl, pos, d);
+        state.spawnAfterBreak(sl, pos, tool, true);
+        sl.levelEvent(2001, pos, net.minecraft.world.level.block.Block.getId(state));
+        return true;
     }
 
     /** Pendant qu'on perce (clic gauche maintenu, bras qui balance) : martèlement, poussière, 1 unité d'essence par seconde. */
