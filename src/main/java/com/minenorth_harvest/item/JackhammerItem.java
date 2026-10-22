@@ -133,6 +133,7 @@ public class JackhammerItem extends PickaxeItem {
      */
     private static boolean breakWithDrops(ServerLevel sl, ServerPlayer p, ItemStack tool, BlockPos pos) {
         BlockState state = sl.getBlockState(pos);
+        if (com.minenorth_harvest.zone.MineBreak.isMineOre(sl, pos, state)) return com.minenorth_harvest.zone.MineBreak.handle(sl, p, pos, state, tool, "marteau-piqueur");
         if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.level.BlockEvent.BreakEvent(sl, pos, state, p))) return sl.getBlockState(pos).isAir();   // annulé mais bloc déjà cassé (minerai de zone mine) = traité
         net.minecraft.world.level.block.entity.BlockEntity be = sl.getBlockEntity(pos);
         boolean drop = !p.isCreative() && (!state.requiresCorrectToolForDrops() || tool.isCorrectToolForDrops(state));

@@ -77,7 +77,9 @@ public final class HarvestConfig {
     public static final ForgeConfigSpec.DoubleValue FOUNDRY_LUCK;
     public static final ForgeConfigSpec.BooleanValue FOUNDRY_NEEDS_FUEL;
     public static final ForgeConfigSpec.ConfigValue<java.util.List<? extends String>> FOUNDRY_RECIPES;
-    public static final ForgeConfigSpec.IntValue MINE_REGEN_DELAY;
+    public static final ForgeConfigSpec.IntValue MINE_REGEN_DELAY, MINE_DROP_MULTIPLIER;
+    public static final ForgeConfigSpec.BooleanValue MINE_TOOL_WEAR;
+    public static final ForgeConfigSpec.ConfigValue<java.util.List<? extends String>> MINE_DROP_OVERRIDES;
     public static final ForgeConfigSpec.ConfigValue<java.util.List<? extends String>> MINE_ORES;
     public static final ForgeConfigSpec.IntValue REFINERY_BATCH_TICKS;
     public static final ForgeConfigSpec.DoubleValue REFINERY_LUCK;
@@ -200,6 +202,11 @@ public final class HarvestConfig {
         b.comment("Mine : zones /recolte zone creer <nom> mine, les minerais de la zone repoussent une fois minés").push("mine");
         MINE_REGEN_DELAY = b.comment("Délai (secondes) avant qu'un minerai miné en zone mine réapparaisse")
                 .defineInRange("regenDelaySeconds", 600, 5, 86400);
+        MINE_DROP_MULTIPLIER = b.comment("Multiplicateur du minerai donné par la casse d'un minerai de zone mine (1 = quantité normale, fortune de l'outil comprise)")
+                .defineInRange("dropMultiplier", 1, 1, 20);
+        MINE_TOOL_WEAR = b.comment("Usure de l'outil (et essence du marteau-piqueur) à chaque minerai cassé en zone mine").define("toolWear", true);
+        MINE_DROP_OVERRIDES = b.comment("Surcharges du minerai donné, format \"bloc=objet*quantité\" (ex. \"minecraft:iron_ore=minecraft:raw_iron*2\") ; vide = loot table vanilla du minerai")
+                .defineList("dropOverrides", java.util.List.of(), o -> o instanceof String);
         MINE_ORES = b.comment("Minerais générés dans la zone, format \"bloc=poids\" (la variante deepslate_ est utilisée dans l'ardoise des abîmes)")
                 .defineList("ores", java.util.List.of("minecraft:coal_ore=6", "minecraft:iron_ore=5", "minecraft:copper_ore=5",
                         "minecraft:gold_ore=2", "minecraft:redstone_ore=2", "minecraft:lapis_ore=2", "minecraft:diamond_ore=1"), o -> o instanceof String);
