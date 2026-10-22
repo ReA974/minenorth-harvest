@@ -16,7 +16,7 @@ public final class ToolPoses {
     private ToolPoses() {}
 
     /** Marteau-piqueur : les deux mains sur les poignées, devant la taille, l'outil pointé vers le sol. */
-    public static final HumanoidModel.ArmPose JACKHAMMER = pose("minenorth_harvest_jackhammer", -0.95f, -0.25f, -0.95f, 0.4f);
+    public static final HumanoidModel.ArmPose JACKHAMMER = pose("minenorth_harvest_jackhammer", -0.95f, -0.17f, -0.95f, 0.26f);
     /** Tronçonneuse : une main sur la poignée arrière, l'autre sur la poignée haute, devant soi. */
     public static final HumanoidModel.ArmPose CHAINSAW = pose("minenorth_harvest_chainsaw", -1.2f, -0.15f, -1.25f, 0.55f);
 

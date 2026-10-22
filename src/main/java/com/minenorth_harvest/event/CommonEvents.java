@@ -63,6 +63,35 @@ public final class CommonEvents {
                 level.getGameTime() + com.minenorth_harvest.config.HarvestConfig.MINE_REGEN_DELAY.get() * 20L);
     }
 
+    /**
+     * Minerai d'une zone mine : le joueur reçoit TOUJOURS ses drops (calculés avec l'outil en main : palier, fortune), déposés directement dans son
+     * inventaire (au sol s'il est plein), sans dépendre de la casse vanilla ni des objets au sol. Passe en dernier : les protections (zones, claims) qui
+     * annulent la casse ont déjà parlé. Création / spectateur : comportement vanilla (aucun drop).
+     */
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void onOreDrops(net.minecraftforge.event.level.BlockEvent.BreakEvent event) {
+        if (!(event.getLevel() instanceof net.minecraft.server.level.ServerLevel sl) || !(event.getPlayer() instanceof ServerPlayer p)) return;
+        if (p.isCreative() || p.isSpectator()) return;
+        net.minecraft.world.level.block.state.BlockState state = event.getState();
+        if (!state.is(net.minecraftforge.common.Tags.Blocks.ORES)) return;
+        net.minecraft.core.BlockPos pos = event.getPos();
+        if (com.minenorth_harvest.zone.ZoneData.get(sl).zoneAt(pos, com.minenorth_harvest.zone.ZoneType.MINE) == null) return;
+        net.minecraft.world.item.ItemStack tool = p.getMainHandItem();
+        boolean harvest = !state.requiresCorrectToolForDrops() || tool.isCorrectToolForDrops(state);
+        java.util.List<net.minecraft.world.item.ItemStack> drops = harvest
+                ? net.minecraft.world.level.block.Block.getDrops(state, sl, pos, sl.getBlockEntity(pos), p, tool) : java.util.List.of();
+        event.setCanceled(true);   // on prend la casse en charge (le bloc est retiré ici, le client est resynchronisé par Forge)
+        tool.mineBlock(sl, state, pos, p);
+        if (!sl.removeBlock(pos, false)) return;
+        state.getBlock().destroy(sl, pos, state);
+        for (net.minecraft.world.item.ItemStack d : drops) {
+            net.minecraft.world.item.ItemStack c = d.copy();
+            if (!p.getInventory().add(c) && !c.isEmpty()) net.minecraft.world.level.block.Block.popResource(sl, pos, c);
+        }
+        state.spawnAfterBreak(sl, pos, tool, true);
+        sl.levelEvent(2001, pos, net.minecraft.world.level.block.Block.getId(state));
+    }
+
     @SubscribeEvent
     public static void onRegisterCommands(RegisterCommandsEvent event) {
         ZoneCommand.register(event.getDispatcher());
