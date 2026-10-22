@@ -50,11 +50,39 @@ public class PumpjackBlock extends BaseEntityBlock {
         builder.add(FACING);
     }
 
-    /** Aucun joueur ne pose un cheval à bascule : ils sont placés par les zones pétrole (menu admin de la baguette de zone). */
+    /** Seul un opérateur en créatif peut en poser un (les joueurs n'en posent pas) : les chevaux sont gérés par les zones pétrole (menu de la baguette de zone). */
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext ctx) {
-        if (ctx.getPlayer() != null) ctx.getPlayer().displayClientMessage(Component.literal("§cLes chevaux à bascule se placent depuis le menu des zones pétrole (baguette de zone, accroupi + clic droit)."), true);
-        return null;
+        Player pl = ctx.getPlayer();
+        if (pl == null || !pl.hasPermissions(2) || !pl.isCreative()) {
+            if (pl != null) pl.displayClientMessage(Component.literal("§cLes chevaux à bascule se placent depuis le menu des zones pétrole (baguette de zone, accroupi + clic droit)."), true);
+            return null;
+        }
+        Direction facing = ctx.getHorizontalDirection().getOpposite();
+        if (!MultiblockUtil.fits(ctx, PumpjackLayout.PARTS, facing)) {
+            pl.displayClientMessage(Component.literal("§cPas assez de place (3×3×3)."), true);
+            return null;
+        }
+        return defaultBlockState().setValue(FACING, facing);
+    }
+
+    @Override
+    public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
+        Direction facing = state.getValue(FACING);
+        for (int i = 0; i < PumpjackLayout.PARTS.length; i++) {
+            level.setBlock(MultiblockUtil.partPos(pos, facing, PumpjackLayout.PARTS[i]), ModBlocks.PUMPJACK_PART.get().defaultBlockState()
+                    .setValue(PumpjackPartBlock.FACING, facing).setValue(PumpjackPartBlock.PART, i), Block.UPDATE_ALL);
+        }
+        // posé dans une zone pétrole : l'emplacement est enregistré (le cheval reviendra s'il est retiré)
+        if (level instanceof ServerLevel sl) {
+            com.minenorth_harvest.zone.ZoneData data = com.minenorth_harvest.zone.ZoneData.get(sl);
+            com.minenorth_harvest.zone.Zone zone = data.zoneAt(pos, com.minenorth_harvest.zone.ZoneType.PETROLE);
+            if (zone != null) {
+                com.minenorth_harvest.zone.ZoneData.Site site = new com.minenorth_harvest.zone.ZoneData.Site(pos, facing, zone.name);
+                site.placedOnce = true;
+                data.addSite(site);
+            }
+        }
     }
 
     /** Construit le cheval (bloc maître + cellules annexes) à cet emplacement si la place est libre. */

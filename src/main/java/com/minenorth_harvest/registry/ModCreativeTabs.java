@@ -31,6 +31,7 @@ public final class ModCreativeTabs {
                 out.accept(ModItems.CASTING_BUCKET.get());
                 out.accept(ModItems.CRUDE_OIL.get());
                 out.accept(ModItems.REFINERY.get());
+                out.accept(ModItems.PUMPJACK.get());
                 out.accept(ModItems.GASOLINE.get());
                 out.accept(com.minenorth_harvest.item.PowerTool.full(new ItemStack(ModItems.CHAINSAW.get())));
                 out.accept(com.minenorth_harvest.item.PowerTool.full(new ItemStack(ModItems.JACKHAMMER.get())));

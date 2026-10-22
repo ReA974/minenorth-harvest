@@ -16,6 +16,8 @@ public class Zone {
     public double speed = 0;
     /** PETROLE : proportion (0-1) de la roche de la zone transformée en gisement. */
     public double density = 0.06;
+    /** PETROLE : la zone a déjà reçu (ou l'admin a choisi) ses chevaux ; faux pour une zone créée avant la refonte : un premier cheval est posé près de son centre. */
+    public boolean seeded;
 
     public Zone(String name, ZoneType type, BlockPos a, BlockPos b) {
         this.name = name;
@@ -54,6 +56,7 @@ public class Zone {
         t.putBoolean("regrow", regrow);
         t.putDouble("speed", speed);
         t.putDouble("density", density);
+        t.putBoolean("seeded", seeded);
         return t;
     }
 
@@ -64,6 +67,7 @@ public class Zone {
         z.regrow = !t.contains("regrow") || t.getBoolean("regrow");
         z.speed = t.getDouble("speed");
         if (t.contains("density")) z.density = t.getDouble("density");
+        z.seeded = t.getBoolean("seeded");
         return z;
     }
 }

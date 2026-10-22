@@ -80,6 +80,7 @@ public final class OilAdmin {
         ZoneSelection.Sel sel = ZoneSelection.get(p);
         if (sel == null || !sel.complete()) return "§cSélectionnez d'abord deux coins avec la baguette (clic gauche = coin 1, clic droit = coin 2).";
         Zone z = new Zone(name, ZoneType.PETROLE, sel.pos1, sel.pos2);
+        z.seeded = true;   // l'admin place lui-même les chevaux
         data.add(z);
         ZoneManager.show(p, z, 10);
         return "§aZone pétrole « " + name + " » créée (" + z.volume() + " blocs). Ajoutez-y des chevaux.";

@@ -15,9 +15,9 @@ public final class PumpSites {
 
     /** Appelé une fois par seconde et par dimension. */
     public static void tick(ServerLevel level, ZoneData data) {
-        if (data.sites().isEmpty()) return;
         long now = level.getGameTime();
-        boolean changed = false;
+        boolean changed = seedZones(level, data);
+        if (data.sites().isEmpty()) { if (changed) data.setDirty(); return; }
         for (ZoneData.Site s : data.sites()) {
             Zone z = data.byName(s.zone);
             if (z == null || z.type != ZoneType.PETROLE || !level.hasChunkAt(s.pos)) continue;
@@ -41,6 +41,35 @@ public final class PumpSites {
             }
         }
         if (changed) data.setDirty();
+    }
+
+    /** Zones pétrole sans cheval (créées avant la refonte) : un premier cheval est posé près du centre de la zone, au sol. */
+    private static boolean seedZones(ServerLevel level, ZoneData data) {
+        boolean changed = false;
+        for (Zone z : data.zones()) {
+            if (z.type != ZoneType.PETROLE || z.seeded) continue;
+            if (!data.sitesIn(z).isEmpty()) { z.seeded = true; changed = true; continue; }
+            int cx = (z.min.getX() + z.max.getX()) / 2, cz = (z.min.getZ() + z.max.getZ()) / 2;
+            int[][] tries = {{0, 0}, {4, 0}, {-4, 0}, {0, 4}, {0, -4}, {8, 8}, {-8, 8}, {8, -8}, {-8, -8}};
+            for (int[] t : tries) {
+                int x = cx + t[0], zz = cz + t[1];
+                if (x < z.min.getX() || x > z.max.getX() || zz < z.min.getZ() || zz > z.max.getZ()) continue;
+                BlockPos at = new BlockPos(x, 0, zz);
+                if (!level.hasChunkAt(at)) break;
+                int y = Math.max(z.min.getY(), Math.min(z.max.getY(), level.getHeight(net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING, x, zz)));
+                BlockPos pos = new BlockPos(x, y, zz);
+                if (!z.contains(pos)) continue;
+                ZoneData.Site site = new ZoneData.Site(pos, net.minecraft.core.Direction.SOUTH, z.name);
+                if (com.minenorth_harvest.block.PumpjackBlock.build(level, pos, site.facing)) {
+                    site.placedOnce = true;
+                    data.addSite(site);
+                    z.seeded = true;
+                    changed = true;
+                    break;
+                }
+            }
+        }
+        return changed;
     }
 
     /** Remet tout de suite en place les chevaux manquants d'une zone. Renvoie le nombre de chevaux posés. */
