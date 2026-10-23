@@ -31,12 +31,12 @@ public final class FirstPersonHands {
      * Réglage d'un outil. rot / scale = le « display » firstperson du modèle (à garder identique dans le JSON) ; base = position du centre du modèle ;
      * gripR / gripL = poignées en pixels du modèle ; shoulder* = décalage du point d'où vient chaque bras (en dessous de la main).
      */
-    private record Rig(float rx, float ry, float rz, float scale, Vector3f base, Vector3f gripR, Vector3f gripL, Vector3f shoulderR, Vector3f shoulderL, float shake) {}
+    private record Rig(float rx, float ry, float rz, float scale, Vector3f base, Vector3f gripR, Vector3f gripL, Vector3f shoulderR, Vector3f shoulderL, float shake, float drop) {}
 
     private static final Rig JACKHAMMER = new Rig(15, -40, 0, 0.95f, new Vector3f(0.06f, -0.10f, -1.2f), new Vector3f(10.75f, 11, 8), new Vector3f(5.25f, 11, 8),
-            new Vector3f(0.60f, -1.0f, 0.0f), new Vector3f(-0.60f, -1.0f, 0.0f), 0.006f);
-    private static final Rig CHAINSAW = new Rig(12, -45, 0, 0.9f, new Vector3f(0.0f, -0.22f, -1.1f), new Vector3f(8, 8.6f, 15.2f), new Vector3f(8, 11.4f, 12),
-            new Vector3f(0.45f, -1.0f, 0.1f), new Vector3f(-0.35f, -1.0f, 0.1f), 0.004f);
+            new Vector3f(0.60f, -1.0f, 0.0f), new Vector3f(-0.60f, -1.0f, 0.0f), 0.006f, 0.14f);
+    private static final Rig CHAINSAW = new Rig(-14, 10, 0, 1.5f, new Vector3f(0.14f, -0.34f, -1.6f), new Vector3f(8, 8.6f, 15.2f), new Vector3f(8, 11.4f, 12),
+            new Vector3f(0.55f, -1.0f, 0.35f), new Vector3f(-0.55f, -1.0f, 0.35f), 0.004f, 0f);
 
     @SubscribeEvent
     public static void onRenderHand(RenderHandEvent event) {
@@ -66,7 +66,7 @@ public final class FirstPersonHands {
         // les deux bras, mains sur les poignées
         if (mc.getEntityRenderDispatcher().getRenderer(player) instanceof PlayerRenderer renderer) {
             Quaternionf q = new Quaternionf().rotationXYZ((float) Math.toRadians(rig.rx()), (float) Math.toRadians(rig.ry()), (float) Math.toRadians(rig.rz()));
-            Vector3f gr = grip(rig, q, rig.gripR(), base), gl = grip(rig, q, rig.gripL(), base);
+            Vector3f gr = grip(rig, q, rig.gripR(), base).sub(0, rig.drop(), 0), gl = grip(rig, q, rig.gripL(), base).sub(0, rig.drop(), 0);   // drop : bras plus bas que les poignées
             arm(ps, renderer, event.getMultiBufferSource(), event.getPackedLight(), player, gr, new Vector3f(gr).add(rig.shoulderR()), false);
             arm(ps, renderer, event.getMultiBufferSource(), event.getPackedLight(), player, gl, new Vector3f(gl).add(rig.shoulderL()), true);
         }
