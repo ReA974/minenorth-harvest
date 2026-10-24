@@ -34,6 +34,10 @@ public class MineNorthHarvest {
             ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, HarvestConfig.SPEC, "minenorth_harvest-common.toml");
         }
 
+        if (net.minecraftforge.fml.loading.FMLEnvironment.dist == net.minecraftforge.api.distmarker.Dist.CLIENT) {
+            ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, com.minenorth_harvest.client.ClientToolConfig.SPEC, "minenorth_harvest-client.toml");
+        }
+
         modBus.addListener(this::commonSetup);
         modBus.addListener(this::onConfigReload);
     }

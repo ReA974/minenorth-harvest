@@ -28,15 +28,20 @@ public final class FirstPersonHands {
     private FirstPersonHands() {}
 
     /**
-     * Réglage d'un outil. rot / scale = le « display » firstperson du modèle (à garder identique dans le JSON) ; base = position du centre du modèle ;
+     * Réglage d'un outil. rot / scale = rotation et échelle appliquées par le code (le « display » firstperson des modèles est neutre) ; base = position du centre du modèle ;
      * gripR / gripL = poignées en pixels du modèle ; shoulder* = décalage du point d'où vient chaque bras (en dessous de la main).
      */
     private record Rig(float rx, float ry, float rz, float scale, Vector3f base, Vector3f gripR, Vector3f gripL, Vector3f shoulderR, Vector3f shoulderL, float shake, float drop) {}
 
-    private static final Rig JACKHAMMER = new Rig(15, -40, 0, 0.95f, new Vector3f(0.06f, -0.10f, -1.2f), new Vector3f(10.75f, 11, 8), new Vector3f(5.25f, 11, 8),
-            new Vector3f(0.60f, -1.0f, 0.0f), new Vector3f(-0.60f, -1.0f, 0.0f), 0.006f, 0.14f);
-    private static final Rig CHAINSAW = new Rig(-14, 10, 0, 1.5f, new Vector3f(0.14f, -0.34f, -1.6f), new Vector3f(8, 8.6f, 15.2f), new Vector3f(8, 11.4f, 12),
-            new Vector3f(0.55f, -1.0f, 0.35f), new Vector3f(-0.55f, -1.0f, 0.35f), 0.004f, 0f);
+    /** Poignées et épaules fixes (liées au modèle) ; l'échelle, la rotation, la position et l'abaissement des mains viennent de {@link ClientToolConfig}. */
+    private static Rig rig(boolean jack) {
+        ClientToolConfig.Tool c = jack ? ClientToolConfig.JACKHAMMER : ClientToolConfig.CHAINSAW;
+        Vector3f base = new Vector3f(c.posX.get().floatValue(), c.posY.get().floatValue(), c.posZ.get().floatValue());
+        float rx = c.rotX.get().floatValue(), ry = c.rotY.get().floatValue(), rz = c.rotZ.get().floatValue(), sc = c.scale.get().floatValue(), drop = c.handDrop.get().floatValue();
+        return jack
+                ? new Rig(rx, ry, rz, sc, base, new Vector3f(10.75f, 11, 8), new Vector3f(5.25f, 11, 8), new Vector3f(0.60f, -1.0f, 0.0f), new Vector3f(-0.60f, -1.0f, 0.0f), 0.006f, drop)
+                : new Rig(rx, ry, rz, sc, base, new Vector3f(8, 8.6f, 15.2f), new Vector3f(8, 11.4f, 12), new Vector3f(0.55f, -1.0f, 0.35f), new Vector3f(-0.55f, -1.0f, 0.35f), 0.004f, drop);
+    }
 
     @SubscribeEvent
     public static void onRenderHand(RenderHandEvent event) {
@@ -45,8 +50,9 @@ public final class FirstPersonHands {
         AbstractClientPlayer player = mc.player;
         ItemStack held = event.getItemStack();
         if (player == null) return;
-        Rig rig = held.is(ModItems.JACKHAMMER.get()) ? JACKHAMMER : held.is(ModItems.CHAINSAW.get()) ? CHAINSAW : null;
-        if (rig == null) return;
+        boolean jack = held.is(ModItems.JACKHAMMER.get());
+        if (!jack && !held.is(ModItems.CHAINSAW.get())) return;
+        Rig rig = rig(jack);
         event.setCanceled(true);
 
         PoseStack ps = event.getPoseStack();
@@ -60,6 +66,8 @@ public final class FirstPersonHands {
         // l'outil
         ps.pushPose();
         ps.translate(base.x, base.y, base.z);
+        ps.mulPose(new Quaternionf().rotationXYZ((float) Math.toRadians(rig.rx()), (float) Math.toRadians(rig.ry()), (float) Math.toRadians(rig.rz())));
+        ps.scale(rig.scale(), rig.scale(), rig.scale());
         mc.getEntityRenderDispatcher().getItemInHandRenderer().renderItem(player, held, ItemDisplayContext.FIRST_PERSON_RIGHT_HAND, false, ps,
                 event.getMultiBufferSource(), event.getPackedLight());
         ps.popPose();
